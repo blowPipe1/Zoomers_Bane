@@ -5,12 +5,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category {
+public class EducationInfo {
     public Integer id;
-    public String name;
-    public Integer parentId;
+    public Integer resumeId;
+    public String institution;
+    public String program;
+    public Date startDate;
+    public Date endDate;
+    public String degree;
 }
