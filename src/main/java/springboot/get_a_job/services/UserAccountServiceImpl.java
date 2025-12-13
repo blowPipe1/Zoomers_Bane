@@ -16,7 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserAccountServiceImpl implements UserAccountService {
 
-    private final String subDir = "data/images/";
+    private final String subDir = "src/main/java/springboot/get_a_job/data/images/";
 
     @Override
     public UserDto registerUser(User user) {
