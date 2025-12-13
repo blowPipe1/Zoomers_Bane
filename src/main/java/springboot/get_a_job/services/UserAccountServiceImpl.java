@@ -26,17 +26,16 @@ public class UserAccountServiceImpl implements UserAccountService {
         // 2. Сохранить в БД
 
         // Заглушка:
-        UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
-        userDto.setName(user.getName());
-        userDto.setSurname(user.getSurname());
-        userDto.setAge(user.getAge());
-        userDto.setEmail(user.getEmail());
-        userDto.setPhoneNumber(user.getPhoneNumber());
-        userDto.setAvatar(user.getAvatar());
-        userDto.setAccountType(user.getAccountType());
-
-        return userDto;
+        return new UserDto(
+                user.getId(),
+                user.getName(),
+                user.getSurname(),
+                user.getAge(),
+                user.getEmail(),
+                user.getPhoneNumber(),
+                user.getAvatar(),
+                user.getAccountType()
+        );
     }
 
     @Override
@@ -56,7 +55,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public Optional<UserDto> findUserDtoById(Integer id) {
+    public Optional<UserDto> findUserById(Integer id) {
         System.out.println("Search by ID " + id);
         //TODO Логика поиска в БД
 
