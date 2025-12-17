@@ -63,5 +63,25 @@ public class UserAccountController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @GetMapping("phone/{phone_number}")
+    public ResponseEntity<UserDto> findUserByPhone(@PathVariable String phone_number ) {
+        return userAccountService.findUserByPhone(phone_number)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("email/{email}")
+    public ResponseEntity<UserDto> findUserByEmail(@PathVariable String email) {
+        return userAccountService.findUserByEmail(email)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+    @GetMapping("username/{name}")
+    public ResponseEntity<UserDto> findUserByName(@PathVariable String name) {
+        return userAccountService.findUserByName(name)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
 

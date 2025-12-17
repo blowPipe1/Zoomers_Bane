@@ -3,18 +3,58 @@ package springboot.get_a_job.dao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import springboot.get_a_job.models.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class UserDao {
     private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public List<User> getAllUsers() {
         String sql = "select * from users";
         return jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(User.class));
+    }
+
+    public User findUserById(int id) {
+        String sql = "select * from USERS\n" +
+                "where id = ?;";
+        return jdbcTemplate.queryForObject(sql,new BeanPropertyRowMapper<>(User.class), id);
+    }
+
+    public List<User> findUserByPhone(String phone_number) {
+        String sql = "select * from USERS\n" +
+                "where phone_number ilike :phone_number;";
+        return namedParameterJdbcTemplate.query(
+                sql,
+                new MapSqlParameterSource()
+                        .addValue("phone_number", "%" + phone_number + "%" ),
+                new BeanPropertyRowMapper<>(User.class));
+    }
+
+    public List<User> findUserByName(String name) {
+        String sql = "SELECT * FROM USERS WHERE name ILIKE :name;";
+
+        return namedParameterJdbcTemplate.query(
+                sql,
+                new MapSqlParameterSource()
+                        .addValue("name", "%" + name + "%"),
+                new BeanPropertyRowMapper<>(User.class));
+    }
+
+    public List<User> findUserByEmail(String email) {
+        String sql = "select * from USERS\n" +
+                "where email ilike :email;";
+        return namedParameterJdbcTemplate.query(
+                sql,
+                new MapSqlParameterSource()
+                        .addValue("email", "%" + email + "%" ),
+                new BeanPropertyRowMapper<>(User.class));
     }
 }
