@@ -3,6 +3,7 @@ package springboot.get_a_job.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import springboot.get_a_job.dao.UserDao;
 import springboot.get_a_job.dto.UserDto;
 import springboot.get_a_job.models.User;
 
@@ -10,13 +11,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserAccountServiceImpl implements UserAccountService {
-
     private final String subDir = "src/main/java/springboot/get_a_job/data/images/";
+    private final UserDao userDao;
 
     @Override
     public UserDto registerUser(User user) {
@@ -67,5 +70,28 @@ public class UserAccountServiceImpl implements UserAccountService {
             return Optional.of(foundUser);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public Optional<List<UserDto>> findAllUsers() {
+        List<UserDto> usersDtos = new ArrayList<>();
+        List<User>users = userDao.getAllUsers();
+        if (users.isEmpty()) {
+            return Optional.empty();
+        } else {
+            for (User user : userDao.getAllUsers()) {
+                usersDtos.add(new UserDto(
+                        user.getId(),
+                        user.getName(),
+                        user.getSurname(),
+                        user.getAge(),
+                        user.getEmail(),
+                        user.getPhoneNumber(),
+                        user.getAvatar(),
+                        user.getAccountType()
+                ));
+            }
+            return Optional.of(usersDtos);
+        }
     }
 }

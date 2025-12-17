@@ -1,4 +1,4 @@
-CREATE TABLE users (
+CREATE TABLE if not exists users (
     id IDENTITY PRIMARY KEY,
     name TEXT NOT NULL,
     surname TEXT,
@@ -10,20 +10,20 @@ CREATE TABLE users (
     account_type VARCHAR(50)
 );
 
-CREATE TABLE categories (
+CREATE TABLE if not exists categories (
     id IDENTITY PRIMARY KEY,
     name TEXT NOT NULL,
     parent_id INTEGER,
         FOREIGN KEY (parent_id) REFERENCES categories(id)
 );
 
-CREATE TABLE contact_types (
+CREATE TABLE if not exists contact_types (
     id IDENTITY PRIMARY KEY,
     type TEXT NOT NULL
 );
 
 
-CREATE TABLE resumes (
+CREATE TABLE if not exists resumes (
     id IDENTITY PRIMARY KEY,
     applicant_id INTEGER NOT NULL,
     name TEXT NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE resumes (
         FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 
-CREATE TABLE contact_info (
+CREATE TABLE if not exists contact_info (
     id IDENTITY PRIMARY KEY,
     resume_id INTEGER NOT NULL,
     type_id INTEGER NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE contact_info (
         FOREIGN KEY (type_id) REFERENCES contact_types(id)
 );
 
-CREATE TABLE education_info (
+CREATE TABLE if not exists education_info (
     id IDENTITY PRIMARY KEY,
     resume_id INTEGER NOT NULL,
     institution TEXT NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE education_info (
         FOREIGN KEY (resume_id) REFERENCES resumes(id)
 );
 
-CREATE TABLE work_experience_info (
+CREATE TABLE if not exists work_experience_info (
     id IDENTITY PRIMARY KEY,
     resume_id INTEGER NOT NULL,
     years INTEGER,
@@ -66,7 +66,7 @@ CREATE TABLE work_experience_info (
         FOREIGN KEY (resume_id) REFERENCES resumes(id)
 );
 
-CREATE TABLE vacancies (
+CREATE TABLE if not exists vacancies (
     id IDENTITY PRIMARY KEY,
     name TEXT NOT NULL,
     description TEXT NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE vacancies (
         FOREIGN KEY (author_id) REFERENCES users(id)
 );
 
-CREATE TABLE responded_applicants (
+CREATE TABLE if not exists responded_applicants (
     id IDENTITY PRIMARY KEY,
     resume_id INTEGER NOT NULL,
     vacancy_id INTEGER NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE responded_applicants (
         FOREIGN KEY (vacancy_id) REFERENCES vacancies(id)
 );
 
-CREATE TABLE messages (
+CREATE TABLE if not exists messages (
     id IDENTITY PRIMARY KEY,
     responded_applicants_id INTEGER NOT NULL,
     content TEXT NOT NULL,

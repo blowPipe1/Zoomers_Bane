@@ -6,10 +6,12 @@ import springboot.get_a_job.models.User;
 
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserAccountService {
     UserDto registerUser(User user);
     void saveAvatar(Integer userId, MultipartFile file) throws IOException;
     Optional<UserDto> findUserById(Integer id);
+    Optional<List<UserDto>> findAllUsers();
 }
