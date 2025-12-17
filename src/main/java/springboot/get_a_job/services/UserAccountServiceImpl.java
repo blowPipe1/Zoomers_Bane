@@ -3,6 +3,7 @@ package springboot.get_a_job.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import springboot.get_a_job.dao.UserDao;
 import springboot.get_a_job.dto.UserDto;
 import springboot.get_a_job.models.User;
 
@@ -10,13 +11,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserAccountServiceImpl implements UserAccountService {
-
     private final String subDir = "src/main/java/springboot/get_a_job/data/images/";
+    private final UserDao userDao;
 
     @Override
     public UserDto registerUser(User user) {
@@ -26,16 +29,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         // 2. Сохранить в БД
 
         // Заглушка:
-        return new UserDto(
-                user.getId(),
-                user.getName(),
-                user.getSurname(),
-                user.getAge(),
-                user.getEmail(),
-                user.getPhoneNumber(),
-                user.getAvatar(),
-                user.getAccountType()
-        );
+        return convert(user);
     }
 
     @Override
@@ -56,16 +50,83 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     public Optional<UserDto> findUserById(Integer id) {
-        System.out.println("Search by ID " + id);
-        //TODO Логика поиска в БД
-
-        // Заглушка:
-        if (id > 0) {
-            UserDto foundUser = new UserDto();
-            foundUser.setId(id);
-            foundUser.setName("test");
-            return Optional.of(foundUser);
+        User result = userDao.findUserById(id);
+        if (result == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(convert(result));
         }
-        return Optional.empty();
     }
+
+    @Override
+    public Optional<List<UserDto>> findAllUsers() {
+        List<UserDto> usersDtos = new ArrayList<>();
+        if (userDao.getAllUsers().isEmpty()) {
+            return Optional.empty();
+        } else {
+            for (User user : userDao.getAllUsers()) {
+                usersDtos.add(convert(user));
+            }
+            return Optional.of(usersDtos);
+        }
+    }
+
+    @Override
+    public Optional<UserDto> findUserByPhone(String phone_number){
+        List<User> result = userDao.findUserByPhone(phone_number);
+        if (result == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(convert(result.getFirst()));
+        }
+    }
+
+    @Override
+    public Optional<UserDto> findUserByEmail(String email) {
+        List<User> result = userDao.findUserByEmail(email);
+        if (result == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(convert(result.getFirst()));
+        }
+    }
+
+    @Override
+    public Optional<UserDto> findUserByName(String name) {
+        List<User> result = userDao.findUserByName(name);
+        if (result == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(convert(result.getFirst()));
+        }
+    }
+
+    @Override
+    public Optional<List<UserDto>> findRespondedUsers(Integer vacancy_id) {
+        List<UserDto> usersDtos = new ArrayList<>();
+        if (userDao.findRespondedUsers(vacancy_id).isEmpty()) {
+            return Optional.empty();
+        } else {
+            for (User user : userDao.findRespondedUsers(vacancy_id)) {
+                usersDtos.add(convert(user));
+            }
+            return Optional.of(usersDtos);
+        }
+    }
+
+
+    public UserDto convert(User user) {
+        return new UserDto(
+                user.getId(),
+                user.getName(),
+                user.getSurname(),
+                user.getAge(),
+                user.getEmail(),
+                user.getPhoneNumber(),
+                user.getAvatar(),
+                user.getAccountType()
+        );
+    }
+
+
 }
