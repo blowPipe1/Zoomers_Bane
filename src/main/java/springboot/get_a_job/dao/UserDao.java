@@ -33,7 +33,7 @@ public class UserDao {
         return namedParameterJdbcTemplate.query(
                 sql,
                 new MapSqlParameterSource()
-                        .addValue("phone_number", "%" + phone_number + "%" ),
+                        .addValue("phone_number", phone_number),
                 new BeanPropertyRowMapper<>(User.class));
     }
 
@@ -43,7 +43,7 @@ public class UserDao {
         return namedParameterJdbcTemplate.query(
                 sql,
                 new MapSqlParameterSource()
-                        .addValue("name", "%" + name + "%"),
+                        .addValue("name", name),
                 new BeanPropertyRowMapper<>(User.class));
     }
 
@@ -53,7 +53,21 @@ public class UserDao {
         return namedParameterJdbcTemplate.query(
                 sql,
                 new MapSqlParameterSource()
-                        .addValue("email", "%" + email + "%" ),
+                        .addValue("email", email),
                 new BeanPropertyRowMapper<>(User.class));
     }
+
+    public List<User> findRespondedUsers(Integer vacancy_id) {
+        String sql = "SELECT u.* FROM users u\n" +
+                "    JOIN resumes r ON u.id = r.applicant_id\n" +
+                "    JOIN responded_applicants ra ON r.id = ra.resume_id\n" +
+                "    WHERE ra.vacancy_id = :id;";
+        return namedParameterJdbcTemplate.query(
+                sql,
+                new MapSqlParameterSource()
+                        .addValue("id", vacancy_id ),
+                new BeanPropertyRowMapper<>(User.class));
+    }
+
+
 }

@@ -82,6 +82,15 @@ public class VacancyServiceImpl implements VacancyService {
         }
     }
 
+    @Override
+    public Optional<List<Vacancy>> findRespondedVacancies(Integer applicant_id) {
+        if (vacancyDao.findRespondedVacancies(applicant_id).isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(vacancyDao.findRespondedVacancies(applicant_id));
+        }
+    }
+
 
 }
 

@@ -14,5 +14,6 @@ public interface VacancyService {
     Optional<Vacancy>findVacancyById(Integer id);
     Optional<List<Vacancy>> findVacancyByCategory(Integer category_id);
     Optional<List<Vacancy>> findVacancyByCategory(String category);
+    Optional<List<Vacancy>> findRespondedVacancies(Integer applicant_id);
 
 }

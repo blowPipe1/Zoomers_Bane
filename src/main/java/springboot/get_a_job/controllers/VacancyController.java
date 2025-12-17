@@ -67,4 +67,11 @@ public class VacancyController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/responded/{applicant_id}")
+    public ResponseEntity<List<Vacancy>> findRespondedVacancies(@PathVariable Integer applicant_id) {
+        return vacancyService.findRespondedVacancies(applicant_id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 }

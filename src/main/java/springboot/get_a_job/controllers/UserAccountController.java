@@ -83,5 +83,12 @@ public class UserAccountController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/responded/{vacancy_id}")
+    public ResponseEntity<List<UserDto>> findRespondedUsers(@PathVariable Integer vacancy_id) {
+        return userAccountService.findRespondedUsers(vacancy_id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
 

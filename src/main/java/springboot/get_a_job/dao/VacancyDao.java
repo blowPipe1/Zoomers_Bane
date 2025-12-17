@@ -45,6 +45,17 @@ public class VacancyDao {
                 new BeanPropertyRowMapper<>(Vacancy.class));
     }
 
+    public List<Vacancy> findRespondedVacancies(Integer applicant_id) {
+        String sql = "SELECT v.* FROM vacancies v\n" +
+                "JOIN responded_applicants ra ON v.id = ra.vacancy_id\n" +
+                "JOIN resumes r ON ra.resume_id = r.id\n" +
+                "WHERE r.applicant_id = :id;";
+        return namedParameterJdbcTemplate.query(
+                sql,
+                new MapSqlParameterSource()
+                        .addValue("id", applicant_id),
+                new BeanPropertyRowMapper<>(Vacancy.class));
+    }
 
 
 }

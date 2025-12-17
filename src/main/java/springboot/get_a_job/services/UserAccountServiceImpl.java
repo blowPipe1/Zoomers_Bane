@@ -101,6 +101,18 @@ public class UserAccountServiceImpl implements UserAccountService {
         }
     }
 
+    @Override
+    public Optional<List<UserDto>> findRespondedUsers(Integer vacancy_id) {
+        List<UserDto> usersDtos = new ArrayList<>();
+        if (userDao.findRespondedUsers(vacancy_id).isEmpty()) {
+            return Optional.empty();
+        } else {
+            for (User user : userDao.findRespondedUsers(vacancy_id)) {
+                usersDtos.add(convert(user));
+            }
+            return Optional.of(usersDtos);
+        }
+    }
 
 
     public UserDto convert(User user) {
