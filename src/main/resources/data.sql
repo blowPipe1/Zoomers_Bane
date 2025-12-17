@@ -119,7 +119,8 @@ INSERT INTO contact_info (resume_id, type_id, "value") VALUES
 
 
 INSERT INTO vacancies (name, description, category_id, salary, exp_from, is_active, author_id, created_date, update_time) VALUES
-    ('Java Developer', 'need someone with straight hands', 4, 180000.00, 3, TRUE, 2, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+    ('Java Developer', 'need someone with straight hands', 4, 180000.00, 3, TRUE, 2, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    ('Kotlin Developer', 'need someone with straight hands', 1, 90000.00, 1, TRUE, 2, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
 
 INSERT INTO education_info (resume_id, institution, program, start_date, end_date, degree) VALUES
     (1, 'University', 'Computer Science', '2010-09-01', '2015-06-25', 'Professor');

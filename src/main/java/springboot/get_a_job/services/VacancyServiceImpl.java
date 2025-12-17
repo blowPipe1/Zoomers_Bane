@@ -1,16 +1,18 @@
 package springboot.get_a_job.services;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import springboot.get_a_job.models.RespondedApplicant;
-import springboot.get_a_job.models.Resume;
+import springboot.get_a_job.dao.VacancyDao;
 import springboot.get_a_job.models.Vacancy;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class VacancyServiceImpl implements VacancyService {
+    private final VacancyDao vacancyDao;
 
     @Override
     public Vacancy createVacancy(Vacancy vacancy) {
@@ -39,31 +41,48 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public List<Resume> findAllActiveResumes() {
-        System.out.println("Active Resumes");
-        //TODO Логика запроса к БД
+    public void respondToVacancy(Integer vacancyId, Integer resumeId) {
 
-        // заглушка
-        return Collections.emptyList();
+    }
+
+
+    @Override
+    public Optional<List<Vacancy>> getAllActiveVacancies() {
+        if (vacancyDao.getAllActiveVacancies().isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(vacancyDao.getAllActiveVacancies());
+        }
     }
 
     @Override
-    public List<Resume> findResumesByCategoryId(Integer categoryId) {
-        System.out.println("Resume by Category (ID): " + categoryId);
-        //TODO Логика запроса к БД с фильтром по категории
-
-        // заглушка
-        return Collections.emptyList();
+    public Optional<Vacancy> findVacancyById(Integer id) {
+        if (vacancyDao.findVacancyById(id) == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(vacancyDao.findVacancyById(id));
+        }
     }
 
     @Override
-    public List<RespondedApplicant> findApplicantsForVacancy(Integer vacancyId) {
-        System.out.println("Replies for Vacancy (ID): " + vacancyId);
-        //TODO Логика запроса к БД с объединением таблиц откликов и соискателей
-
-        // заглушка
-        return Collections.emptyList();
+    public Optional<List<Vacancy>> findVacancyByCategory(Integer category_id) {
+        if (vacancyDao.findVacancyByCategory(category_id).isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(vacancyDao.findVacancyByCategory(category_id));
+        }
     }
+
+    @Override
+    public Optional<List<Vacancy>> findVacancyByCategory(String category) {
+        if (vacancyDao.findVacancyByCategory(category).isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(vacancyDao.findVacancyByCategory(category));
+        }
+    }
+
+
 }
 
 

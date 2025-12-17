@@ -3,15 +3,13 @@ package springboot.get_a_job.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springboot.get_a_job.models.RespondedApplicant;
-import springboot.get_a_job.models.Resume;
 import springboot.get_a_job.models.Vacancy;
 import springboot.get_a_job.services.VacancyService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/employer/vacancies")
+@RequestMapping("/api/vacancies")
 @RequiredArgsConstructor
 public class VacancyController {
 
@@ -35,21 +33,38 @@ public class VacancyController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/resumes/all")
-    public ResponseEntity<List<Resume>> searchAllResumes() {
-        List<Resume> resumes = vacancyService.findAllActiveResumes();
-        return ResponseEntity.ok(resumes);
+    @PostMapping("/{vacancyId}/respond")
+    public ResponseEntity<String> respondToVacancy(@PathVariable Integer vacancyId, @RequestParam Integer resumeId) {
+        vacancyService.respondToVacancy(vacancyId, resumeId);
+        return ResponseEntity.ok("отклик зарегистрирован");
     }
 
-    @GetMapping("/resumes/category/{categoryId}")
-    public ResponseEntity<List<Resume>> searchResumesByCategory(@PathVariable Integer categoryId) {
-        List<Resume> resumes = vacancyService.findResumesByCategoryId(categoryId);
-        return ResponseEntity.ok(resumes);
+    @GetMapping("/all")
+    public ResponseEntity<List<Vacancy>> searchAllActiveVacancies() {
+        return vacancyService.getAllActiveVacancies()
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{vacancyId}/applicants")
-    public ResponseEntity<List<RespondedApplicant>> findRespondedApplicants(@PathVariable Integer vacancyId) {
-        List<RespondedApplicant> applicants = vacancyService.findApplicantsForVacancy(vacancyId);
-        return ResponseEntity.ok(applicants);
+    @GetMapping("/{id}")
+    public ResponseEntity<Vacancy> findVacancyById(@PathVariable Integer id) {
+        return vacancyService.findVacancyById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/categoryId/{category_id}")
+    public ResponseEntity<List<Vacancy>> findVacancyByCategoryId(@PathVariable Integer category_id) {
+        return vacancyService.findVacancyByCategory(category_id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/category/{category}")
+    public ResponseEntity<List<Vacancy>> findVacancyByCategory(@PathVariable String category) {
+        return vacancyService.findVacancyByCategory(category)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 }
