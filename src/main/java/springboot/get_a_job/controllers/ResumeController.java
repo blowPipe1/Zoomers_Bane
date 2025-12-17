@@ -3,6 +3,7 @@ package springboot.get_a_job.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springboot.get_a_job.dto.UserDto;
 import springboot.get_a_job.models.Resume;
 import springboot.get_a_job.models.Vacancy;
 import springboot.get_a_job.services.ResumeServiceImpl;
@@ -50,5 +51,47 @@ public class ResumeController {
     public ResponseEntity<String> respondToVacancy(@PathVariable Integer vacancyId, @RequestParam Integer resumeId) {
         resumeService.respondToVacancy(vacancyId, resumeId);
         return ResponseEntity.ok("отклик зарегистрирован");
+    }
+
+    @GetMapping("/resumes/all")
+    public ResponseEntity<List<Resume>> getAllActiveResumes() {
+        return resumeService.getAllActiveResumes()
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("resumes/{id}")
+    public ResponseEntity<Resume> findResumeById(@PathVariable Integer id) {
+        return resumeService.findResumeById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("resumes/categoryId/{category_id}")
+    public ResponseEntity<List<Resume>> findResumeByCategoryId(@PathVariable Integer category_id) {
+        return resumeService.findResumeByCategory(category_id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("resumes/category/{category}")
+    public ResponseEntity<List<Resume>> findResumeByCategory(@PathVariable String category) {
+        return resumeService.findResumeByCategory(category)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("resumes/creatorId/{applicant_id}")
+    public ResponseEntity<List<Resume>> findResumeByCreatorId(@PathVariable Integer applicant_id) {
+        return resumeService.findResumeByCreator(applicant_id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("resumes/creator/{name}")
+    public ResponseEntity<List<Resume>> findResumeByCreatorName(@PathVariable String name) {
+        return resumeService.findResumeByCreator(name)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

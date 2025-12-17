@@ -110,7 +110,8 @@ INSERT INTO categories (name, parent_id) VALUES ('Software Development', 1), ('A
 INSERT INTO contact_types (type) VALUES ('Phone'), ('Email'), ('Telegram');
 
 INSERT INTO resumes (applicant_id, name, category_id, salary, is_active, created_date, update_time) VALUES
-    (1, 'Java the Right Version ♂', 4, 15000.00, TRUE, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+    (1, 'Java the Right Version ♂', 4, 15000.00, TRUE, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
+    (2, 'Kotlin the Right Version ♂', 1, 12400.00, TRUE, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
 
 INSERT INTO contact_info (resume_id, type_id, "value") VALUES
     (1, 1, '1234567890'),
