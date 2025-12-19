@@ -1,3 +1,4 @@
+
 package springboot.get_a_job.services;
 
 import lombok.RequiredArgsConstructor;
@@ -6,9 +7,12 @@ import springboot.get_a_job.dao.CategoryDao;
 import springboot.get_a_job.dao.EducationInfoDao;
 import springboot.get_a_job.dao.ResumeDao;
 import springboot.get_a_job.dao.WorkExperienceDao;
+import springboot.get_a_job.dto.EducationDto;
 import springboot.get_a_job.dto.ResumeDto;
+import springboot.get_a_job.dto.WorkExperienceDto;
 import springboot.get_a_job.models.Resume;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,20 +69,47 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public Optional<List<Resume>> getAllActiveResumes() {
-        if (resumeDao.getAllActiveResumes().isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.of(resumeDao.getAllActiveResumes());
+    public Optional<List<ResumeDto>> getAllActiveResumes() {
+        List<ResumeDto>resumeDtos = new ArrayList<>();
+        for (Resume resume : resumeDao.getAllActiveResumes()){
+            String category = categoryDao.findNameById(resume.categoryId);
+            List<EducationDto>educationInfo = educationDao.getResumesEducationInfo(resume.getId());
+            List<WorkExperienceDto>workExperienceInfo = workExperienceDao.getResumesWorkExperience(resume.getId());
+
+            resumeDtos.add(new ResumeDto(
+                    resume.getApplicantId(),
+                    resume.getName(),
+                    category,
+                    resume.getSalary(),
+                    resume.getIsActive(),
+                    educationInfo,
+                    workExperienceInfo
+            ));
         }
+        return Optional.of(resumeDtos);
     }
 
     @Override
-    public Optional<Resume> findResumeById(Integer id) {
+    public Optional<ResumeDto> findResumeById(Integer id) {
+        Resume resume = resumeDao.findResumeById(id);
+        List<EducationDto> education = educationDao.getResumesEducationInfo(id);
+        List<WorkExperienceDto> workExperience = workExperienceDao.getResumesWorkExperience(id);
+        String category = categoryDao.findNameById(resume.categoryId);
+
+        ResumeDto resumeDto = new ResumeDto(
+                resume.getApplicantId(),
+                resume.getName(),
+                category,
+                resume.getSalary(),
+                resume.getIsActive(),
+                education,
+                workExperience
+        );
+
         if (resumeDao.findResumeById(id) == null) {
             return Optional.empty();
         } else {
-            return Optional.of(resumeDao.findResumeById(id));
+            return Optional.of(resumeDto);
         }
     }
 

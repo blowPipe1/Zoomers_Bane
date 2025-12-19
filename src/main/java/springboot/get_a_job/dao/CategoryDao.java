@@ -3,7 +3,6 @@ package springboot.get_a_job.dao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -12,7 +11,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CategoryDao {
     private final JdbcTemplate jdbcTemplate;
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public Optional<Integer> findIdByName(String name) {
         String sql = "SELECT id FROM categories WHERE name = ?";
@@ -22,5 +20,10 @@ public class CategoryDao {
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
+    }
+
+    public String findNameById(Integer id) {
+        String sql = "SELECT name FROM categories WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, String.class, id);
     }
 }

@@ -40,14 +40,14 @@ public class ResumeController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Resume>> getAllActiveResumes() {
+    public ResponseEntity<List<ResumeDto>> getAllActiveResumes() {
         return resumeService.getAllActiveResumes()
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Resume> findResumeById(@PathVariable Integer id) {
+    public ResponseEntity<ResumeDto> findResumeById(@PathVariable Integer id) {
         return resumeService.findResumeById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
