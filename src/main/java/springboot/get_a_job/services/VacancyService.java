@@ -1,12 +1,13 @@
 package springboot.get_a_job.services;
 
+import springboot.get_a_job.dto.VacancyDto;
 import springboot.get_a_job.models.Vacancy;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface VacancyService {
-    Vacancy createVacancy(Vacancy vacancy);
+    void createVacancy(VacancyDto vacancy);
     Vacancy updateVacancy(Integer id, Vacancy vacancyDetails);
     void deleteVacancy(Integer id);
     void respondToVacancy(Integer vacancyId, Integer resumeId);

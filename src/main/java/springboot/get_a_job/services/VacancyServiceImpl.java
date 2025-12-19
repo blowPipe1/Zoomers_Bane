@@ -2,7 +2,9 @@ package springboot.get_a_job.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import springboot.get_a_job.dao.CategoryDao;
 import springboot.get_a_job.dao.VacancyDao;
+import springboot.get_a_job.dto.VacancyDto;
 import springboot.get_a_job.models.Vacancy;
 
 import java.time.LocalDateTime;
@@ -13,14 +15,27 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class VacancyServiceImpl implements VacancyService {
     private final VacancyDao vacancyDao;
+    private final CategoryDao categoryDao;
 
     @Override
-    public Vacancy createVacancy(Vacancy vacancy) {
-        System.out.println("Creating Vacancy: " + vacancy.getName());
-        //TODO логика сохранения в БД и возврата сохраненного объекта
+    public void createVacancy(VacancyDto vacancy) {
+        Integer categoryId = categoryDao.findIdByName(vacancy.getCategory())
+                .orElseThrow(() -> new RuntimeException("Категория не найдена: " + vacancy.getCategory()));
 
-        // заглушка
-        return vacancy;
+        if (vacancy == null) {
+            throw new IllegalArgumentException("Vacancy cannot be null");
+        } else {
+            vacancyDao.createVacancy(
+                    vacancy.getName(),
+                    vacancy.getDescription(),
+                    categoryId,
+                    vacancy.getSalary(),
+                    vacancy.getExpFrom(),
+                    vacancy.getExpTo(),
+                    vacancy.getIsActive(),
+                    vacancy.getAuthorId());
+        }
+
     }
 
     @Override

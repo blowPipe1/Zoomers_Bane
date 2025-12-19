@@ -1,8 +1,10 @@
 package springboot.get_a_job.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springboot.get_a_job.dto.VacancyDto;
 import springboot.get_a_job.models.Vacancy;
 import springboot.get_a_job.services.VacancyService;
 
@@ -15,10 +17,12 @@ public class VacancyController {
 
     private final VacancyService vacancyService;
 
-    @PostMapping
-    public ResponseEntity<Vacancy> createVacancy(@RequestBody Vacancy vacancy) {
-        Vacancy createdVacancy = vacancyService.createVacancy(vacancy);
-        return ResponseEntity.ok(createdVacancy);
+    @PostMapping("/")
+    public ResponseEntity<String> createVacancy(@RequestBody VacancyDto vacancy) {
+        vacancyService.createVacancy(vacancy);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body("Vacancy has been created");
     }
 
     @PutMapping("/{id}")

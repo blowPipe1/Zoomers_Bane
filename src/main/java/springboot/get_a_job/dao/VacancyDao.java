@@ -5,9 +5,14 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import springboot.get_a_job.models.Vacancy;
 
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -55,6 +60,22 @@ public class VacancyDao {
                 new MapSqlParameterSource()
                         .addValue("id", applicant_id),
                 new BeanPropertyRowMapper<>(Vacancy.class));
+    }
+
+    public void createVacancy(String name, String description, Integer categoryId, Double salary, Integer expFrom, Integer expTo, Boolean isActive, Integer authorId) {
+        String sql = "insert into VACANCIES(name, description, category_id, salary, exp_from, exp_To, is_Active, author_Id, created_date, update_time)" +
+                "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        jdbcTemplate.update(sql,
+                name,
+                description,
+                categoryId,
+                salary,
+                expFrom,
+                expTo,
+                isActive,
+                authorId,
+                Timestamp.valueOf(LocalDateTime.now()),
+                Timestamp.valueOf(LocalDateTime.now()));
     }
 
 
