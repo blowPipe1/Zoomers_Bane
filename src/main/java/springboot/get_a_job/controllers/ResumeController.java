@@ -34,9 +34,11 @@ public class ResumeController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteResume(@PathVariable Integer id) {
+    public ResponseEntity<String> deleteResume(@PathVariable Integer id) {
         resumeService.deleteResume(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Resume successfully deleted");
     }
 
     @GetMapping("/all")

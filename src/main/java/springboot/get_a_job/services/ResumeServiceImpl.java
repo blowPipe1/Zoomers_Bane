@@ -64,8 +64,11 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public void deleteResume(Integer id) {
-        System.out.println("Deleting resume (ID) " + id);
-        //TODO Логика удаления записи из БД
+        if (resumeDao.findResumeById(id) == null) {
+            throw new RuntimeException("Resume with id: " + id + " not found");
+        }else {
+            resumeDao.deleteResume(id);
+        }
     }
 
     @Override
@@ -196,4 +199,6 @@ public class ResumeServiceImpl implements ResumeService {
         }
         return Optional.of(resumeDtos);
     }
+
+
 }

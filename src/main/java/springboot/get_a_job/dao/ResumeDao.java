@@ -111,4 +111,9 @@ public class ResumeDao {
         return (key != null) ? key.intValue() : null;
     }
 
+    public void deleteResume(Integer resumeId) {
+        String sql = "DELETE FROM resumes WHERE Id = ?;";
+        jdbcTemplate.update(sql, resumeId);
+    }
+
 }
