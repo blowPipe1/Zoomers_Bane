@@ -114,38 +114,86 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public Optional<List<Resume>> findResumeByCategory(Integer category_id) {
-        if (resumeDao.findResumeByCategory(category_id).isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.of(resumeDao.findResumeByCategory(category_id));
+    public Optional<List<ResumeDto>> findResumeByCategory(Integer category_id) {
+        List<ResumeDto>resumeDtos = new ArrayList<>();
+        for (Resume resume : resumeDao.findResumeByCategory(category_id)) {
+            String category = categoryDao.findNameById(resume.categoryId);
+            List<EducationDto>educationInfo = educationDao.getResumesEducationInfo(resume.getId());
+            List<WorkExperienceDto>workExperienceInfo = workExperienceDao.getResumesWorkExperience(resume.getId());
+
+            resumeDtos.add(new ResumeDto(
+                    resume.getApplicantId(),
+                    resume.getName(),
+                    category,
+                    resume.getSalary(),
+                    resume.getIsActive(),
+                    educationInfo,
+                    workExperienceInfo
+            ));
         }
+        return Optional.of(resumeDtos);
     }
 
     @Override
-    public Optional<List<Resume>> findResumeByCategory(String category) {
-        if (resumeDao.findResumeByCategory(category).isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.of(resumeDao.findResumeByCategory(category));
+    public Optional<List<ResumeDto>> findResumeByCategory(String category1) {
+        List<ResumeDto>resumeDtos = new ArrayList<>();
+        for (Resume resume : resumeDao.findResumeByCategory(category1)) {
+            String category = categoryDao.findNameById(resume.categoryId);
+            List<EducationDto>educationInfo = educationDao.getResumesEducationInfo(resume.getId());
+            List<WorkExperienceDto>workExperienceInfo = workExperienceDao.getResumesWorkExperience(resume.getId());
+
+            resumeDtos.add(new ResumeDto(
+                    resume.getApplicantId(),
+                    resume.getName(),
+                    category,
+                    resume.getSalary(),
+                    resume.getIsActive(),
+                    educationInfo,
+                    workExperienceInfo
+            ));
         }
+        return Optional.of(resumeDtos);
     }
 
     @Override
-    public Optional<List<Resume>> findResumeByCreator(Integer applicant_id) {
-        if (resumeDao.findResumeByCreator(applicant_id).isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.of(resumeDao.findResumeByCreator(applicant_id));
+    public Optional<List<ResumeDto>> findResumeByCreator(Integer applicant_id) {
+        List<ResumeDto>resumeDtos = new ArrayList<>();
+        for (Resume resume : resumeDao.findResumeByCreator(applicant_id)) {
+            String category = categoryDao.findNameById(resume.categoryId);
+            List<EducationDto>educationInfo = educationDao.getResumesEducationInfo(resume.getId());
+            List<WorkExperienceDto>workExperienceInfo = workExperienceDao.getResumesWorkExperience(resume.getId());
+
+            resumeDtos.add(new ResumeDto(
+                    resume.getApplicantId(),
+                    resume.getName(),
+                    category,
+                    resume.getSalary(),
+                    resume.getIsActive(),
+                    educationInfo,
+                    workExperienceInfo
+            ));
         }
+        return Optional.of(resumeDtos);
     }
 
     @Override
-    public Optional<List<Resume>> findResumeByCreator(String creatorName) {
-        if (resumeDao.findResumeByCreator(creatorName).isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.of(resumeDao.findResumeByCreator(creatorName));
+    public Optional<List<ResumeDto>> findResumeByCreator(String creatorName) {
+        List<ResumeDto>resumeDtos = new ArrayList<>();
+        for (Resume resume : resumeDao.findResumeByCreator(creatorName)) {
+            String category = categoryDao.findNameById(resume.categoryId);
+            List<EducationDto>educationInfo = educationDao.getResumesEducationInfo(resume.getId());
+            List<WorkExperienceDto>workExperienceInfo = workExperienceDao.getResumesWorkExperience(resume.getId());
+
+            resumeDtos.add(new ResumeDto(
+                    resume.getApplicantId(),
+                    resume.getName(),
+                    category,
+                    resume.getSalary(),
+                    resume.getIsActive(),
+                    educationInfo,
+                    workExperienceInfo
+            ));
         }
+        return Optional.of(resumeDtos);
     }
 }

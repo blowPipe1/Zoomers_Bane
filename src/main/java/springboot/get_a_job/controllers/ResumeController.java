@@ -54,28 +54,28 @@ public class ResumeController {
     }
 
     @GetMapping("/categoryId/{category_id}")
-    public ResponseEntity<List<Resume>> findResumeByCategoryId(@PathVariable Integer category_id) {
+    public ResponseEntity<List<ResumeDto>> findResumeByCategoryId(@PathVariable Integer category_id) {
         return resumeService.findResumeByCategory(category_id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<Resume>> findResumeByCategory(@PathVariable String category) {
+    public ResponseEntity<List<ResumeDto>> findResumeByCategory(@PathVariable String category) {
         return resumeService.findResumeByCategory(category)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/creatorId/{applicant_id}")
-    public ResponseEntity<List<Resume>> findResumeByCreatorId(@PathVariable Integer applicant_id) {
+    public ResponseEntity<List<ResumeDto>> findResumeByCreatorId(@PathVariable Integer applicant_id) {
         return resumeService.findResumeByCreator(applicant_id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/creator/{name}")
-    public ResponseEntity<List<Resume>> findResumeByCreatorName(@PathVariable String name) {
+    public ResponseEntity<List<ResumeDto>> findResumeByCreatorName(@PathVariable String name) {
         return resumeService.findResumeByCreator(name)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
