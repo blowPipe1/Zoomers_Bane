@@ -71,7 +71,7 @@ public class ResumeDao {
                 new BeanPropertyRowMapper<>(Resume.class));
     }
 
-    public Integer saveResume(Integer applicantId, String name, Integer categoryId, Double salary) {
+    public Integer saveResume(Integer applicantId, String name, Integer categoryId, Double salary, boolean isActive) {
         String sql = "INSERT INTO resumes (applicant_id, name, category_id, salary, is_active, created_date, update_time) VALUES (?, ?, ?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -81,7 +81,7 @@ public class ResumeDao {
             ps.setString(2, name);
             ps.setInt(3, categoryId);
             ps.setDouble(4, salary);
-            ps.setBoolean(5, true);
+            ps.setBoolean(5, isActive);
             ps.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
             ps.setTimestamp(7, Timestamp.valueOf(LocalDateTime.now()));
             return ps;
@@ -90,4 +90,25 @@ public class ResumeDao {
         Number key = keyHolder.getKey();
         return (key != null) ? key.intValue() : null;
     }
+
+    public Integer updateResume(Integer resumeId, Integer applicantId, String name, Integer categoryId, Double salary, boolean isActive) {
+
+        String sql = "update RESUMES set name = ?, CATEGORY_ID = ?, salary = ?, is_active = ?, UPDATE_TIME = ? where id = ?";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
+            ps.setString(1, name);
+            ps.setInt(2, categoryId);
+            ps.setDouble(3, salary);
+            ps.setBoolean(4, isActive);
+            ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setInt(6, resumeId);
+            return ps;
+        }, keyHolder);
+
+        Number key = keyHolder.getKey();
+        return (key != null) ? key.intValue() : null;
+    }
+
 }

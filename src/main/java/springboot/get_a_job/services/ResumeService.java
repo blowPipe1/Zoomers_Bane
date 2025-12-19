@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ResumeService {
-    Resume updateResume(Integer id, Resume resumeDetails);
+    void updateResume(Integer id, ResumeDto resumeDto);
     void deleteResume(Integer id);
     Optional<List<Resume>>getAllActiveResumes();
     Optional<Resume>findResumeById(Integer id);

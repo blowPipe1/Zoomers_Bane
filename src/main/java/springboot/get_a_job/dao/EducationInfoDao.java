@@ -18,4 +18,11 @@ public class EducationInfoDao {
             jdbcTemplate.update(sql, resumeId, edu.getInstitution(), edu.getProgram(), edu.getStartDate(), edu.getEndDate(), edu.getDegree());
         }
     }
+
+    public void updateEducationInfo(ResumeDto resumeDto, Integer resumeId) {
+        String sql = "update EDUCATION_INFO set institution = ?, program = ?, start_date = ?, end_date = ?, degree = ? where id = ?";
+        for (EducationDto edu : resumeDto.getEducation()){
+            jdbcTemplate.update(sql, edu.getInstitution(), edu.getProgram(), edu.getStartDate(), edu.getEndDate(), edu.getDegree(), resumeId);
+        }
+    }
 }

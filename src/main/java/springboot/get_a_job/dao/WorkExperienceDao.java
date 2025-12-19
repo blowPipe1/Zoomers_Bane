@@ -20,4 +20,11 @@ public class WorkExperienceDao {
         }
     }
 
+    public void updateWorkExperience(ResumeDto resumeDto, Integer resumeId) {
+        String sql = "update WORK_EXPERIENCE_INFO set years = ?, company_name = ?, position = ?, responsibilities = ? where id = ?";
+        for (WorkExperienceDto workExp : resumeDto.getWorkExperience()) {
+            jdbcTemplate.update(sql, workExp.getYears(), workExp.getCompanyName(), workExp.getPosition(), workExp.getResponsibilities(), resumeId);
+        }
+    }
+
 }

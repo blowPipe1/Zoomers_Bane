@@ -18,17 +18,19 @@ public class ResumeController {
     private final ResumeServiceImpl resumeService;
 
     @PostMapping("/")
-    public ResponseEntity<String> createResume(@RequestBody ResumeDto resume) {
-        resumeService.createResume(resume);
+    public ResponseEntity<String> createResume(@RequestBody ResumeDto resumeDto) {
+        resumeService.createResume(resumeDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body("Резюме успешно создано");
+                .body("Resume successfully created");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Resume> updateResume(@PathVariable Integer id, @RequestBody Resume resumeDetails) {
-        Resume updatedResume = resumeService.updateResume(id, resumeDetails);
-        return ResponseEntity.ok(updatedResume);
+    public ResponseEntity<String> updateResume(@PathVariable Integer id, @RequestBody ResumeDto resumeDto) {
+        resumeService.updateResume(id, resumeDto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Resume successfully updated");
     }
 
     @DeleteMapping("/{id}")

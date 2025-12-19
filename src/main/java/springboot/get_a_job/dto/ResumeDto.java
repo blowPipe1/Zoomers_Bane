@@ -15,6 +15,7 @@ public class ResumeDto {
     String name;
     String category;
     Double salary;
+    boolean isActive;
     List<EducationDto> education;
     List<WorkExperienceDto> workExperience;
 }
