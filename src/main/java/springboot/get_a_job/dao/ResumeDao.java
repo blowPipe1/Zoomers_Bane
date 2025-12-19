@@ -5,10 +5,17 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.models.Resume;
 
 
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -62,5 +69,25 @@ public class ResumeDao {
                 new MapSqlParameterSource()
                         .addValue("name", creatorName),
                 new BeanPropertyRowMapper<>(Resume.class));
+    }
+
+    public Integer saveResume(Integer applicantId, String name, Integer categoryId, Double salary) {
+        String sql = "INSERT INTO resumes (applicant_id, name, category_id, salary, is_active, created_date, update_time) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
+            ps.setInt(1, applicantId);
+            ps.setString(2, name);
+            ps.setInt(3, categoryId);
+            ps.setDouble(4, salary);
+            ps.setBoolean(5, true);
+            ps.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setTimestamp(7, Timestamp.valueOf(LocalDateTime.now()));
+            return ps;
+        }, keyHolder);
+
+        Number key = keyHolder.getKey();
+        return (key != null) ? key.intValue() : null;
     }
 }

@@ -1,8 +1,11 @@
 package springboot.get_a_job.services;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import springboot.get_a_job.dao.CategoryDao;
+import springboot.get_a_job.dao.EducationInfoDao;
 import springboot.get_a_job.dao.ResumeDao;
+import springboot.get_a_job.dao.WorkExperienceDao;
+import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.models.Resume;
 
 
@@ -14,14 +17,25 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ResumeServiceImpl implements ResumeService {
     private final ResumeDao resumeDao;
+    private final CategoryDao categoryDao;
+    private final EducationInfoDao educationDao;
+    private final WorkExperienceDao workExperienceDao;
 
     @Override
-    public Resume createResume(Resume resume) {
-        System.out.println("Creating resume " + resume.getName());
-        //TODO Логика сохранения резюме в БД
-        resume.setId(1);
-        resume.setCreatedDate(LocalDateTime.now());
-        return resume;
+    public void createResume(ResumeDto resumeDto) {
+
+        Integer categoryId = categoryDao.findIdByName(resumeDto.getCategory())
+                .orElseThrow(() -> new RuntimeException("Категория не найдена: " + resumeDto.getCategory()));
+
+        Integer resumeId = resumeDao.saveResume(resumeDto.getApplicantId(), resumeDto.getName(), categoryId, resumeDto.getSalary());
+
+        if (resumeDto.getEducation() != null) {
+            educationDao.addEducationInfo(resumeDto, resumeId);
+        }
+
+        if (resumeDto.getWorkExperience() != null) {
+            workExperienceDao.addWorkExperience(resumeDto, resumeId );
+        }
     }
 
     @Override

@@ -1,8 +1,10 @@
 package springboot.get_a_job.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.models.Resume;
 import springboot.get_a_job.services.ResumeServiceImpl;
 
@@ -15,10 +17,12 @@ public class ResumeController {
 
     private final ResumeServiceImpl resumeService;
 
-    @PostMapping()
-    public ResponseEntity<Resume> createResume(@RequestBody Resume resume) {
-        Resume createdResume = resumeService.createResume(resume);
-        return ResponseEntity.ok(createdResume);
+    @PostMapping("/")
+    public ResponseEntity<String> createResume(@RequestBody ResumeDto resume) {
+        resumeService.createResume(resume);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body("Резюме успешно создано");
     }
 
     @PutMapping("/{id}")
