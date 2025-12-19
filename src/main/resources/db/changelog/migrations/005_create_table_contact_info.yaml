@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: myself
+      changes:
+        - createTable:
+            tableName: contact_info
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: resume_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_contact_resume
+                    referencedTableName: resumes
+                    referencedColumnNames: id
+              - column:
+                  name: type_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_contact_type
+                    referencedTableName: contact_types
+                    referencedColumnNames: id
+              - column:
+                  name: value
+                  type: TEXT
+                  constraints:
+                    nullable: false
