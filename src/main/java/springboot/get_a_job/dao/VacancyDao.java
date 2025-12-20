@@ -40,7 +40,6 @@ public class VacancyDao {
                 new BeanPropertyRowMapper<>(Vacancy.class));
     }
 
-
     public List<Vacancy> findVacancyByCategory(Integer category_id) {
         String sql = "SELECT * FROM vacancies WHERE category_id = :id;";
         return namedParameterJdbcTemplate.query(
@@ -76,6 +75,30 @@ public class VacancyDao {
                 authorId,
                 Timestamp.valueOf(LocalDateTime.now()),
                 Timestamp.valueOf(LocalDateTime.now()));
+    }
+
+    public void updateVacancy(Integer vacancyId, String name, String description, Integer categoryId, Double salary, Integer expFrom, Integer expTo, Boolean isActive){
+        String sql = "update VACANCIES set " +
+                "name = ?," +
+                "description = ?, " +
+                "CATEGORY_ID = ?, " +
+                "salary = ?," +
+                "exp_from = ?," +
+                "exp_to = ?, " +
+                "is_active = ?, " +
+                "update_time = ? where id = ?;";
+
+        jdbcTemplate.update(sql,
+                name,
+                description,
+                categoryId,
+                salary,
+                expFrom,
+                expTo,
+                isActive,
+                Timestamp.valueOf(LocalDateTime.now()),
+                vacancyId);
+
     }
 
 

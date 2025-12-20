@@ -26,9 +26,11 @@ public class VacancyController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Vacancy> updateVacancy(@PathVariable Integer id, @RequestBody Vacancy vacancyDetails) {
-        Vacancy updatedVacancy = vacancyService.updateVacancy(id, vacancyDetails);
-        return ResponseEntity.ok(updatedVacancy);
+    public ResponseEntity<String> updateVacancy(@PathVariable Integer id, @RequestBody VacancyDto vacancyDetails) {
+        vacancyService.updateVacancy(id, vacancyDetails);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body("Vacancy has been updated");
     }
 
     @DeleteMapping("/{id}")

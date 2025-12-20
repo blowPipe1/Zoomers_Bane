@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface VacancyService {
     void createVacancy(VacancyDto vacancy);
-    Vacancy updateVacancy(Integer id, Vacancy vacancyDetails);
+    void updateVacancy(Integer id, VacancyDto vacancy);
     void deleteVacancy(Integer id);
     void respondToVacancy(Integer vacancyId, Integer resumeId);
     Optional<List<Vacancy>>getAllActiveVacancies();

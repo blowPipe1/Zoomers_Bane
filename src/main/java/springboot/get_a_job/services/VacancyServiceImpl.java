@@ -39,14 +39,23 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public Vacancy updateVacancy(Integer id, Vacancy vacancyDetails) {
-        System.out.println("Updating Vacancy (ID) " + id);
-        //TODO Логика обновления записи в БД
+    public void updateVacancy(Integer id, VacancyDto vacancy) {
+        Integer categoryId = categoryDao.findIdByName(vacancy.getCategory())
+                .orElseThrow(() -> new RuntimeException("Категория не найдена: " + vacancy.getCategory()));
 
-        //заглушка
-        vacancyDetails.setId(id);
-        vacancyDetails.setUpdateTime(LocalDateTime.now());
-        return vacancyDetails;
+        if (vacancy == null) {
+            throw new IllegalArgumentException("Vacancy cannot be null");
+        } else {
+            vacancyDao.updateVacancy(
+                    id,
+                    vacancy.getName(),
+                    vacancy.getDescription(),
+                    categoryId,
+                    vacancy.getSalary(),
+                    vacancy.getExpFrom(),
+                    vacancy.getExpTo(),
+                    vacancy.getIsActive());
+        }
     }
 
     @Override
