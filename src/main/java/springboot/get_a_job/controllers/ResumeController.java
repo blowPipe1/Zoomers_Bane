@@ -1,8 +1,10 @@
 package springboot.get_a_job.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.models.Resume;
 import springboot.get_a_job.services.ResumeServiceImpl;
 
@@ -15,61 +17,67 @@ public class ResumeController {
 
     private final ResumeServiceImpl resumeService;
 
-    @PostMapping()
-    public ResponseEntity<Resume> createResume(@RequestBody Resume resume) {
-        Resume createdResume = resumeService.createResume(resume);
-        return ResponseEntity.ok(createdResume);
+    @PostMapping("/")
+    public ResponseEntity<String> createResume(@RequestBody ResumeDto resumeDto) {
+        resumeService.createResume(resumeDto);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body("Resume successfully created");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Resume> updateResume(@PathVariable Integer id, @RequestBody Resume resumeDetails) {
-        Resume updatedResume = resumeService.updateResume(id, resumeDetails);
-        return ResponseEntity.ok(updatedResume);
+    public ResponseEntity<String> updateResume(@PathVariable Integer id, @RequestBody ResumeDto resumeDto) {
+        resumeService.updateResume(id, resumeDto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Resume successfully updated");
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteResume(@PathVariable Integer id) {
+    public ResponseEntity<String> deleteResume(@PathVariable Integer id) {
         resumeService.deleteResume(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Resume successfully deleted");
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Resume>> getAllActiveResumes() {
+    public ResponseEntity<List<ResumeDto>> getAllActiveResumes() {
         return resumeService.getAllActiveResumes()
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Resume> findResumeById(@PathVariable Integer id) {
+    public ResponseEntity<ResumeDto> findResumeById(@PathVariable Integer id) {
         return resumeService.findResumeById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/categoryId/{category_id}")
-    public ResponseEntity<List<Resume>> findResumeByCategoryId(@PathVariable Integer category_id) {
+    public ResponseEntity<List<ResumeDto>> findResumeByCategoryId(@PathVariable Integer category_id) {
         return resumeService.findResumeByCategory(category_id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<Resume>> findResumeByCategory(@PathVariable String category) {
+    public ResponseEntity<List<ResumeDto>> findResumeByCategory(@PathVariable String category) {
         return resumeService.findResumeByCategory(category)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/creatorId/{applicant_id}")
-    public ResponseEntity<List<Resume>> findResumeByCreatorId(@PathVariable Integer applicant_id) {
+    public ResponseEntity<List<ResumeDto>> findResumeByCreatorId(@PathVariable Integer applicant_id) {
         return resumeService.findResumeByCreator(applicant_id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/creator/{name}")
-    public ResponseEntity<List<Resume>> findResumeByCreatorName(@PathVariable String name) {
+    public ResponseEntity<List<ResumeDto>> findResumeByCreatorName(@PathVariable String name) {
         return resumeService.findResumeByCreator(name)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

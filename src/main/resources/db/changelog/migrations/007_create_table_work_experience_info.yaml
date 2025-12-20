@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      id: 7
+      author: myself
+      changes:
+        - createTable:
+            tableName: work_experience_info
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: resume_id
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_work_resume
+                    referencedTableName: resumes
+                    referencedColumnNames: id
+              - column:
+                  name: years
+                  type: INTEGER
+              - column:
+                  name: company_name
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: position
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: responsibilities
+                  type: TEXT

@@ -9,12 +9,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class VacancyDto {
     public String name;
-    public String surname;
-    public Integer age;
-    public String email;
-    public String phoneNumber;
-    public String avatar;
-    public String accountType;
+    public String description;
+    public String category;
+    public Double salary;
+    public Integer expFrom;
+    public Integer expTo;
+    public Boolean isActive;
+    public String author;
 }

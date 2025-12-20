@@ -2,10 +2,15 @@ package springboot.get_a_job.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import springboot.get_a_job.dao.CategoryDao;
+import springboot.get_a_job.dao.UserDao;
 import springboot.get_a_job.dao.VacancyDao;
+import springboot.get_a_job.dto.ResumeDto;
+import springboot.get_a_job.dto.VacancyDto;
 import springboot.get_a_job.models.Vacancy;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,82 +18,137 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class VacancyServiceImpl implements VacancyService {
     private final VacancyDao vacancyDao;
+    private final CategoryDao categoryDao;
+    private final UserDao userDao;
 
     @Override
-    public Vacancy createVacancy(Vacancy vacancy) {
-        System.out.println("Creating Vacancy: " + vacancy.getName());
-        //TODO логика сохранения в БД и возврата сохраненного объекта
+    public void createVacancy(VacancyDto vacancy) {
+        Integer categoryId = categoryDao.findIdByName(vacancy.getCategory())
+                .orElseThrow(() -> new RuntimeException("Категория не найдена: " + vacancy.getCategory()));
 
-        // заглушка
-        return vacancy;
+        // TODO check for null & empty string etc.
+        String[] name = vacancy.getAuthor().split(" ");
+        Integer authorId = Integer.valueOf(userDao.findIdBySurname(name[1]));
+
+        if (vacancy == null) {
+            throw new IllegalArgumentException("Vacancy cannot be null");
+        } else {
+            vacancyDao.createVacancy(
+                    vacancy.getName(),
+                    vacancy.getDescription(),
+                    categoryId,
+                    vacancy.getSalary(),
+                    vacancy.getExpFrom(),
+                    vacancy.getExpTo(),
+                    vacancy.getIsActive(),
+                    authorId);
+        }
+
     }
 
     @Override
-    public Vacancy updateVacancy(Integer id, Vacancy vacancyDetails) {
-        System.out.println("Updating Vacancy (ID) " + id);
-        //TODO Логика обновления записи в БД
+    public void updateVacancy(Integer id, VacancyDto vacancy) {
+        Integer categoryId = categoryDao.findIdByName(vacancy.getCategory())
+                .orElseThrow(() -> new RuntimeException("Категория не найдена: " + vacancy.getCategory()));
 
-        //заглушка
-        vacancyDetails.setId(id);
-        vacancyDetails.setUpdateTime(LocalDateTime.now());
-        return vacancyDetails;
+        if (vacancy == null) {
+            throw new IllegalArgumentException("Vacancy cannot be null");
+        } else {
+            vacancyDao.updateVacancy(
+                    id,
+                    vacancy.getName(),
+                    vacancy.getDescription(),
+                    categoryId,
+                    vacancy.getSalary(),
+                    vacancy.getExpFrom(),
+                    vacancy.getExpTo(),
+                    vacancy.getIsActive());
+        }
     }
 
     @Override
     public void deleteVacancy(Integer id) {
-        System.out.println("Deleting Vacancy (ID) " + id);
-        //TODO Логика удаления записи из БД
-    }
-
-    @Override
-    public void respondToVacancy(Integer vacancyId, Integer resumeId) {
-
-    }
-
-
-    @Override
-    public Optional<List<Vacancy>> getAllActiveVacancies() {
-        if (vacancyDao.getAllActiveVacancies().isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.of(vacancyDao.getAllActiveVacancies());
-        }
-    }
-
-    @Override
-    public Optional<Vacancy> findVacancyById(Integer id) {
         if (vacancyDao.findVacancyById(id) == null) {
-            return Optional.empty();
+            throw new IllegalArgumentException("Vacancy cannot be null");
         } else {
-            return Optional.of(vacancyDao.findVacancyById(id));
+            vacancyDao.deleteVacancy(id);
         }
     }
 
     @Override
-    public Optional<List<Vacancy>> findVacancyByCategory(Integer category_id) {
-        if (vacancyDao.findVacancyByCategory(category_id).isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.of(vacancyDao.findVacancyByCategory(category_id));
-        }
+    public void respondToVacancy(Integer vacancyId, Integer resumeId) {}
+
+    @Override
+    public Optional<List<VacancyDto>> getAllActiveVacancies() {
+        return convert(vacancyDao.getAllActiveVacancies());
     }
 
     @Override
-    public Optional<List<Vacancy>> findVacancyByCategory(String category) {
-        if (vacancyDao.findVacancyByCategory(category).isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.of(vacancyDao.findVacancyByCategory(category));
-        }
+    public Optional<VacancyDto> findVacancyById(Integer id) {
+        return convert(vacancyDao.findVacancyById(id));
     }
 
     @Override
-    public Optional<List<Vacancy>> findRespondedVacancies(Integer applicant_id) {
-        if (vacancyDao.findRespondedVacancies(applicant_id).isEmpty()) {
+    public Optional<List<VacancyDto>> findVacancyByCategory(Integer category_id) {
+        return convert(vacancyDao.findVacancyByCategory(category_id));
+    }
+
+    @Override
+    public Optional<List<VacancyDto>> findVacancyByCategory(String category) {
+        return convert(vacancyDao.findVacancyByCategory(category));
+    }
+
+    @Override
+    public Optional<List<VacancyDto>> findVacancyByCreator(Integer applicant_id) {
+        return convert(vacancyDao.findVacancyByCreator(applicant_id));
+    }
+
+    @Override
+    public Optional<List<VacancyDto>> findVacancyByCreator(String creatorName) {
+        return convert(vacancyDao.findVacancyByCreator(creatorName));
+    }
+
+    @Override
+    public Optional<List<VacancyDto>> findRespondedVacancies(Integer applicant_id) {
+        return convert(vacancyDao.findRespondedVacancies(applicant_id));
+    }
+
+    private Optional<List<VacancyDto>>convert(List<Vacancy> vacancies) {
+        if (vacancies == null || vacancies.isEmpty()) {
             return Optional.empty();
-        } else {
-            return Optional.of(vacancyDao.findRespondedVacancies(applicant_id));
         }
+
+        List<VacancyDto>vacancyDtos = new ArrayList<>();
+        for (Vacancy vacancy : vacancies){
+            vacancyDtos.add(new VacancyDto(
+                            vacancy.getName(),
+                            vacancy.getDescription(),
+                            categoryDao.findNameById(vacancy.getCategoryId()),
+                            vacancy.getSalary(),
+                            vacancy.getExpFrom(),
+                            vacancy.getExpTo(),
+                            vacancy.getIsActive(),
+                            userDao.findNameById(vacancy.getAuthorId())
+                    )
+            );
+        }
+        return Optional.of(vacancyDtos);
+    }
+
+    private Optional<VacancyDto>convert(Vacancy vacancy) {
+        if (vacancy == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new VacancyDto(
+                vacancy.getName(),
+                vacancy.getDescription(),
+                categoryDao.findNameById(vacancy.getCategoryId()),
+                vacancy.getSalary(),
+                vacancy.getExpFrom(),
+                vacancy.getExpTo(),
+                vacancy.getIsActive(),
+                userDao.findNameById(vacancy.getAuthorId())
+        ));
     }
 
 
