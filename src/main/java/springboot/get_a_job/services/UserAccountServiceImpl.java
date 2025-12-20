@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import springboot.get_a_job.dao.UserDao;
 import springboot.get_a_job.dto.UserDto;
+import springboot.get_a_job.dto.VacancyDto;
 import springboot.get_a_job.models.User;
+import springboot.get_a_job.models.Vacancy;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +24,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final UserDao userDao;
 
     @Override
-    public UserDto registerUser(User user) {
+    public Optional<UserDto> registerUser(User user) {
         System.out.println("User registering: " + user.getEmail());
         //TODO
         // 1. Проверить данные
@@ -50,81 +52,66 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     public Optional<UserDto> findUserById(Integer id) {
-        User result = userDao.findUserById(id);
-        if (result == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(convert(result));
-        }
+        return convert(userDao.findUserById(id));
     }
 
     @Override
     public Optional<List<UserDto>> findAllUsers() {
-        List<UserDto> usersDtos = new ArrayList<>();
-        if (userDao.getAllUsers().isEmpty()) {
-            return Optional.empty();
-        } else {
-            for (User user : userDao.getAllUsers()) {
-                usersDtos.add(convert(user));
-            }
-            return Optional.of(usersDtos);
-        }
+        return convert(userDao.getAllUsers());
     }
 
     @Override
-    public Optional<UserDto> findUserByPhone(String phone_number){
-        List<User> result = userDao.findUserByPhone(phone_number);
-        if (result == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(convert(result.getFirst()));
-        }
+    public Optional<List<UserDto>> findUserByPhone(String phone_number){
+        return convert(userDao.findUserByPhone(phone_number));
     }
 
     @Override
-    public Optional<UserDto> findUserByEmail(String email) {
-        List<User> result = userDao.findUserByEmail(email);
-        if (result == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(convert(result.getFirst()));
-        }
+    public Optional<List<UserDto>> findUserByEmail(String email) {
+        return convert(userDao.findUserByEmail(email));
     }
 
     @Override
-    public Optional<UserDto> findUserByName(String name) {
-        List<User> result = userDao.findUserByName(name);
-        if (result == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(convert(result.getFirst()));
-        }
+    public Optional<List<UserDto>> findUserByName(String name) {
+        return convert(userDao.findUserByName(name));
     }
 
     @Override
     public Optional<List<UserDto>> findRespondedUsers(Integer vacancy_id) {
-        List<UserDto> usersDtos = new ArrayList<>();
-        if (userDao.findRespondedUsers(vacancy_id).isEmpty()) {
+        return convert(userDao.findRespondedUsers(vacancy_id));
+    }
+
+    private Optional<List<UserDto>>convert(List<User> users) {
+        if (users == null || users.isEmpty()) {
             return Optional.empty();
-        } else {
-            for (User user : userDao.findRespondedUsers(vacancy_id)) {
-                usersDtos.add(convert(user));
-            }
-            return Optional.of(usersDtos);
         }
+        List<UserDto> userDtos = new ArrayList<>();
+        for (User user : users){
+            userDtos.add(new UserDto(
+                            user.getName(),
+                            user.getSurname(),
+                            user.getAge(),
+                            user.getEmail(),
+                            user.getPhoneNumber(),
+                            user.getAvatar(),
+                            user.getAccountType())
+            );
+        }
+        return Optional.of(userDtos);
     }
 
 
-    public UserDto convert(User user) {
-        return new UserDto(
-                user.getId(),
+    public Optional<UserDto> convert(User user) {
+        if (user == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new UserDto(
                 user.getName(),
                 user.getSurname(),
                 user.getAge(),
                 user.getEmail(),
                 user.getPhoneNumber(),
                 user.getAvatar(),
-                user.getAccountType()
+                user.getAccountType())
         );
     }
 

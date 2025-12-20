@@ -5,12 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import springboot.get_a_job.dao.UserDao;
 import springboot.get_a_job.dto.UserDto;
 import springboot.get_a_job.models.User;
 import springboot.get_a_job.services.UserAccountServiceImpl;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,8 +20,8 @@ public class UserAccountController {
     private final UserAccountServiceImpl userAccountService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> registerUser(@RequestBody User user) {
-        UserDto createdUserDto = userAccountService.registerUser(user);
+    public ResponseEntity<Optional<UserDto>> registerUser(@RequestBody User user) {
+        Optional<UserDto> createdUserDto = userAccountService.registerUser(user);
         return ResponseEntity.ok(createdUserDto);
 //        {
 //            "id":1,
@@ -65,20 +65,20 @@ public class UserAccountController {
     }
 
     @GetMapping("phone/{phone_number}")
-    public ResponseEntity<UserDto> findUserByPhone(@PathVariable String phone_number ) {
+    public ResponseEntity<List<UserDto>> findUserByPhone(@PathVariable String phone_number ) {
         return userAccountService.findUserByPhone(phone_number)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("email/{email}")
-    public ResponseEntity<UserDto> findUserByEmail(@PathVariable String email) {
+    public ResponseEntity<List<UserDto>> findUserByEmail(@PathVariable String email) {
         return userAccountService.findUserByEmail(email)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
     @GetMapping("username/{name}")
-    public ResponseEntity<UserDto> findUserByName(@PathVariable String name) {
+    public ResponseEntity<List<UserDto>> findUserByName(@PathVariable String name) {
         return userAccountService.findUserByName(name)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

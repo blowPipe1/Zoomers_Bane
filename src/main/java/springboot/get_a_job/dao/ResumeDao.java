@@ -63,7 +63,7 @@ public class ResumeDao {
     }
 
     public List<Resume> findResumeByCreator(String creatorName) {
-        String sql = "SELECT r.* FROM resumes r JOIN users u ON r.category_id = u.id WHERE u.name ilike :name;";
+        String sql = "SELECT r.* FROM resumes r JOIN users u ON r.APPLICANT_ID = u.id WHERE u.name ilike :name;";
         return namedParameterJdbcTemplate.query(
                 sql,
                 new MapSqlParameterSource()

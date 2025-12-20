@@ -112,6 +112,9 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     private Optional<List<ResumeDto>>convert(List<Resume>resumes){
+        if (resumes == null || resumes.isEmpty()) {
+            return Optional.empty();
+        }
         List<ResumeDto>resumeDtos = new ArrayList<>();
         for (Resume resume : resumes) {
             List<EducationDto>educationInfo = educationDao.getResumesEducationInfo(resume.getId());
@@ -131,6 +134,9 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     private Optional<ResumeDto>convert(Resume resume){
+        if (resume == null) {
+            return Optional.empty();
+        }
         List<EducationDto>educationInfo = educationDao.getResumesEducationInfo(resume.getId());
         List<WorkExperienceDto>workExperienceInfo = workExperienceDao.getResumesWorkExperience(resume.getId());
         return Optional.of(new ResumeDto(

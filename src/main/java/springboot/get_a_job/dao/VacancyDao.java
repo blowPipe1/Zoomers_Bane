@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import springboot.get_a_job.models.Resume;
 import springboot.get_a_job.models.Vacancy;
 
 import java.sql.PreparedStatement;
@@ -61,6 +62,24 @@ public class VacancyDao {
                 new BeanPropertyRowMapper<>(Vacancy.class));
     }
 
+    public List<Vacancy> findResumeByCreator(Integer author_id) {
+        String sql = "SELECT * FROM VACANCIES WHERE AUTHOR_ID = :id;";
+        return namedParameterJdbcTemplate.query(
+                sql,
+                new MapSqlParameterSource()
+                        .addValue("id", author_id),
+                new BeanPropertyRowMapper<>(Vacancy.class));
+    }
+
+    public List<Vacancy> findResumeByCreator(String creatorName) {
+        String sql = "SELECT r.* FROM VACANCIES r JOIN users u ON r.AUTHOR_ID = u.id WHERE u.name ilike :name;";
+        return namedParameterJdbcTemplate.query(
+                sql,
+                new MapSqlParameterSource()
+                        .addValue("name", creatorName),
+                new BeanPropertyRowMapper<>(Vacancy.class));
+    }
+
     public void createVacancy(String name, String description, Integer categoryId, Double salary, Integer expFrom, Integer expTo, Boolean isActive, Integer authorId) {
         String sql = "insert into VACANCIES(name, description, category_id, salary, exp_from, exp_To, is_Active, author_Id, created_date, update_time)" +
                 "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
@@ -99,6 +118,11 @@ public class VacancyDao {
                 Timestamp.valueOf(LocalDateTime.now()),
                 vacancyId);
 
+    }
+
+    public void deleteVacancy(Integer vacancyId){
+        String sql = "delete from VACANCIES where id = ?;";
+        jdbcTemplate.update(sql, vacancyId);
     }
 
 

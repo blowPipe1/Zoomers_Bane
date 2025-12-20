@@ -11,10 +11,12 @@ public interface VacancyService {
     void updateVacancy(Integer id, VacancyDto vacancy);
     void deleteVacancy(Integer id);
     void respondToVacancy(Integer vacancyId, Integer resumeId);
-    Optional<List<Vacancy>>getAllActiveVacancies();
-    Optional<Vacancy>findVacancyById(Integer id);
-    Optional<List<Vacancy>> findVacancyByCategory(Integer category_id);
-    Optional<List<Vacancy>> findVacancyByCategory(String category);
-    Optional<List<Vacancy>> findRespondedVacancies(Integer applicant_id);
+    Optional<List<VacancyDto>>getAllActiveVacancies();
+    Optional<VacancyDto>findVacancyById(Integer id);
+    Optional<List<VacancyDto>> findVacancyByCategory(Integer category_id);
+    Optional<List<VacancyDto>> findVacancyByCategory(String category);
+    Optional<List<VacancyDto>> findVacancyByCreator(Integer applicant_id);
+    Optional<List<VacancyDto>> findVacancyByCreator(String creator);
+    Optional<List<VacancyDto>> findRespondedVacancies(Integer applicant_id);
 
 }
