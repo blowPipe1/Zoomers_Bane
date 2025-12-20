@@ -41,4 +41,10 @@ public class EducationInfoDao {
             jdbcTemplate.update(sql, edu.getInstitution(), edu.getProgram(), edu.getStartDate(), edu.getEndDate(), edu.getDegree(), resumeId);
         }
     }
+
+    public void deleteEducationInfo(Integer resumeId) {
+        String sql = "delete from EDUCATION_INFO where resume_id = ?;";
+        jdbcTemplate.update(sql, resumeId);
+    }
+
 }

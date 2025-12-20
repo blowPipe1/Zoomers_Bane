@@ -43,4 +43,9 @@ public class WorkExperienceDao {
         }
     }
 
+    public void deleteWorkExperienceInfo(Integer resumeId) {
+        String sql = "delete from WORK_EXPERIENCE_INFO where resume_id = ?;";
+        jdbcTemplate.update(sql, resumeId);
+    }
+
 }

@@ -67,6 +67,16 @@ public class ResumeServiceImpl implements ResumeService {
         if (resumeDao.findResumeById(id) == null) {
             throw new RuntimeException("Resume with id: " + id + " not found");
         }else {
+            if (educationDao.getResumesEducationInfo(id) != null) {
+                for (EducationDto edu : educationDao.getResumesEducationInfo(id)) {
+                    educationDao.deleteEducationInfo(id);
+                }
+            }
+            if (workExperienceDao.getResumesWorkExperience(id) != null) {
+                for (WorkExperienceDto we : workExperienceDao.getResumesWorkExperience(id)) {
+                    workExperienceDao.deleteWorkExperienceInfo(id);
+                }
+            }
             resumeDao.deleteResume(id);
         }
     }
@@ -75,14 +85,13 @@ public class ResumeServiceImpl implements ResumeService {
     public Optional<List<ResumeDto>> getAllActiveResumes() {
         List<ResumeDto>resumeDtos = new ArrayList<>();
         for (Resume resume : resumeDao.getAllActiveResumes()){
-            String category = categoryDao.findNameById(resume.categoryId);
             List<EducationDto>educationInfo = educationDao.getResumesEducationInfo(resume.getId());
             List<WorkExperienceDto>workExperienceInfo = workExperienceDao.getResumesWorkExperience(resume.getId());
 
             resumeDtos.add(new ResumeDto(
                     resume.getApplicantId(),
                     resume.getName(),
-                    category,
+                    categoryDao.findNameById(resume.categoryId),
                     resume.getSalary(),
                     resume.getIsActive(),
                     educationInfo,
@@ -97,12 +106,11 @@ public class ResumeServiceImpl implements ResumeService {
         Resume resume = resumeDao.findResumeById(id);
         List<EducationDto> education = educationDao.getResumesEducationInfo(id);
         List<WorkExperienceDto> workExperience = workExperienceDao.getResumesWorkExperience(id);
-        String category = categoryDao.findNameById(resume.categoryId);
 
         ResumeDto resumeDto = new ResumeDto(
                 resume.getApplicantId(),
                 resume.getName(),
-                category,
+                categoryDao.findNameById(resume.categoryId),
                 resume.getSalary(),
                 resume.getIsActive(),
                 education,
@@ -120,14 +128,13 @@ public class ResumeServiceImpl implements ResumeService {
     public Optional<List<ResumeDto>> findResumeByCategory(Integer category_id) {
         List<ResumeDto>resumeDtos = new ArrayList<>();
         for (Resume resume : resumeDao.findResumeByCategory(category_id)) {
-            String category = categoryDao.findNameById(resume.categoryId);
             List<EducationDto>educationInfo = educationDao.getResumesEducationInfo(resume.getId());
             List<WorkExperienceDto>workExperienceInfo = workExperienceDao.getResumesWorkExperience(resume.getId());
 
             resumeDtos.add(new ResumeDto(
                     resume.getApplicantId(),
                     resume.getName(),
-                    category,
+                    categoryDao.findNameById(resume.categoryId),
                     resume.getSalary(),
                     resume.getIsActive(),
                     educationInfo,
@@ -141,14 +148,13 @@ public class ResumeServiceImpl implements ResumeService {
     public Optional<List<ResumeDto>> findResumeByCategory(String category1) {
         List<ResumeDto>resumeDtos = new ArrayList<>();
         for (Resume resume : resumeDao.findResumeByCategory(category1)) {
-            String category = categoryDao.findNameById(resume.categoryId);
             List<EducationDto>educationInfo = educationDao.getResumesEducationInfo(resume.getId());
             List<WorkExperienceDto>workExperienceInfo = workExperienceDao.getResumesWorkExperience(resume.getId());
 
             resumeDtos.add(new ResumeDto(
                     resume.getApplicantId(),
                     resume.getName(),
-                    category,
+                    categoryDao.findNameById(resume.categoryId),
                     resume.getSalary(),
                     resume.getIsActive(),
                     educationInfo,
@@ -162,14 +168,13 @@ public class ResumeServiceImpl implements ResumeService {
     public Optional<List<ResumeDto>> findResumeByCreator(Integer applicant_id) {
         List<ResumeDto>resumeDtos = new ArrayList<>();
         for (Resume resume : resumeDao.findResumeByCreator(applicant_id)) {
-            String category = categoryDao.findNameById(resume.categoryId);
             List<EducationDto>educationInfo = educationDao.getResumesEducationInfo(resume.getId());
             List<WorkExperienceDto>workExperienceInfo = workExperienceDao.getResumesWorkExperience(resume.getId());
 
             resumeDtos.add(new ResumeDto(
                     resume.getApplicantId(),
                     resume.getName(),
-                    category,
+                    categoryDao.findNameById(resume.categoryId),
                     resume.getSalary(),
                     resume.getIsActive(),
                     educationInfo,
@@ -183,14 +188,13 @@ public class ResumeServiceImpl implements ResumeService {
     public Optional<List<ResumeDto>> findResumeByCreator(String creatorName) {
         List<ResumeDto>resumeDtos = new ArrayList<>();
         for (Resume resume : resumeDao.findResumeByCreator(creatorName)) {
-            String category = categoryDao.findNameById(resume.categoryId);
             List<EducationDto>educationInfo = educationDao.getResumesEducationInfo(resume.getId());
             List<WorkExperienceDto>workExperienceInfo = workExperienceDao.getResumesWorkExperience(resume.getId());
 
             resumeDtos.add(new ResumeDto(
                     resume.getApplicantId(),
                     resume.getName(),
-                    category,
+                    categoryDao.findNameById(resume.categoryId),
                     resume.getSalary(),
                     resume.getIsActive(),
                     educationInfo,
