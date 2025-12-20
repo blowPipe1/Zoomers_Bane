@@ -51,7 +51,9 @@ public class ResumeServiceImpl implements ResumeService {
             Integer categoryId = categoryDao.findIdByName(resumeDto.getCategory())
                     .orElseThrow(() -> new RuntimeException("Категория не найдена: " + resumeDto.getCategory()));
 
-            Integer applcantId = Integer.valueOf(userDao.findIdBySurname(resumeDto.getApplicant()));
+            // TODO check for null & empty string etc.
+            String[] name = resumeDto.getApplicant().split(" ");
+            Integer applcantId = Integer.valueOf(userDao.findIdBySurname(name[1]));
 
             Integer resumeId = resumeDao.updateResume(id, applcantId, resumeDto.getName(), categoryId, resumeDto.getSalary(), resumeDto.isActive());
 

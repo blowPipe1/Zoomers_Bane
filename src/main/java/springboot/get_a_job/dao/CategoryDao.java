@@ -13,7 +13,7 @@ public class CategoryDao {
     private final JdbcTemplate jdbcTemplate;
 
     public Optional<Integer> findIdByName(String name) {
-        String sql = "SELECT id FROM categories WHERE name = ?";
+        String sql = "SELECT id FROM categories WHERE name ilike ?";
         try {
             Integer id = jdbcTemplate.queryForObject(sql, Integer.class, name);
             return Optional.ofNullable(id);

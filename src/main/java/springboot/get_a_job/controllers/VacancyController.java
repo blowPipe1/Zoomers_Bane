@@ -30,7 +30,7 @@ public class VacancyController {
     public ResponseEntity<String> updateVacancy(@PathVariable Integer id, @RequestBody VacancyDto vacancyDetails) {
         vacancyService.updateVacancy(id, vacancyDetails);
         return ResponseEntity
-                .status(HttpStatus.CREATED)
+                .status(HttpStatus.OK)
                 .body("Vacancy has been updated");
     }
 
@@ -38,7 +38,7 @@ public class VacancyController {
     public ResponseEntity<String> deleteVacancy(@PathVariable Integer id) {
         vacancyService.deleteVacancy(id);
         return ResponseEntity
-                .status(HttpStatus.CREATED)
+                .status(HttpStatus.OK)
                 .body("Vacancy has been deleted");
     }
 
