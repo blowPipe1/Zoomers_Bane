@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserAccountService {
-    Optional<UserDto> registerUser(User user);
+    void registerUser(User user);
+    void updateUser(User user);
+    void deleteUser(Integer id);
     void saveAvatar(Integer userId, MultipartFile file) throws IOException;
     Optional<UserDto> findUserById(Integer id);
     Optional<List<UserDto>> findAllUsers();

@@ -3,11 +3,11 @@ package springboot.get_a_job.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import springboot.get_a_job.dao.ResumeDao;
 import springboot.get_a_job.dao.UserDao;
+import springboot.get_a_job.dao.VacancyDao;
 import springboot.get_a_job.dto.UserDto;
-import springboot.get_a_job.dto.VacancyDto;
 import springboot.get_a_job.models.User;
-import springboot.get_a_job.models.Vacancy;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,16 +23,59 @@ import java.util.Optional;
 public class UserAccountServiceImpl implements UserAccountService {
     private final String subDir = "src/main/java/springboot/get_a_job/data/images/";
     private final UserDao userDao;
+    private final ResumeDao resumeDao;
+    private final VacancyDao vacancyDao;
 
     @Override
-    public Optional<UserDto> registerUser(User user) {
-        System.out.println("User registering: " + user.getEmail());
-        //TODO
-        // 1. Проверить данные
-        // 2. Сохранить в БД
+    public void registerUser(User user) {
+        //TODO add logic to check for necessary fields
+        if (user == null) {
+            throw new RuntimeException("Error registering user");
+        }
+        userDao.registerUser(
+                user.getName(),
+                user.getSurname(),
+                user.getAge(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getPhoneNumber(),
+                user.getAvatar(),
+                user.getAccountType()
+        );
+    }
 
-        // Заглушка:
-        return convert(user);
+    @Override
+    public void updateUser(User user) {
+        //TODO add logic to check for necessary fields
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+        userDao.updateUser(
+                user.getId(),
+                user.getName(),
+                user.getSurname(),
+                user.getAge(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getPhoneNumber(),
+                user.getAvatar(),
+                user.getAccountType()
+        );
+    }
+
+    @Override
+    public void deleteUser(Integer userId) {
+        if (userDao.findUserById(userId) == null) {
+            throw new RuntimeException("User not found");
+        }
+        if (!resumeDao.findResumeByCreator(userId).isEmpty()) {
+            throw new RuntimeException("User has Resume attached to their id");
+        }
+        if(!vacancyDao.findVacancyByCreator(userId).isEmpty()) {
+            throw new RuntimeException("User has Vacancy attached to their id");
+        }
+        //TODO add logic to check for necessary fields
+        userDao.deleteUserHard(userId);
     }
 
     @Override
@@ -103,8 +146,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         return Optional.of(userDtos);
     }
 
-
-    public Optional<UserDto> convert(User user) {
+    private Optional<UserDto> convert(User user) {
         if (user == null) {
             return Optional.empty();
         }
@@ -118,6 +160,5 @@ public class UserAccountServiceImpl implements UserAccountService {
                 user.getAccountType())
         );
     }
-
 
 }

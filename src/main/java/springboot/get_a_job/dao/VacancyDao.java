@@ -62,7 +62,7 @@ public class VacancyDao {
                 new BeanPropertyRowMapper<>(Vacancy.class));
     }
 
-    public List<Vacancy> findResumeByCreator(Integer author_id) {
+    public List<Vacancy> findVacancyByCreator(Integer author_id) {
         String sql = "SELECT * FROM VACANCIES WHERE AUTHOR_ID = :id;";
         return namedParameterJdbcTemplate.query(
                 sql,
@@ -71,7 +71,7 @@ public class VacancyDao {
                 new BeanPropertyRowMapper<>(Vacancy.class));
     }
 
-    public List<Vacancy> findResumeByCreator(String creatorName) {
+    public List<Vacancy> findVacancyByCreator(String creatorName) {
         String sql = "SELECT r.* FROM VACANCIES r JOIN users u ON r.AUTHOR_ID = u.id WHERE u.name ilike :name;";
         return namedParameterJdbcTemplate.query(
                 sql,

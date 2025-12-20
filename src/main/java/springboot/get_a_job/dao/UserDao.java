@@ -84,4 +84,24 @@ public class UserDao {
         jdbcTemplate.update(sql,savedPath,userId);
     }
 
+    public void registerUser(String name, String surname, Integer age, String email, String password, String phone_number, String avatar, String account_type){
+        String sql = "INSERT INTO USERS (name, surname, age, email, password, phone_number, avatar, account_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, name, surname, age, email, password, phone_number, avatar, account_type);
+    }
+
+    public void updateUser(Integer userId, String name, String surname, Integer age, String email, String password, String phone_number, String avatar, String account_type){
+        String sql = "update USERS set name = ?, surname = ?, age = ?, email = ?, password = ?, phone_number = ?, avatar = ?, account_type = ? where id = ?";
+        jdbcTemplate.update(sql, name, surname, age, email, password, phone_number, avatar, account_type, userId);
+    }
+
+    public void deleteUser(Integer userId) {
+        String sql = "update USERS set name = ?, surname = ?, age = ?, email = ?, password = ?, phone_number = ?, avatar = ?, account_type = ? where id = ?";
+        jdbcTemplate.update(sql, "deleted", "deleted", -1, "deleted", "deleted", "deleted", "deleted", "deleted", userId);
+    }
+
+    public void deleteUserHard(Integer userId) {
+        String sql = "delete from USERS where id = ?";
+        jdbcTemplate.update(sql, userId);
+    }
+
 }

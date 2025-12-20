@@ -100,12 +100,12 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public Optional<List<VacancyDto>> findVacancyByCreator(Integer applicant_id) {
-        return convert(vacancyDao.findResumeByCreator(applicant_id));
+        return convert(vacancyDao.findVacancyByCreator(applicant_id));
     }
 
     @Override
     public Optional<List<VacancyDto>> findVacancyByCreator(String creatorName) {
-        return convert(vacancyDao.findResumeByCreator(creatorName));
+        return convert(vacancyDao.findVacancyByCreator(creatorName));
     }
 
     @Override

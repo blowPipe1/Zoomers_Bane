@@ -2,9 +2,11 @@ package springboot.get_a_job.controllers;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.UserDto;
 import springboot.get_a_job.models.User;
 import springboot.get_a_job.services.UserAccountServiceImpl;
@@ -16,13 +18,31 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
 public class UserAccountController {
-
     private final UserAccountServiceImpl userAccountService;
 
-    @PostMapping("/register")
-    public ResponseEntity<Optional<UserDto>> registerUser(@RequestBody User user) {
-        Optional<UserDto> createdUserDto = userAccountService.registerUser(user);
-        return ResponseEntity.ok(createdUserDto);
+    @PostMapping("/register/")
+    public ResponseEntity<String> registerUser(@RequestBody User user) {
+        userAccountService.registerUser(user);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body("User successfully Registered");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateUser(@PathVariable Integer id, @RequestBody User user) {
+        userAccountService.updateUser(user);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("User successfully updated");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Integer id) {
+
+        userAccountService.deleteUser(id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("User successfully deleted");
     }
 
     @PostMapping("/{userId}/avatar")
