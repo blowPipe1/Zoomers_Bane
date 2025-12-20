@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResumeDto {
-    Integer applicantId;
+    String applicant;
     String name;
     String category;
     Double salary;

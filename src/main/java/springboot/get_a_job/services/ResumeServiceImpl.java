@@ -3,10 +3,7 @@ package springboot.get_a_job.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import springboot.get_a_job.dao.CategoryDao;
-import springboot.get_a_job.dao.EducationInfoDao;
-import springboot.get_a_job.dao.ResumeDao;
-import springboot.get_a_job.dao.WorkExperienceDao;
+import springboot.get_a_job.dao.*;
 import springboot.get_a_job.dto.EducationDto;
 import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.WorkExperienceDto;
@@ -23,13 +20,14 @@ public class ResumeServiceImpl implements ResumeService {
     private final CategoryDao categoryDao;
     private final EducationInfoDao educationDao;
     private final WorkExperienceDao workExperienceDao;
+    private final UserDao userDao;
 
     @Override
     public void createResume(ResumeDto resumeDto) {
         Integer categoryId = categoryDao.findIdByName(resumeDto.getCategory())
                 .orElseThrow(() -> new RuntimeException("Категория не найдена: " + resumeDto.getCategory()));
 
-        Integer resumeId = resumeDao.saveResume(resumeDto.getApplicantId(), resumeDto.getName(), categoryId, resumeDto.getSalary(), resumeDto.isActive());
+        Integer resumeId = resumeDao.saveResume(resumeDto.getApplicant(), resumeDto.getName(), categoryId, resumeDto.getSalary(), resumeDto.isActive());
 
         if (resumeDto.getEducation() != null) {
             educationDao.addEducationInfo(resumeDto, resumeId);
@@ -48,7 +46,7 @@ public class ResumeServiceImpl implements ResumeService {
             Integer categoryId = categoryDao.findIdByName(resumeDto.getCategory())
                     .orElseThrow(() -> new RuntimeException("Категория не найдена: " + resumeDto.getCategory()));
 
-            Integer resumeId = resumeDao.updateResume(id, resumeDto.getApplicantId(), resumeDto.getName(), categoryId, resumeDto.getSalary(), resumeDto.isActive());
+            Integer resumeId = resumeDao.updateResume(id, resumeDto.getApplicant(), resumeDto.getName(), categoryId, resumeDto.getSalary(), resumeDto.isActive());
 
             if (resumeDto.getEducation() != null) {
                 educationDao.updateEducationInfo(resumeDto, resumeId);
@@ -120,8 +118,9 @@ public class ResumeServiceImpl implements ResumeService {
             List<EducationDto>educationInfo = educationDao.getResumesEducationInfo(resume.getId());
             List<WorkExperienceDto>workExperienceInfo = workExperienceDao.getResumesWorkExperience(resume.getId());
 
+
             resumeDtos.add(new ResumeDto(
-                    resume.getApplicantId(),
+                    userDao.findNameById(resume.getApplicantId()),
                     resume.getName(),
                     categoryDao.findNameById(resume.categoryId),
                     resume.getSalary(),
@@ -140,7 +139,7 @@ public class ResumeServiceImpl implements ResumeService {
         List<EducationDto>educationInfo = educationDao.getResumesEducationInfo(resume.getId());
         List<WorkExperienceDto>workExperienceInfo = workExperienceDao.getResumesWorkExperience(resume.getId());
         return Optional.of(new ResumeDto(
-                resume.getApplicantId(),
+                userDao.findNameById(resume.getApplicantId()),
                 resume.getName(),
                 categoryDao.findNameById(resume.categoryId),
                 resume.getSalary(),

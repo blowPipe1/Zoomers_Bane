@@ -69,5 +69,9 @@ public class UserDao {
                 new BeanPropertyRowMapper<>(User.class));
     }
 
+    public String findNameById(Integer id) {
+        String sql = "SELECT concat(name, ' ' , surname) as name  FROM users WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, String.class, id);
+    }
 
 }
