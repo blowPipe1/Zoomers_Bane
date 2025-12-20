@@ -27,7 +27,12 @@ public class ResumeServiceImpl implements ResumeService {
         Integer categoryId = categoryDao.findIdByName(resumeDto.getCategory())
                 .orElseThrow(() -> new RuntimeException("Категория не найдена: " + resumeDto.getCategory()));
 
-        Integer resumeId = resumeDao.saveResume(resumeDto.getApplicant(), resumeDto.getName(), categoryId, resumeDto.getSalary(), resumeDto.isActive());
+        // TODO check for null & empty string etc.
+        String[] name = resumeDto.getApplicant().split(" ");
+        Integer applcantId = Integer.valueOf(userDao.findIdBySurname(name[1]));
+
+
+        Integer resumeId = resumeDao.saveResume(applcantId, resumeDto.getName(), categoryId, resumeDto.getSalary(), resumeDto.isActive());
 
         if (resumeDto.getEducation() != null) {
             educationDao.addEducationInfo(resumeDto, resumeId);
@@ -46,7 +51,9 @@ public class ResumeServiceImpl implements ResumeService {
             Integer categoryId = categoryDao.findIdByName(resumeDto.getCategory())
                     .orElseThrow(() -> new RuntimeException("Категория не найдена: " + resumeDto.getCategory()));
 
-            Integer resumeId = resumeDao.updateResume(id, resumeDto.getApplicant(), resumeDto.getName(), categoryId, resumeDto.getSalary(), resumeDto.isActive());
+            Integer applcantId = Integer.valueOf(userDao.findIdBySurname(resumeDto.getApplicant()));
+
+            Integer resumeId = resumeDao.updateResume(id, applcantId, resumeDto.getName(), categoryId, resumeDto.getSalary(), resumeDto.isActive());
 
             if (resumeDto.getEducation() != null) {
                 educationDao.updateEducationInfo(resumeDto, resumeId);

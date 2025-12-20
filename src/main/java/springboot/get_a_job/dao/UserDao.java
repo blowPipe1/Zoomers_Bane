@@ -74,4 +74,9 @@ public class UserDao {
         return jdbcTemplate.queryForObject(sql, String.class, id);
     }
 
+    public String findIdBySurname(String surname) {
+        String sql = "SELECT id  FROM users WHERE SURNAME ilike ?";
+        return jdbcTemplate.queryForObject(sql, String.class, surname);
+    }
+
 }

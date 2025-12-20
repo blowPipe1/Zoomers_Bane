@@ -3,6 +3,7 @@ package springboot.get_a_job.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import springboot.get_a_job.dao.CategoryDao;
+import springboot.get_a_job.dao.UserDao;
 import springboot.get_a_job.dao.VacancyDao;
 import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.VacancyDto;
@@ -18,11 +19,16 @@ import java.util.Optional;
 public class VacancyServiceImpl implements VacancyService {
     private final VacancyDao vacancyDao;
     private final CategoryDao categoryDao;
+    private final UserDao userDao;
 
     @Override
     public void createVacancy(VacancyDto vacancy) {
         Integer categoryId = categoryDao.findIdByName(vacancy.getCategory())
                 .orElseThrow(() -> new RuntimeException("Категория не найдена: " + vacancy.getCategory()));
+
+        // TODO check for null & empty string etc.
+        String[] name = vacancy.getAuthor().split(" ");
+        Integer authorId = Integer.valueOf(userDao.findIdBySurname(name[1]));
 
         if (vacancy == null) {
             throw new IllegalArgumentException("Vacancy cannot be null");
@@ -35,7 +41,7 @@ public class VacancyServiceImpl implements VacancyService {
                     vacancy.getExpFrom(),
                     vacancy.getExpTo(),
                     vacancy.getIsActive(),
-                    vacancy.getAuthorId());
+                    authorId);
         }
 
     }
@@ -111,6 +117,7 @@ public class VacancyServiceImpl implements VacancyService {
         if (vacancies == null || vacancies.isEmpty()) {
             return Optional.empty();
         }
+
         List<VacancyDto>vacancyDtos = new ArrayList<>();
         for (Vacancy vacancy : vacancies){
             vacancyDtos.add(new VacancyDto(
@@ -121,7 +128,7 @@ public class VacancyServiceImpl implements VacancyService {
                             vacancy.getExpFrom(),
                             vacancy.getExpTo(),
                             vacancy.getIsActive(),
-                            vacancy.getAuthorId()
+                            userDao.findNameById(vacancy.getAuthorId())
                     )
             );
         }
@@ -140,7 +147,7 @@ public class VacancyServiceImpl implements VacancyService {
                 vacancy.getExpFrom(),
                 vacancy.getExpTo(),
                 vacancy.getIsActive(),
-                vacancy.getAuthorId()
+                userDao.findNameById(vacancy.getAuthorId())
         ));
     }
 

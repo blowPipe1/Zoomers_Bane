@@ -71,13 +71,13 @@ public class ResumeDao {
                 new BeanPropertyRowMapper<>(Resume.class));
     }
 
-    public Integer saveResume(String applicantId, String name, Integer categoryId, Double salary, boolean isActive) {
+    public Integer saveResume(Integer applicantId, String name, Integer categoryId, Double salary, boolean isActive) {
         String sql = "INSERT INTO resumes (applicant_id, name, category_id, salary, is_active, created_date, update_time) VALUES (?, ?, ?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
-            ps.setString(1, applicantId);
+            ps.setInt(1, applicantId);
             ps.setString(2, name);
             ps.setInt(3, categoryId);
             ps.setDouble(4, salary);
@@ -91,7 +91,7 @@ public class ResumeDao {
         return (key != null) ? key.intValue() : null;
     }
 
-    public Integer updateResume(Integer resumeId, String applicantId, String name, Integer categoryId, Double salary, boolean isActive) {
+    public Integer updateResume(Integer resumeId, Integer applicantId, String name, Integer categoryId, Double salary, boolean isActive) {
 
         String sql = "update RESUMES set name = ?, CATEGORY_ID = ?, salary = ?, is_active = ?, UPDATE_TIME = ? where id = ?";
         KeyHolder keyHolder = new GeneratedKeyHolder();

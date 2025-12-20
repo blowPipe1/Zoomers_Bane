@@ -17,5 +17,5 @@ public class VacancyDto {
     public Integer expFrom;
     public Integer expTo;
     public Boolean isActive;
-    public Integer authorId;
+    public String author;
 }
