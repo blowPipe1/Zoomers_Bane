@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,17 +38,20 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public void saveAvatar(Integer userId, MultipartFile file) throws IOException{
         if (file.isEmpty()) {
-            System.out.println("File is empty");
+            throw new IllegalArgumentException("File is empty");
         }
-
-        System.out.println("Saving avatar for user ID: " + userId);
-        //TODO Логика сохранения файла и обновления пути в БД
         Path uploadPath = Paths.get(subDir);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
-        Path filePath = uploadPath.resolve(userId + "_" + file.getOriginalFilename());
-        Files.copy(file.getInputStream(), filePath);
+
+        String fileName = userId + "_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        Path filePath = uploadPath.resolve(fileName);
+
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        String savedPath = filePath.toString();
+        userDao.updateAvatarPath(userId, savedPath);
     }
 
     @Override

@@ -79,4 +79,9 @@ public class UserDao {
         return jdbcTemplate.queryForObject(sql, String.class, surname);
     }
 
+    public void updateAvatarPath(Integer userId, String savedPath){
+        String sql = "UPDATE USERS SET AVATAR = ? WHERE id = ?";
+        jdbcTemplate.update(sql,savedPath,userId);
+    }
+
 }

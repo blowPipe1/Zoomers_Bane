@@ -23,27 +23,15 @@ public class UserAccountController {
     public ResponseEntity<Optional<UserDto>> registerUser(@RequestBody User user) {
         Optional<UserDto> createdUserDto = userAccountService.registerUser(user);
         return ResponseEntity.ok(createdUserDto);
-//        {
-//            "id":1,
-//                "name": "Petya",
-//                "surname": "Petrov",
-//                "age": 18,
-//                "email": "petya.petrov@mail.com",
-//                "password": "12345",
-//                "phoneNumber": "996999999999",
-//                "avatar":"",
-//                "accountType":"Employee"
-//        }
-//         тела для post запроса
     }
 
     @PostMapping("/{userId}/avatar")
     public ResponseEntity<String> uploadAvatar(@PathVariable Integer userId, @RequestParam("file") MultipartFile file) {
         try {
             userAccountService.saveAvatar(userId, file);
-            return ResponseEntity.ok("Аватар успешно загружен.");
+            return ResponseEntity.ok("Successfully uploaded avatar");
         } catch (IOException e) {
-            return ResponseEntity.internalServerError().body("Ошибка загрузки или обработки файла.");
+            return ResponseEntity.internalServerError().body("Error while uploading avatar");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
