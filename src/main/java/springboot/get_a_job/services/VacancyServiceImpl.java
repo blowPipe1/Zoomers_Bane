@@ -7,6 +7,8 @@ import springboot.get_a_job.dao.UserDao;
 import springboot.get_a_job.dao.VacancyDao;
 import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.VacancyDto;
+import springboot.get_a_job.exceptions.CategoryNotFoundException;
+import springboot.get_a_job.exceptions.VacancyNotFoundException;
 import springboot.get_a_job.models.Vacancy;
 
 import java.time.LocalDateTime;
@@ -23,53 +25,50 @@ public class VacancyServiceImpl implements VacancyService {
 
     @Override
     public void createVacancy(VacancyDto vacancy) {
+        if (vacancy == null) {
+            throw new VacancyNotFoundException("Vacancy cannot be null");
+        }
         Integer categoryId = categoryDao.findIdByName(vacancy.getCategory())
-                .orElseThrow(() -> new RuntimeException("Категория не найдена: " + vacancy.getCategory()));
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + vacancy.getCategory()));
 
         // TODO check for null & empty string etc.
         String[] name = vacancy.getAuthor().split(" ");
         Integer authorId = Integer.valueOf(userDao.findIdBySurname(name[1]));
 
-        if (vacancy == null) {
-            throw new IllegalArgumentException("Vacancy cannot be null");
-        } else {
-            vacancyDao.createVacancy(
-                    vacancy.getName(),
-                    vacancy.getDescription(),
-                    categoryId,
-                    vacancy.getSalary(),
-                    vacancy.getExpFrom(),
-                    vacancy.getExpTo(),
-                    vacancy.getIsActive(),
-                    authorId);
-        }
-
+        vacancyDao.createVacancy(
+                vacancy.getName(),
+                vacancy.getDescription(),
+                categoryId,
+                vacancy.getSalary(),
+                vacancy.getExpFrom(),
+                vacancy.getExpTo(),
+                vacancy.getIsActive(),
+                authorId);
     }
 
     @Override
     public void updateVacancy(Integer id, VacancyDto vacancy) {
-        Integer categoryId = categoryDao.findIdByName(vacancy.getCategory())
-                .orElseThrow(() -> new RuntimeException("Категория не найдена: " + vacancy.getCategory()));
-
         if (vacancy == null) {
-            throw new IllegalArgumentException("Vacancy cannot be null");
-        } else {
-            vacancyDao.updateVacancy(
-                    id,
-                    vacancy.getName(),
-                    vacancy.getDescription(),
-                    categoryId,
-                    vacancy.getSalary(),
-                    vacancy.getExpFrom(),
-                    vacancy.getExpTo(),
-                    vacancy.getIsActive());
+            throw new VacancyNotFoundException("Vacancy cannot be null");
         }
+        Integer categoryId = categoryDao.findIdByName(vacancy.getCategory())
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + vacancy.getCategory()));
+
+        vacancyDao.updateVacancy(
+                id,
+                vacancy.getName(),
+                vacancy.getDescription(),
+                categoryId,
+                vacancy.getSalary(),
+                vacancy.getExpFrom(),
+                vacancy.getExpTo(),
+                vacancy.getIsActive());
     }
 
     @Override
     public void deleteVacancy(Integer id) {
         if (vacancyDao.findVacancyById(id) == null) {
-            throw new IllegalArgumentException("Vacancy cannot be null");
+            throw new VacancyNotFoundException("Vacancy cannot be null");
         } else {
             vacancyDao.deleteVacancy(id);
         }
@@ -115,7 +114,7 @@ public class VacancyServiceImpl implements VacancyService {
 
     private Optional<List<VacancyDto>>convert(List<Vacancy> vacancies) {
         if (vacancies == null || vacancies.isEmpty()) {
-            return Optional.empty();
+            throw new VacancyNotFoundException("Vacancies not found");
         }
 
         List<VacancyDto>vacancyDtos = new ArrayList<>();
@@ -137,7 +136,7 @@ public class VacancyServiceImpl implements VacancyService {
 
     private Optional<VacancyDto>convert(Vacancy vacancy) {
         if (vacancy == null) {
-            return Optional.empty();
+            throw new VacancyNotFoundException("Vacancy not found");
         }
         return Optional.of(new VacancyDto(
                 vacancy.getName(),

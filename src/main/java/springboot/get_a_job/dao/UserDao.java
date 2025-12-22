@@ -1,6 +1,7 @@
 package springboot.get_a_job.dao;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -22,9 +23,12 @@ public class UserDao {
     }
 
     public User findUserById(int id) {
-        String sql = "select * from USERS\n" +
-                "where id = ?;";
-        return jdbcTemplate.queryForObject(sql,new BeanPropertyRowMapper<>(User.class), id);
+        String sql = "select * from USERS where id = ?;";
+        try {
+            return jdbcTemplate.queryForObject(sql,new BeanPropertyRowMapper<>(User.class), id);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     public List<User> findUserByPhone(String phone_number) {
@@ -71,12 +75,20 @@ public class UserDao {
 
     public String findNameById(Integer id) {
         String sql = "SELECT concat(name, ' ' , surname) as name  FROM users WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, String.class, id);
+        try {
+            return jdbcTemplate.queryForObject(sql, String.class, id);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     public String findIdBySurname(String surname) {
         String sql = "SELECT id  FROM users WHERE SURNAME ilike ?";
-        return jdbcTemplate.queryForObject(sql, String.class, surname);
+        try {
+            return jdbcTemplate.queryForObject(sql, String.class, surname);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     public void updateAvatarPath(Integer userId, String savedPath){

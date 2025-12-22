@@ -24,6 +24,11 @@ public class CategoryDao {
 
     public String findNameById(Integer id) {
         String sql = "SELECT name FROM categories WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, String.class, id);
+        try {
+            return jdbcTemplate.queryForObject(sql, String.class, id);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+
     }
 }

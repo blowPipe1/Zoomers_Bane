@@ -1,6 +1,7 @@
 package springboot.get_a_job.dao;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -29,7 +30,12 @@ public class VacancyDao {
 
     public Vacancy findVacancyById(Integer id) {
         String sql = "select * from vacancies where id = ?;";
-        return jdbcTemplate.queryForObject(sql,new BeanPropertyRowMapper<>(Vacancy.class), id);
+        try {
+            return jdbcTemplate.queryForObject(sql,new BeanPropertyRowMapper<>(Vacancy.class), id);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+
     }
 
     public List<Vacancy> findVacancyByCategory(String category) {

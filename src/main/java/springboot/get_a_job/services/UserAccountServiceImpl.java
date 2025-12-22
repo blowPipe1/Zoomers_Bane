@@ -7,6 +7,7 @@ import springboot.get_a_job.dao.ResumeDao;
 import springboot.get_a_job.dao.UserDao;
 import springboot.get_a_job.dao.VacancyDao;
 import springboot.get_a_job.dto.UserDto;
+import springboot.get_a_job.exceptions.UserNotFoundException;
 import springboot.get_a_job.models.User;
 
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     public void registerUser(User user) {
         //TODO add logic to check for necessary fields
         if (user == null) {
-            throw new RuntimeException("Error registering user");
+            throw new UserNotFoundException("Error registering user");
         }
         userDao.registerUser(
                 user.getName(),
@@ -48,7 +49,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     public void updateUser(User user) {
         //TODO add logic to check for necessary fields
         if (user == null) {
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException("User not found");
         }
         userDao.updateUser(
                 user.getId(),
@@ -66,7 +67,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public void deleteUser(Integer userId) {
         if (userDao.findUserById(userId) == null) {
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException("User not found");
         }
         if (!resumeDao.findResumeByCreator(userId).isEmpty()) {
             throw new RuntimeException("User has Resume attached to their id");
@@ -129,7 +130,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     private Optional<List<UserDto>>convert(List<User> users) {
         if (users == null || users.isEmpty()) {
-            return Optional.empty();
+            throw new UserNotFoundException("User not found");
         }
         List<UserDto> userDtos = new ArrayList<>();
         for (User user : users){
@@ -148,7 +149,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     private Optional<UserDto> convert(User user) {
         if (user == null) {
-            return Optional.empty();
+            throw new UserNotFoundException("User not found");
         }
         return Optional.of(new UserDto(
                 user.getName(),
