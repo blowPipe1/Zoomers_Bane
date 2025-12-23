@@ -10,7 +10,7 @@ import springboot.get_a_job.dto.WorkExperienceDto;
 import springboot.get_a_job.exceptions.CategoryNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.models.Resume;
-import springboot.get_a_job.models.User;
+
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -52,11 +52,15 @@ public class ResumeServiceImpl implements ResumeService {
         Integer resumeId = resumeDao.saveResume(resume);
 
         if (resumeDto.getEducation() != null  || !resumeDto.getEducation().isEmpty()) {
-            educationDao.addEducationInfo(resumeDto, resumeId);
+            for (EducationDto edu : resumeDto.getEducation()){
+                educationDao.addEducationInfo(edu, resumeId);
+            }
         }
 
-        if (resumeDto.getWorkExperience() != null || resumeDto.getWorkExperience().isEmpty()) {
-            workExperienceDao.addWorkExperience(resumeDto, resumeId );
+        if (resumeDto.getWorkExperience() != null || !resumeDto.getWorkExperience().isEmpty()) {
+            for (WorkExperienceDto workExp : resumeDto.getWorkExperience()) {
+                workExperienceDao.addWorkExperience(workExp, resumeId);
+            }
         }
     }
 
@@ -88,15 +92,27 @@ public class ResumeServiceImpl implements ResumeService {
         Integer resumeId = resumeDao.updateResume(id, resume);
 
         if (checkedResume.getEducation() != null || !checkedResume.getEducation().isEmpty()) {
-            educationDao.updateEducationInfo(checkedResume, resumeId);
+            // TODO change educationDaos update method so it updates existing object by ID(not resumes ID)
+            for (EducationDto edu : resumeDto.getEducation()){
+                educationDao.updateEducationInfo(edu, resumeId);
+            }
+
         } else {
-            educationDao.addEducationInfo(checkedResume, resumeId);
+            // TODO same needs to be done here
+            for (EducationDto edu : resumeDto.getEducation()){
+                educationDao.addEducationInfo(edu, resumeId);
+            }
+
         }
 
         if (checkedResume.getWorkExperience() != null || !checkedResume.getWorkExperience().isEmpty()) {
-            workExperienceDao.updateWorkExperience(checkedResume, resumeId );
+            for (WorkExperienceDto workExp : resumeDto.getWorkExperience()) {
+                workExperienceDao.updateWorkExperience(workExp, resumeId );
+            }
         } else {
-            workExperienceDao.addWorkExperience(checkedResume, resumeId);
+            for (WorkExperienceDto workExp : resumeDto.getWorkExperience()){
+                workExperienceDao.addWorkExperience(workExp, resumeId);
+            }
         }
 
 

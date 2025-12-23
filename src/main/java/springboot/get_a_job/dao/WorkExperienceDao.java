@@ -28,19 +28,16 @@ public class WorkExperienceDao {
                 new BeanPropertyRowMapper<>(WorkExperienceDto.class));
     }
 
-    public void addWorkExperience(ResumeDto resumeDto, Integer resumeId) {
+    public void addWorkExperience(WorkExperienceDto workExp, Integer resumeId) {
         String sql = "insert into WORK_EXPERIENCE_INFO(resume_id, years, company_name, position, responsibilities)" +
                 "values (?, ?, ?, ?, ?);";
-        for (WorkExperienceDto workExp : resumeDto.getWorkExperience()) {
-            jdbcTemplate.update(sql, resumeId, workExp.getYears(), workExp.getCompanyName(), workExp.getPosition(), workExp.getResponsibilities());
-        }
+        jdbcTemplate.update(sql, resumeId, workExp.getYears(), workExp.getCompanyName(), workExp.getPosition(), workExp.getResponsibilities());
+
     }
 
-    public void updateWorkExperience(ResumeDto resumeDto, Integer resumeId) {
+    public void updateWorkExperience(WorkExperienceDto workExp, Integer resumeId) {
         String sql = "update WORK_EXPERIENCE_INFO set years = ?, company_name = ?, position = ?, responsibilities = ? where id = ?";
-        for (WorkExperienceDto workExp : resumeDto.getWorkExperience()) {
-            jdbcTemplate.update(sql, workExp.getYears(), workExp.getCompanyName(), workExp.getPosition(), workExp.getResponsibilities(), resumeId);
-        }
+        jdbcTemplate.update(sql, workExp.getYears(), workExp.getCompanyName(), workExp.getPosition(), workExp.getResponsibilities(), resumeId);
     }
 
     public void deleteWorkExperienceInfo(Integer resumeId) {
