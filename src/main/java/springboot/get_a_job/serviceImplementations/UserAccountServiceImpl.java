@@ -1,4 +1,4 @@
-package springboot.get_a_job.services;
+package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,6 +9,7 @@ import springboot.get_a_job.dao.VacancyDao;
 import springboot.get_a_job.dto.UserDto;
 import springboot.get_a_job.exceptions.UserNotFoundException;
 import springboot.get_a_job.models.User;
+import springboot.get_a_job.services.UserAccountService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,7 +18,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service

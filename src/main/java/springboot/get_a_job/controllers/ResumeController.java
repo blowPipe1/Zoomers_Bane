@@ -8,8 +8,10 @@ import springboot.get_a_job.dto.ContactInfoDto;
 import springboot.get_a_job.dto.EducationDto;
 import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.WorkExperienceDto;
-import springboot.get_a_job.models.Resume;
-import springboot.get_a_job.services.ResumeServiceImpl;
+import springboot.get_a_job.serviceImplementations.ContactInfoServiceImpl;
+import springboot.get_a_job.serviceImplementations.EducationInfoServiceImpl;
+import springboot.get_a_job.serviceImplementations.ResumeServiceImpl;
+import springboot.get_a_job.serviceImplementations.WorkExperienceServiceImpl;
 
 import java.util.List;
 
@@ -19,6 +21,9 @@ import java.util.List;
 public class ResumeController {
 
     private final ResumeServiceImpl resumeService;
+    private final EducationInfoServiceImpl educationInfoService;
+    private final WorkExperienceServiceImpl workExperienceService;
+    private final ContactInfoServiceImpl contactInfoService;
 
     @PostMapping("/")
     public ResponseEntity<String> createResume(@RequestBody ResumeDto resumeDto) {
@@ -46,7 +51,7 @@ public class ResumeController {
 
     @PostMapping("add/education/{resumeId}")
     public ResponseEntity<String> addEducation(@PathVariable Integer resumeId, @RequestBody List<EducationDto> educationDto) {
-        resumeService.addEducationInfo(resumeId, educationDto);
+        educationInfoService.addEducationInfo(resumeId, educationDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("Education info for Resume " + resumeId + " successfully added");
@@ -54,7 +59,7 @@ public class ResumeController {
 
     @PutMapping("update/education/{educationId}")
     public ResponseEntity<String> updateEducation(@PathVariable Integer educationId, @RequestBody EducationDto educationDto) {
-        resumeService.updateResumesEducationInfo(educationId, educationDto);
+        educationInfoService.updateResumesEducationInfo(educationId, educationDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("Education info successfully updated");
@@ -62,7 +67,7 @@ public class ResumeController {
 
     @PostMapping("add/work_exp/{resumeId}")
     public ResponseEntity<String> addWorkExperience(@PathVariable Integer resumeId, @RequestBody List<WorkExperienceDto> workExperienceDtos) {
-        resumeService.addWorkExperienceInfo(resumeId, workExperienceDtos);
+        workExperienceService.addWorkExperienceInfo(resumeId, workExperienceDtos);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("Work Experience info for Resume " + resumeId + " successfully added");
@@ -70,7 +75,7 @@ public class ResumeController {
 
     @PutMapping("update/work_exp/{workExpId}")
     public ResponseEntity<String> updateWorkExperience(@PathVariable Integer workExpId, @RequestBody WorkExperienceDto workExperienceDto) {
-        resumeService.updateResumesWorkExperienceInfo(workExpId, workExperienceDto);
+        workExperienceService.updateResumesWorkExperienceInfo(workExpId, workExperienceDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("Work Experience info successfully updated");
@@ -78,7 +83,7 @@ public class ResumeController {
 
     @PostMapping("add/contact_info/{resumeId}")
     public ResponseEntity<String> addContactInfo(@PathVariable Integer resumeId, @RequestBody List<ContactInfoDto> contactInfoDtos) {
-        resumeService.addContactInfo(resumeId, contactInfoDtos);
+        contactInfoService.addContactInfo(resumeId, contactInfoDtos);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("Contact info for Resume " + resumeId + " successfully added");
@@ -86,7 +91,7 @@ public class ResumeController {
 
     @PutMapping("update/contact_info/{contactInfoId}")
     public ResponseEntity<String> updateContactInfo(@PathVariable Integer contactInfoId, @RequestBody ContactInfoDto contactInfoDto) {
-        resumeService.updateContactInfo(contactInfoId, contactInfoDto);
+        contactInfoService.updateContactInfo(contactInfoId, contactInfoDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("Contact info successfully updated");

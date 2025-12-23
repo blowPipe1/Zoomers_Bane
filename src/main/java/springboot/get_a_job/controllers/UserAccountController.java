@@ -6,13 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.UserDto;
 import springboot.get_a_job.models.User;
-import springboot.get_a_job.services.UserAccountServiceImpl;
+import springboot.get_a_job.serviceImplementations.UserAccountServiceImpl;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor

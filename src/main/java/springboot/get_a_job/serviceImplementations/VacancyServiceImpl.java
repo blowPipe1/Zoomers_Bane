@@ -1,15 +1,15 @@
-package springboot.get_a_job.services;
+package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import springboot.get_a_job.dao.CategoryDao;
 import springboot.get_a_job.dao.UserDao;
 import springboot.get_a_job.dao.VacancyDao;
-import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.VacancyDto;
 import springboot.get_a_job.exceptions.CategoryNotFoundException;
 import springboot.get_a_job.exceptions.VacancyNotFoundException;
 import springboot.get_a_job.models.Vacancy;
+import springboot.get_a_job.services.VacancyService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

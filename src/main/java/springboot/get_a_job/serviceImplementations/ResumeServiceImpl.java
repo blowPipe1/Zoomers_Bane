@@ -1,5 +1,5 @@
 
-package springboot.get_a_job.services;
+package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +13,7 @@ import springboot.get_a_job.exceptions.ResourceNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.models.ContactInfo;
 import springboot.get_a_job.models.Resume;
+import springboot.get_a_job.services.ResumeService;
 
 
 import java.time.LocalDateTime;
@@ -126,6 +127,7 @@ public class ResumeServiceImpl implements ResumeService {
                 workExperienceDao.addWorkExperience(workExp, resumeId);
             }
         }
+        //TODO add updating logic for contact info entity
     }
 
     @Override
@@ -151,74 +153,6 @@ public class ResumeServiceImpl implements ResumeService {
         resumeDao.deleteResume(id);
 
     }
-
-    @Override
-    public void addEducationInfo(Integer resumeId, List<EducationDto> educationDtos) {
-        if (resumeDao.findResumeById(resumeId) == null) {
-            throw new ResumeNotFoundException("Resume with id: " + resumeId + " not found");
-        }
-        for (EducationDto edu : educationDtos){
-            educationDao.addEducationInfo(edu, resumeId);
-        }
-
-    }
-
-    @Override
-    public void updateResumesEducationInfo(Integer educationId, EducationDto educationDto) {
-        if (educationDao.findInfoById(educationId) == null) {
-            throw new ResourceNotFoundException("Education info with id: " + educationId + " not found");
-        }
-        educationDao.updateEducationInfo(educationDto, educationId);
-    }
-
-    @Override
-    public void addWorkExperienceInfo(Integer resumeId, List<WorkExperienceDto> workExperienceDtos) {
-        if (resumeDao.findResumeById(resumeId) == null) {
-            throw new ResumeNotFoundException("Resume with id: " + resumeId + " not found");
-        }
-        for (WorkExperienceDto workExp : workExperienceDtos){
-            workExperienceDao.addWorkExperience(workExp, resumeId);
-        }
-
-    }
-
-    @Override
-    public void updateResumesWorkExperienceInfo(Integer workExpID, WorkExperienceDto workExperienceDto) {
-        if (workExperienceDao.findInfoById(workExpID) == null) {
-            throw new ResourceNotFoundException("WorkExperience with id: " + workExpID + " not found");
-        }
-        workExperienceDao.updateWorkExperience(workExperienceDto, workExpID);
-    }
-
-    @Override
-    public void addContactInfo(Integer resumeId, List<ContactInfoDto> contacts){
-        if (resumeDao.findResumeById(resumeId) == null) {
-            throw new ResumeNotFoundException("Resume with id: " + resumeId + " not found");
-        }
-        for (ContactInfoDto contact : contacts){
-            contactInfoDao.addContactInfo(new ContactInfo(
-                    0, contactInfoDao.findIdByName(contact.getType()), resumeId, contact.getValue()
-            ), resumeId);
-        }
-    }
-
-    @Override
-    public void updateContactInfo(Integer contactId, ContactInfoDto contactInfo){
-        if (contactInfoDao.findInfoByID(contactId) == null) {
-            throw new ResourceNotFoundException("Contact info with id: " + contactId + " not found");
-        }
-        if (contactInfoDao.findIdByName(contactInfo.getType()) == null ) {
-            throw new ResourceNotFoundException("Contact info with type: " + contactInfo.getType() + " not found");
-        }
-        contactInfoDao.updateContactInfo(new ContactInfo(
-                0,
-                contactInfoDao.findIdByName(contactInfo.getType()),
-                contactInfoDao.findInfoByID(contactId).getResumeId(),
-                contactInfo.getValue()
-        ), contactId);
-
-    }
-
 
     @Override
     public Optional<List<ResumeDto>> getAllActiveResumes() {
