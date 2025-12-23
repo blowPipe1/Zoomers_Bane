@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springboot.get_a_job.dto.EducationDto;
 import springboot.get_a_job.dto.ResumeDto;
+import springboot.get_a_job.dto.WorkExperienceDto;
 import springboot.get_a_job.models.Resume;
 import springboot.get_a_job.services.ResumeServiceImpl;
 
@@ -39,6 +41,38 @@ public class ResumeController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("Resume successfully deleted");
+    }
+
+    @PostMapping("add/education/{resumeId}")
+    public ResponseEntity<String> addEducation(@PathVariable Integer resumeId, @RequestBody List<EducationDto> educationDto) {
+        resumeService.addEducationInfo(resumeId, educationDto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Education info for Resume " + resumeId + " successfully added");
+    }
+
+    @PutMapping("update/education/{educationId}")
+    public ResponseEntity<String> updateEducation(@PathVariable Integer educationId, @RequestBody EducationDto educationDto) {
+        resumeService.updateResumesEducationInfo(educationId, educationDto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Education info successfully updated");
+    }
+
+    @PostMapping("add/work_exp/{resumeId}")
+    public ResponseEntity<String> addWorkExperience(@PathVariable Integer resumeId, @RequestBody List<WorkExperienceDto> workExperienceDtos) {
+        resumeService.addWorkExperienceInfo(resumeId, workExperienceDtos);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Work Experience info for Resume " + resumeId + " successfully added");
+    }
+
+    @PutMapping("update/work_exp/{workExpId}")
+    public ResponseEntity<String> updateWorkExperience(@PathVariable Integer workExpId, @RequestBody WorkExperienceDto workExperienceDto) {
+        resumeService.updateResumesWorkExperienceInfo(workExpId, workExperienceDto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Work Experience info successfully updated");
     }
 
     @GetMapping("/all")

@@ -1,6 +1,7 @@
 package springboot.get_a_job.dao;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import springboot.get_a_job.dto.EducationDto;
 import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.models.Resume;
+import springboot.get_a_job.models.User;
 
 import java.util.List;
 
@@ -25,6 +27,15 @@ public class EducationInfoDao {
                 new MapSqlParameterSource()
                         .addValue("id", resumeId),
                 new BeanPropertyRowMapper<>(EducationDto.class));
+    }
+
+    public EducationDto findInfoById(int id) {
+        String sql = "select * from EDUCATION_INFO where id = ?;";
+        try {
+            return jdbcTemplate.queryForObject(sql,new BeanPropertyRowMapper<>(EducationDto.class), id);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     public void addEducationInfo(EducationDto edu, Integer resumeId) {

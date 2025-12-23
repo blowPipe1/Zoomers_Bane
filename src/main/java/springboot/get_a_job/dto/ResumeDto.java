@@ -18,4 +18,5 @@ public class ResumeDto {
     boolean isActive;
     List<EducationDto> education;
     List<WorkExperienceDto> workExperience;
+    List<ContactInfoDto>contactInfo;
 }
