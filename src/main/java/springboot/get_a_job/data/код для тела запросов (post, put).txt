@@ -16,6 +16,7 @@ json тело запроса:
     "salary": 17500.0,
     "education": [
         {
+            "id": (любое целое число для POST, для PUT нужен id той записи котрую хотите поменять),
             "institution": "University of Advanced Mathematics",
             "program": "In Depth Matrix Program",
             "startDate": "2019-01-15",
@@ -25,6 +26,7 @@ json тело запроса:
     ],
     "workExperience": [
         {
+            "id": любое целое число(для POST, для PUT нужен id той записи котрую хотите поменять),
             "years": 7,
             "companyName": "Umbrella Co.",
             "position": "Lead Consultant",
