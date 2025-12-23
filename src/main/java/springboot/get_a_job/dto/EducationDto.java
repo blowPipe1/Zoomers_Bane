@@ -1,9 +1,6 @@
 package springboot.get_a_job.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -12,6 +9,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EducationDto {
+    Integer id;
     String institution;
     String program;
     LocalDate startDate;

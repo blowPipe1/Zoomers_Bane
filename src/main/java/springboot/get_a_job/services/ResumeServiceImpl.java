@@ -94,7 +94,7 @@ public class ResumeServiceImpl implements ResumeService {
         if (checkedResume.getEducation() != null || !checkedResume.getEducation().isEmpty()) {
             // TODO change educationDaos update method so it updates existing object by ID(not resumes ID)
             for (EducationDto edu : resumeDto.getEducation()){
-                educationDao.updateEducationInfo(edu, resumeId);
+                educationDao.updateEducationInfo(edu, edu.getId());
             }
 
         } else {
@@ -107,7 +107,7 @@ public class ResumeServiceImpl implements ResumeService {
 
         if (checkedResume.getWorkExperience() != null || !checkedResume.getWorkExperience().isEmpty()) {
             for (WorkExperienceDto workExp : resumeDto.getWorkExperience()) {
-                workExperienceDao.updateWorkExperience(workExp, resumeId );
+                workExperienceDao.updateWorkExperience(workExp, workExp.getId() );
             }
         } else {
             for (WorkExperienceDto workExp : resumeDto.getWorkExperience()){

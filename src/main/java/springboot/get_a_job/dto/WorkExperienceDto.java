@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WorkExperienceDto {
+    Integer id;
     int years;
     String companyName;
     String position;

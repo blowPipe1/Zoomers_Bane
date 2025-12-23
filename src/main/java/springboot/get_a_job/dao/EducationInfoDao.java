@@ -33,9 +33,9 @@ public class EducationInfoDao {
         jdbcTemplate.update(sql, resumeId, edu.getInstitution(), edu.getProgram(), edu.getStartDate(), edu.getEndDate(), edu.getDegree());
     }
 
-    public void updateEducationInfo(EducationDto edu, Integer resumeId) {
+    public void updateEducationInfo(EducationDto edu, Integer id) {
         String sql = "update EDUCATION_INFO set institution = ?, program = ?, start_date = ?, end_date = ?, degree = ? where id = ?";
-        jdbcTemplate.update(sql, edu.getInstitution(), edu.getProgram(), edu.getStartDate(), edu.getEndDate(), edu.getDegree(), resumeId);
+        jdbcTemplate.update(sql, edu.getInstitution(), edu.getProgram(), edu.getStartDate(), edu.getEndDate(), edu.getDegree(), id);
 
     }
 

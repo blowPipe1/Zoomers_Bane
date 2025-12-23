@@ -35,9 +35,9 @@ public class WorkExperienceDao {
 
     }
 
-    public void updateWorkExperience(WorkExperienceDto workExp, Integer resumeId) {
+    public void updateWorkExperience(WorkExperienceDto workExp, Integer id) {
         String sql = "update WORK_EXPERIENCE_INFO set years = ?, company_name = ?, position = ?, responsibilities = ? where id = ?";
-        jdbcTemplate.update(sql, workExp.getYears(), workExp.getCompanyName(), workExp.getPosition(), workExp.getResponsibilities(), resumeId);
+        jdbcTemplate.update(sql, workExp.getYears(), workExp.getCompanyName(), workExp.getPosition(), workExp.getResponsibilities(), id);
     }
 
     public void deleteWorkExperienceInfo(Integer resumeId) {
