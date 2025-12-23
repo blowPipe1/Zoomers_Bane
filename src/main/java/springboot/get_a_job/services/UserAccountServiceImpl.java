@@ -34,16 +34,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         if (user == null) {
             throw new UserNotFoundException("Error registering user");
         }
-        userDao.registerUser(
-                user.getName(),
-                user.getSurname(),
-                user.getAge(),
-                user.getEmail(),
-                user.getPassword(),
-                user.getPhoneNumber(),
-                user.getAvatar(),
-                user.getAccountType()
-        );
+        userDao.registerUser(user);
     }
 
     @Override
@@ -54,17 +45,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         }
         User result = checkFieldsForNullOrEmpty(id, user);
 
-        userDao.updateUser(
-                id,
-                result.getName(),
-                result.getSurname(),
-                result.getAge(),
-                result.getEmail(),
-                result.getPassword(),
-                result.getPhoneNumber(),
-                result.getAvatar(),
-                result.getAccountType()
-        );
+        userDao.updateUser(id, user);
     }
 
     @Override

@@ -10,7 +10,9 @@ import springboot.get_a_job.dto.WorkExperienceDto;
 import springboot.get_a_job.exceptions.CategoryNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.models.Resume;
+import springboot.get_a_job.models.User;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,13 +38,24 @@ public class ResumeServiceImpl implements ResumeService {
         String[] name = resumeDto.getApplicant().split(" ");
         Integer applcantId = Integer.valueOf(userDao.findIdBySurname(name[1]));
 
-        Integer resumeId = resumeDao.saveResume(applcantId, resumeDto.getName(), categoryId, resumeDto.getSalary(), resumeDto.isActive());
+        Resume resume = new Resume(
+                0,
+                applcantId,
+                resumeDto.getName(),
+                categoryId,
+                resumeDto.getSalary(),
+                resumeDto.isActive(),
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
-        if (resumeDto.getEducation() != null) {
+        Integer resumeId = resumeDao.saveResume(resume);
+
+        if (resumeDto.getEducation() != null  || !resumeDto.getEducation().isEmpty()) {
             educationDao.addEducationInfo(resumeDto, resumeId);
         }
 
-        if (resumeDto.getWorkExperience() != null) {
+        if (resumeDto.getWorkExperience() != null || resumeDto.getWorkExperience().isEmpty()) {
             workExperienceDao.addWorkExperience(resumeDto, resumeId );
         }
     }
@@ -52,21 +65,38 @@ public class ResumeServiceImpl implements ResumeService {
         if (resumeDao.findResumeById(id) == null) {
             throw new ResumeNotFoundException("Resume with id: " + id + " not found");
         }
-        Integer categoryId = categoryDao.findIdByName(resumeDto.getCategory())
-                .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + resumeDto.getCategory()));
+        ResumeDto checkedResume = checkFieldsForNullOrEmpty(id, resumeDto);
+
+        Integer categoryId = categoryDao.findIdByName(checkedResume.getCategory())
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + checkedResume.getCategory()));
 
         // TODO check for null & empty string etc.
-        String[] name = resumeDto.getApplicant().split(" ");
+        String[] name = checkedResume.getApplicant().split(" ");
         Integer applcantId = Integer.valueOf(userDao.findIdBySurname(name[1]));
 
-        Integer resumeId = resumeDao.updateResume(id, applcantId, resumeDto.getName(), categoryId, resumeDto.getSalary(), resumeDto.isActive());
+        Resume resume = new Resume(
+                0,
+                applcantId,
+                checkedResume.getName(),
+                categoryId,
+                checkedResume.getSalary(),
+                checkedResume.isActive(),
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
-        if (resumeDto.getEducation() != null) {
-            educationDao.updateEducationInfo(resumeDto, resumeId);
+        Integer resumeId = resumeDao.updateResume(id, resume);
+
+        if (checkedResume.getEducation() != null || !checkedResume.getEducation().isEmpty()) {
+            educationDao.updateEducationInfo(checkedResume, resumeId);
+        } else {
+            educationDao.addEducationInfo(checkedResume, resumeId);
         }
 
-        if (resumeDto.getWorkExperience() != null) {
-            workExperienceDao.updateWorkExperience(resumeDto, resumeId );
+        if (checkedResume.getWorkExperience() != null || !checkedResume.getWorkExperience().isEmpty()) {
+            workExperienceDao.updateWorkExperience(checkedResume, resumeId );
+        } else {
+            workExperienceDao.addWorkExperience(checkedResume, resumeId);
         }
 
 
@@ -160,5 +190,54 @@ public class ResumeServiceImpl implements ResumeService {
                 educationInfo,
                 workExperienceInfo
         ));
+    }
+
+    private ResumeDto checkFieldsForNullOrEmpty(Integer id, ResumeDto newResume) {
+        Optional<ResumeDto> oldResume = convert(resumeDao.findResumeById(id));
+        if (oldResume.isEmpty()){
+            throw new ResumeNotFoundException("Resume with id: " + id + " not found");
+        }
+        ResumeDto result = new ResumeDto();
+
+        if (ifNull(newResume.getApplicant()) || newResume.getApplicant().isEmpty()) {
+            result.setApplicant(oldResume.get().getApplicant());
+        } else {
+            result.setApplicant(newResume.getApplicant());
+        }
+        if (ifNull(newResume.getName()) || newResume.getName().isEmpty()) {
+            result.setName(oldResume.get().getName());
+        } else {
+            result.setName(newResume.getName());
+        }
+        if (ifNull(newResume.getCategory()) || newResume.getCategory().isEmpty()) {
+            result.setCategory(oldResume.get().getCategory());
+        } else {
+            result.setCategory(newResume.getCategory());
+        }
+        if (ifNull(newResume.getSalary()) || newResume.getSalary() <= 0){
+            result.setSalary(oldResume.get().getSalary());
+        } else {
+            result.setSalary(newResume.getSalary());
+        }
+        if (newResume.isActive() == oldResume.get().isActive() || ifNull(newResume.isActive())) {
+            result.setActive(oldResume.get().isActive());
+        } else {
+            result.setActive(newResume.isActive());
+        }
+        if (ifNull(newResume.getEducation()) || newResume.getEducation().isEmpty()) {
+            result.setEducation(oldResume.get().getEducation());
+        } else {
+            result.setEducation(newResume.getEducation());
+        }
+        if (ifNull(newResume.getWorkExperience()) || newResume.getWorkExperience().isEmpty()) {
+            result.setWorkExperience(oldResume.get().getWorkExperience());
+        } else {
+            result.setWorkExperience(newResume.getWorkExperience());
+        }
+        return result;
+    }
+
+    private boolean ifNull(Object object){
+        return object == null;
     }
 }

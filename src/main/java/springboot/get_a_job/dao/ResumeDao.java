@@ -77,17 +77,17 @@ public class ResumeDao {
                 new BeanPropertyRowMapper<>(Resume.class));
     }
 
-    public Integer saveResume(Integer applicantId, String name, Integer categoryId, Double salary, boolean isActive) {
+    public Integer saveResume(Resume resume) {
         String sql = "INSERT INTO resumes (applicant_id, name, category_id, salary, is_active, created_date, update_time) VALUES (?, ?, ?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
-            ps.setInt(1, applicantId);
-            ps.setString(2, name);
-            ps.setInt(3, categoryId);
-            ps.setDouble(4, salary);
-            ps.setBoolean(5, isActive);
+            ps.setInt(1, resume.getApplicantId());
+            ps.setString(2, resume.getName());
+            ps.setInt(3, resume.getCategoryId());
+            ps.setDouble(4, resume.getSalary());
+            ps.setBoolean(5, resume.getIsActive());
             ps.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
             ps.setTimestamp(7, Timestamp.valueOf(LocalDateTime.now()));
             return ps;
@@ -97,17 +97,17 @@ public class ResumeDao {
         return (key != null) ? key.intValue() : null;
     }
 
-    public Integer updateResume(Integer resumeId, Integer applicantId, String name, Integer categoryId, Double salary, boolean isActive) {
+    public Integer updateResume(Integer resumeId, Resume resume) {
 
         String sql = "update RESUMES set name = ?, CATEGORY_ID = ?, salary = ?, is_active = ?, UPDATE_TIME = ? where id = ?";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
-            ps.setString(1, name);
-            ps.setInt(2, categoryId);
-            ps.setDouble(3, salary);
-            ps.setBoolean(4, isActive);
+            ps.setString(1, resume.getName());
+            ps.setInt(2, resume.getCategoryId());
+            ps.setDouble(3, resume.getSalary());
+            ps.setBoolean(4, resume.getIsActive());
             ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
             ps.setInt(6, resumeId);
             return ps;

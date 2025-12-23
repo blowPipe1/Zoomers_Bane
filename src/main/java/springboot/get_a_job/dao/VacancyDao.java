@@ -86,23 +86,23 @@ public class VacancyDao {
                 new BeanPropertyRowMapper<>(Vacancy.class));
     }
 
-    public void createVacancy(String name, String description, Integer categoryId, Double salary, Integer expFrom, Integer expTo, Boolean isActive, Integer authorId) {
+    public void createVacancy(Vacancy vacancy) {
         String sql = "insert into VACANCIES(name, description, category_id, salary, exp_from, exp_To, is_Active, author_Id, created_date, update_time)" +
                 "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         jdbcTemplate.update(sql,
-                name,
-                description,
-                categoryId,
-                salary,
-                expFrom,
-                expTo,
-                isActive,
-                authorId,
+                vacancy.getName(),
+                vacancy.getDescription(),
+                vacancy.getCategoryId(),
+                vacancy.getSalary(),
+                vacancy.getExpFrom(),
+                vacancy.getExpTo(),
+                vacancy.getIsActive(),
+                vacancy.getAuthorId(),
                 Timestamp.valueOf(LocalDateTime.now()),
                 Timestamp.valueOf(LocalDateTime.now()));
     }
 
-    public void updateVacancy(Integer vacancyId, String name, String description, Integer categoryId, Double salary, Integer expFrom, Integer expTo, Boolean isActive){
+    public void updateVacancy(Integer vacancyId, Vacancy vacancy){
         String sql = "update VACANCIES set " +
                 "name = ?," +
                 "description = ?, " +
@@ -114,13 +114,13 @@ public class VacancyDao {
                 "update_time = ? where id = ?;";
 
         jdbcTemplate.update(sql,
-                name,
-                description,
-                categoryId,
-                salary,
-                expFrom,
-                expTo,
-                isActive,
+                vacancy.getName(),
+                vacancy.getDescription(),
+                vacancy.getCategoryId(),
+                vacancy.getSalary(),
+                vacancy.getExpFrom(),
+                vacancy.getExpTo(),
+                vacancy.getIsActive(),
                 Timestamp.valueOf(LocalDateTime.now()),
                 vacancyId);
 

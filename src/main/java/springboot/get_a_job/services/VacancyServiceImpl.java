@@ -34,8 +34,8 @@ public class VacancyServiceImpl implements VacancyService {
         // TODO check for null & empty string etc.
         String[] name = vacancy.getAuthor().split(" ");
         Integer authorId = Integer.valueOf(userDao.findIdBySurname(name[1]));
-
-        vacancyDao.createVacancy(
+        Vacancy result = new Vacancy(
+                0,
                 vacancy.getName(),
                 vacancy.getDescription(),
                 categoryId,
@@ -43,7 +43,12 @@ public class VacancyServiceImpl implements VacancyService {
                 vacancy.getExpFrom(),
                 vacancy.getExpTo(),
                 vacancy.getIsActive(),
-                authorId);
+                authorId,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+                );
+
+        vacancyDao.createVacancy(result);
     }
 
     @Override
@@ -54,15 +59,23 @@ public class VacancyServiceImpl implements VacancyService {
         Integer categoryId = categoryDao.findIdByName(vacancy.getCategory())
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + vacancy.getCategory()));
 
-        vacancyDao.updateVacancy(
-                id,
+        String[] name = vacancy.getAuthor().split(" ");
+        Integer authorId = Integer.valueOf(userDao.findIdBySurname(name[1]));
+
+        Vacancy result = new Vacancy(
+                0,
                 vacancy.getName(),
                 vacancy.getDescription(),
                 categoryId,
                 vacancy.getSalary(),
                 vacancy.getExpFrom(),
                 vacancy.getExpTo(),
-                vacancy.getIsActive());
+                vacancy.getIsActive(),
+                authorId,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+        vacancyDao.updateVacancy(id, result);
     }
 
     @Override

@@ -56,3 +56,17 @@ json тело запроса:
         "isActive": false,
         "author": "van dARkholme"
     }
+
+
+    для user
+    {
+            "id": 123213,
+            "name": "updated",
+            "surname": "test",
+            "age": 46,
+            "email": "test@ofgym.com",
+            "password": "123",
+            "phoneNumber": "43209483248",
+            "avatar": "Changed",
+            "accountType": "applicant"
+        }

@@ -96,14 +96,14 @@ public class UserDao {
         jdbcTemplate.update(sql,savedPath,userId);
     }
 
-    public void registerUser(String name, String surname, Integer age, String email, String password, String phone_number, String avatar, String account_type){
+    public void registerUser(User user){
         String sql = "INSERT INTO USERS (name, surname, age, email, password, phone_number, avatar, account_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, name, surname, age, email, password, phone_number, avatar, account_type);
+        jdbcTemplate.update(sql, user.getName(), user.getSurname(), user.getAge(), user.getEmail(), user.getPassword(), user.getPhoneNumber(), user.getAvatar(), user.getAccountType());
     }
 
-    public void updateUser(Integer userId, String name, String surname, Integer age, String email, String password, String phone_number, String avatar, String account_type){
+    public void updateUser(Integer userId, User user){
         String sql = "update USERS set name = ?, surname = ?, age = ?, email = ?, password = ?, phone_number = ?, avatar = ?, account_type = ? where id = ?";
-        jdbcTemplate.update(sql, name, surname, age, email, password, phone_number, avatar, account_type, userId);
+        jdbcTemplate.update(sql, user.getName(), user.getSurname(), user.getAge(), user.getEmail(), user.getPassword(), user.getPhoneNumber(), user.getAvatar(), user.getAccountType(), userId);
     }
 
     public void deleteUser(Integer userId) {
