@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -46,21 +47,23 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public void updateUser(User user) {
+    public void updateUser(Integer id, User user) {
         //TODO add logic to check for necessary fields
         if (user == null) {
             throw new UserNotFoundException("User not found");
         }
+        User result = checkFieldsForNullOrEmpty(id, user);
+
         userDao.updateUser(
-                user.getId(),
-                user.getName(),
-                user.getSurname(),
-                user.getAge(),
-                user.getEmail(),
-                user.getPassword(),
-                user.getPhoneNumber(),
-                user.getAvatar(),
-                user.getAccountType()
+                id,
+                result.getName(),
+                result.getSurname(),
+                result.getAge(),
+                result.getEmail(),
+                result.getPassword(),
+                result.getPhoneNumber(),
+                result.getAvatar(),
+                result.getAccountType()
         );
     }
 
@@ -162,4 +165,61 @@ public class UserAccountServiceImpl implements UserAccountService {
         );
     }
 
+    private User checkFieldsForNullOrEmpty(Integer id, User newUser){
+        User oldUser = userDao.findUserById(id);
+        User result = new User();
+
+        if (ifNull(newUser.getName()) || newUser.getName().isEmpty()) {
+            result.setName(oldUser.getName());
+        } else {
+            result.setName(newUser.getName());
+        }
+
+        if (ifNull(newUser.getSurname()) || newUser.getSurname().isEmpty()) {
+            result.setSurname(oldUser.getSurname());
+        } else {
+            result.setSurname(newUser.getSurname());
+        }
+
+        if (ifNull(newUser.getAge()) || newUser.getAge() <= 0) {
+            result.setAge(oldUser.getAge());
+        } else {
+            result.setAge(newUser.getAge());
+        }
+
+        if (ifNull(newUser.getEmail()) || newUser.getEmail().isEmpty()) {
+            result.setEmail(oldUser.getEmail());
+        } else {
+            result.setEmail(newUser.getEmail());
+        }
+
+        if (ifNull(newUser.getPassword()) || newUser.getPassword().isEmpty()) {
+            result.setPassword(oldUser.getPassword());
+        } else {
+            result.setPassword(newUser.getPassword());
+        }
+
+        if (ifNull(newUser.getPhoneNumber()) || newUser.getPhoneNumber().isEmpty()) {
+            result.setPhoneNumber(oldUser.getPhoneNumber());
+        } else {
+            result.setPhoneNumber(newUser.getPhoneNumber());
+        }
+
+        if (ifNull(newUser.getAvatar()) || newUser.getAvatar().isEmpty()) {
+            result.setAvatar(oldUser.getAvatar());
+        } else {
+            result.setAvatar(newUser.getAvatar());
+        }
+
+        if (ifNull(newUser.getAccountType()) || newUser.getAccountType().isEmpty()) {
+            result.setAccountType(oldUser.getAccountType());
+        } else {
+            result.setAccountType(newUser.getAccountType());
+        }
+        return result;
+    }
+
+    private boolean ifNull(Object object){
+        return object == null;
+    }
 }

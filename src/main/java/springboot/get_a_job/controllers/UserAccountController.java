@@ -30,7 +30,7 @@ public class UserAccountController {
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateUser(@PathVariable Integer id, @RequestBody User user) {
-        userAccountService.updateUser(user);
+        userAccountService.updateUser(id, user);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("User successfully updated");

@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface UserAccountService {
     void registerUser(User user);
-    void updateUser(User user);
+    void updateUser(Integer id, User user);
     void deleteUser(Integer id);
     void saveAvatar(Integer userId, MultipartFile file) throws IOException;
     Optional<UserDto> findUserById(Integer id);
