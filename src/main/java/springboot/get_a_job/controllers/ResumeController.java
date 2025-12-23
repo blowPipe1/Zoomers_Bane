@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springboot.get_a_job.dto.ContactInfoDto;
 import springboot.get_a_job.dto.EducationDto;
 import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.WorkExperienceDto;
@@ -74,6 +75,23 @@ public class ResumeController {
                 .status(HttpStatus.OK)
                 .body("Work Experience info successfully updated");
     }
+
+    @PostMapping("add/contact_info/{resumeId}")
+    public ResponseEntity<String> addContactInfo(@PathVariable Integer resumeId, @RequestBody List<ContactInfoDto> contactInfoDtos) {
+        resumeService.addContactInfo(resumeId, contactInfoDtos);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Contact info for Resume " + resumeId + " successfully added");
+    }
+
+    @PutMapping("update/contact_info/{contactInfoId}")
+    public ResponseEntity<String> updateContactInfo(@PathVariable Integer contactInfoId, @RequestBody ContactInfoDto contactInfoDto) {
+        resumeService.updateContactInfo(contactInfoId, contactInfoDto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Contact info successfully updated");
+    }
+
 
     @GetMapping("/all")
     public ResponseEntity<List<ResumeDto>> getAllActiveResumes() {

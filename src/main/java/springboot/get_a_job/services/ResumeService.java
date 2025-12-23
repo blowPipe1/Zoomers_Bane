@@ -1,5 +1,6 @@
 package springboot.get_a_job.services;
 
+import springboot.get_a_job.dto.ContactInfoDto;
 import springboot.get_a_job.dto.EducationDto;
 import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.WorkExperienceDto;
@@ -22,4 +23,6 @@ public interface ResumeService {
     void updateResumesEducationInfo(Integer educationID, EducationDto educationDto);
     void addWorkExperienceInfo(Integer resumeId, List<WorkExperienceDto> workExperienceDtos);
     void updateResumesWorkExperienceInfo(Integer workExpId, WorkExperienceDto workExperienceDto);
+    void addContactInfo(Integer resumeId, List<ContactInfoDto> contacts);
+    void updateContactInfo(Integer contactId, ContactInfoDto contactInfo);
 }
