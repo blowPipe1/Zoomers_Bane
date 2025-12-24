@@ -13,10 +13,9 @@ spring:
 # Logging
 logging:
   level:
-    # Example: Set the root logging level to INFO
     root: INFO
   file:
-    path: /log
+    path: log
 
 
 
