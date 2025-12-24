@@ -9,10 +9,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EducationDto {
-    Integer id;
-    String institution;
-    String program;
-    LocalDate startDate;
-    LocalDate endDate;
-    String degree;
+    private Integer id;
+    private String institution;
+    private String program;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String degree;
 }

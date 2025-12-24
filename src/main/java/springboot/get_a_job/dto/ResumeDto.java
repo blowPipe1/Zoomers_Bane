@@ -1,9 +1,7 @@
 package springboot.get_a_job.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.util.List;
 
 @Getter
@@ -11,12 +9,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResumeDto {
-    String applicant;
-    String name;
-    String category;
-    Double salary;
-    boolean isActive;
-    List<EducationDto> education;
-    List<WorkExperienceDto> workExperience;
-    List<ContactInfoDto>contactInfo;
+    private String applicant;
+    private String name;
+    private String category;
+    private Double salary;
+    private boolean isActive;
+    private List<EducationDto> education;
+    private List<WorkExperienceDto> workExperience;
+    private List<ContactInfoDto>contactInfo;
 }

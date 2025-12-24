@@ -31,23 +31,23 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final VacancyDao vacancyDao;
 
     @Override
-    public void registerUser(User user) {
+    public void registerUser(UserDto userDto) {
         //TODO add logic to check for necessary fields
-        if (user == null) {
+        if (userDto == null) {
             throw new UserNotFoundException("Error registering user");
         }
-        userDao.registerUser(user);
-        log.info("Registered user: {} {} (Email: {})", user.getName(), user.getSurname(), user.getEmail());
+        userDao.registerUser(convertIntoModel(userDto));
+        log.info("Registered user: {} {} (Email: {})", userDto.getName(), userDto.getSurname(), userDto.getEmail());
     }
 
     @Override
-    public void updateUser(Integer id, User user) {
+    public void updateUser(Integer id, UserDto userDto) {
         //TODO add logic to check for necessary fields
-        if (user == null) {
+        if (userDto == null) {
             throw new UserNotFoundException("User not found");
         }
-        userDao.updateUser(id, checkFieldsForNullOrEmpty(id, user));
-        log.info("Updating user(ID {}): {} {} (Email: {})", id, user.getName(), user.getSurname(), user.getEmail());
+        userDao.updateUser(id, checkFieldsForNullOrEmpty(id, userDto));
+        log.info("Updating user(ID {}): {} {} (Email: {})", id, userDto.getName(), userDto.getSurname(), userDto.getEmail());
     }
 
     @Override
@@ -131,6 +131,7 @@ public class UserAccountServiceImpl implements UserAccountService {
                             user.getSurname(),
                             user.getAge(),
                             user.getEmail(),
+                            user.getPassword(),
                             user.getPhoneNumber(),
                             user.getAvatar(),
                             user.getAccountType())
@@ -148,6 +149,7 @@ public class UserAccountServiceImpl implements UserAccountService {
                 user.getSurname(),
                 user.getAge(),
                 user.getEmail(),
+                user.getPassword(),
                 user.getPhoneNumber(),
                 user.getAvatar(),
                 user.getAccountType())
@@ -155,7 +157,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     }
 
-    private User checkFieldsForNullOrEmpty(Integer id, User newUser){
+    private User checkFieldsForNullOrEmpty(Integer id, UserDto newUser){
         User oldUser = userDao.findUserById(id);
         User result = new User();
 
@@ -211,5 +213,18 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     private boolean ifNull(Object object){
         return object == null;
+    }
+
+    private User convertIntoModel(UserDto user){
+        return new User(
+                0,
+                user.getName(),
+                user.getSurname(),
+                user.getAge(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getPhoneNumber(),
+                user.getAvatar(),
+                user.getAccountType());
     }
 }

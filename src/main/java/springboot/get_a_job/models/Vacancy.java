@@ -12,15 +12,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Vacancy {
-    public Integer id;
-    public String name;
-    public String description;
-    public Integer categoryId;
-    public Double salary;
-    public Integer expFrom;
-    public Integer expTo;
-    public Boolean isActive;
-    public Integer authorId;
-    public LocalDateTime createdDate;
-    public LocalDateTime updateTime;
+    private Integer id;
+    private String name;
+    private String description;
+    private Integer categoryId;
+    private Double salary;
+    private Integer expFrom;
+    private Integer expTo;
+    private Boolean isActive;
+    private Integer authorId;
+    private LocalDateTime createdDate;
+    private LocalDateTime updateTime;
 }

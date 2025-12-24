@@ -9,8 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ContactInfoDto {
-    public Integer id;
-    public String  type;
-    public String resume;
-    public String value;
+    private Integer id;
+    private String  type;
+    private String resume;
+    private String value;
 }

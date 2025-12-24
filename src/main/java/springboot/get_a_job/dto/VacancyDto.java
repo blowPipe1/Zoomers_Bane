@@ -10,12 +10,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VacancyDto {
-    public String name;
-    public String description;
-    public String category;
-    public Double salary;
-    public Integer expFrom;
-    public Integer expTo;
-    public Boolean isActive;
-    public String author;
+    private String name;
+    private String description;
+    private String category;
+    private Double salary;
+    private Integer expFrom;
+    private Integer expTo;
+    private Boolean isActive;
+    private String author;
 }

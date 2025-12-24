@@ -191,7 +191,7 @@ public class ResumeServiceImpl implements ResumeService {
             resumeDtos.add(new ResumeDto(
                     userDao.findNameById(resume.getApplicantId()),
                     resume.getName(),
-                    categoryDao.findNameById(resume.categoryId),
+                    categoryDao.findNameById(resume.getCategoryId()),
                     resume.getSalary(),
                     resume.getIsActive(),
                     educationInfo,
@@ -214,7 +214,7 @@ public class ResumeServiceImpl implements ResumeService {
         return Optional.of(new ResumeDto(
                 userDao.findNameById(resume.getApplicantId()),
                 resume.getName(),
-                categoryDao.findNameById(resume.categoryId),
+                categoryDao.findNameById(resume.getCategoryId()),
                 resume.getSalary(),
                 resume.getIsActive(),
                 educationInfo,

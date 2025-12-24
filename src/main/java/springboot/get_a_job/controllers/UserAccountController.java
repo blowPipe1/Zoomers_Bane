@@ -1,13 +1,16 @@
 package springboot.get_a_job.controllers;
 
 
+import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springboot.get_a_job.dto.UserDto;
-import springboot.get_a_job.models.User;
+import springboot.get_a_job.dto.validation.OnCreate;
+import springboot.get_a_job.dto.validation.OnUpdate;
 import springboot.get_a_job.serviceImplementations.UserAccountServiceImpl;
 import java.io.IOException;
 import java.util.List;
@@ -19,7 +22,7 @@ public class UserAccountController {
     private final UserAccountServiceImpl userAccountService;
 
     @PostMapping("/register/")
-    public ResponseEntity<String> registerUser(@RequestBody User user) {
+    public ResponseEntity<String> registerUser(@Validated(OnCreate.class) @RequestBody UserDto user) {
         userAccountService.registerUser(user);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -27,8 +30,8 @@ public class UserAccountController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable Integer id, @RequestBody User user) {
-        userAccountService.updateUser(id, user);
+    public ResponseEntity<String> updateUser( @PathVariable Integer id, @Validated(OnUpdate.class) @RequestBody UserDto userDto) {
+        userAccountService.updateUser(id, userDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("User successfully updated");

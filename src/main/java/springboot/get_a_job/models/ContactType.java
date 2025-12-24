@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ContactType {
-    public Integer id;
-    public String type;
+    private Integer id;
+    private String type;
 }

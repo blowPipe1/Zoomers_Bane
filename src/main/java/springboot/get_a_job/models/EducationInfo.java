@@ -12,11 +12,11 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EducationInfo {
-    public Integer id;
-    public Integer resumeId;
-    public String institution;
-    public String program;
-    public Date startDate;
-    public Date endDate;
-    public String degree;
+    private Integer id;
+    private Integer resumeId;
+    private String institution;
+    private String program;
+    private Date startDate;
+    private Date endDate;
+    private String degree;
 }

@@ -10,8 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ContactInfo {
-    public Integer id;
-    public Integer typeId;
-    public Integer resumeId;
-    public String value;
+    private Integer id;
+    private Integer typeId;
+    private Integer resumeId;
+    private String value;
 }
