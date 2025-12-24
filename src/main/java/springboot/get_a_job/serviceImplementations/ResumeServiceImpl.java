@@ -10,7 +10,6 @@ import springboot.get_a_job.dto.EducationDto;
 import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.WorkExperienceDto;
 import springboot.get_a_job.exceptions.CategoryNotFoundException;
-import springboot.get_a_job.exceptions.ResourceNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.models.ContactInfo;
 import springboot.get_a_job.models.Resume;
@@ -39,7 +38,7 @@ public class ResumeServiceImpl implements ResumeService {
             throw new ResumeNotFoundException("Category not found");
         }
 
-        Integer resumeId = resumeDao.saveResume(preparedResume(resumeDto));
+        Integer resumeId = resumeDao.saveResume(convertIntoModel(resumeDto));
         log.info("Resume with ID {} created", resumeId);
 
         if (resumeDto.getEducation() != null  || !resumeDto.getEducation().isEmpty()) {
@@ -74,7 +73,7 @@ public class ResumeServiceImpl implements ResumeService {
 
         ResumeDto checkedResume = checkFieldsForNullOrEmpty(id, resumeDto);
 
-        Integer resumeId = resumeDao.updateResume(id, preparedResume(resumeDto));
+        Integer resumeId = resumeDao.updateResume(id, convertIntoModel(resumeDto));
         log.info("Updating resume({})", resumeId);
 
         if (checkedResume.getEducation() != null) {
@@ -150,36 +149,35 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public Optional<List<ResumeDto>> getAllActiveResumes() {
-        return convert(resumeDao.getAllActiveResumes());
+        return convertIntoDto(resumeDao.getAllActiveResumes());
     }
 
     @Override
     public Optional<ResumeDto> findResumeById(Integer id) {
-        return convert(resumeDao.findResumeById(id));
+        return convertIntoDto(resumeDao.findResumeById(id));
     }
 
     @Override
     public Optional<List<ResumeDto>> findResumeByCategory(Integer category_id) {
-        return convert(resumeDao.findResumeByCategory(category_id));
-
+        return convertIntoDto(resumeDao.findResumeByCategory(category_id));
     }
 
     @Override
     public Optional<List<ResumeDto>> findResumeByCategory(String category1) {
-        return convert(resumeDao.findResumeByCategory(category1));
+        return convertIntoDto(resumeDao.findResumeByCategory(category1));
     }
 
     @Override
     public Optional<List<ResumeDto>> findResumeByCreator(Integer applicant_id) {
-        return convert(resumeDao.findResumeByCreator(applicant_id));
+        return convertIntoDto(resumeDao.findResumeByCreator(applicant_id));
     }
 
     @Override
     public Optional<List<ResumeDto>> findResumeByCreator(String creatorName) {
-        return convert(resumeDao.findResumeByCreator(creatorName));
+        return convertIntoDto(resumeDao.findResumeByCreator(creatorName));
     }
 
-    private Optional<List<ResumeDto>>convert(List<Resume>resumes){
+    private Optional<List<ResumeDto>> convertIntoDto(List<Resume>resumes){
         if (resumes == null || resumes.isEmpty()) {
             throw new ResumeNotFoundException("Resumes not Found");
         }
@@ -188,6 +186,7 @@ public class ResumeServiceImpl implements ResumeService {
             List<EducationDto>educationInfo = educationDao.getResumesEducationInfo(resume.getId());
             List<WorkExperienceDto>workExperienceInfo = workExperienceDao.getResumesWorkExperience(resume.getId());
             List<ContactInfoDto>contacts = contactInfoDao.getResumesContacts(resume.getId());
+            log.info("Mapping (ID: {})Resume into Resume DTO, stored in list", resume.getId());
 
             resumeDtos.add(new ResumeDto(
                     userDao.findNameById(resume.getApplicantId()),
@@ -203,13 +202,14 @@ public class ResumeServiceImpl implements ResumeService {
         return Optional.of(resumeDtos);
     }
 
-    private Optional<ResumeDto>convert(Resume resume){
+    private Optional<ResumeDto> convertIntoDto(Resume resume){
         if (resume == null) {
             throw new ResumeNotFoundException("Resume not Found");
         }
         List<EducationDto>educationInfo = educationDao.getResumesEducationInfo(resume.getId());
         List<WorkExperienceDto>workExperienceInfo = workExperienceDao.getResumesWorkExperience(resume.getId());
         List<ContactInfoDto>contacts = contactInfoDao.getResumesContacts(resume.getId());
+        log.info("Mapping (ID: {})Resume into Resume DTO", resume.getId());
 
         return Optional.of(new ResumeDto(
                 userDao.findNameById(resume.getApplicantId()),
@@ -224,7 +224,7 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     private ResumeDto checkFieldsForNullOrEmpty(Integer id, ResumeDto newResume) {
-        Optional<ResumeDto> oldResume = convert(resumeDao.findResumeById(id));
+        Optional<ResumeDto> oldResume = convertIntoDto(resumeDao.findResumeById(id));
         if (oldResume.isEmpty()){
             throw new ResumeNotFoundException("Resume with id: " + id + " not found");
         }
@@ -277,14 +277,14 @@ public class ResumeServiceImpl implements ResumeService {
         return object == null;
     }
 
-    private Resume preparedResume(ResumeDto resumeDto){
+    private Resume convertIntoModel(ResumeDto resumeDto){
         Integer categoryId = categoryDao.findIdByName(resumeDto.getCategory())
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + resumeDto.getCategory()));
 
         // TODO check for null & empty string etc.
         String[] name = resumeDto.getApplicant().split(" ");
         Integer applicantId = Integer.valueOf(userDao.findIdBySurname(name[1]));
-        log.info("Mapping resume for User with ID: {} Name: {} {}", applicantId, name[0], name[1]);
+        log.info("Mapping Resume DTO into Resume for User with ID: {} Name: {} {}", applicantId, name[0], name[1]);
 
         return new Resume(
                 0,

@@ -1,6 +1,7 @@
 package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import springboot.get_a_job.dao.ResumeDao;
@@ -22,6 +23,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserAccountServiceImpl implements UserAccountService {
     private final String subDir = "src/main/java/springboot/get_a_job/data/images/";
     private final UserDao userDao;
@@ -35,6 +37,7 @@ public class UserAccountServiceImpl implements UserAccountService {
             throw new UserNotFoundException("Error registering user");
         }
         userDao.registerUser(user);
+        log.info("Registered user: {} {} (Email: {})", user.getName(), user.getSurname(), user.getEmail());
     }
 
     @Override
@@ -43,9 +46,8 @@ public class UserAccountServiceImpl implements UserAccountService {
         if (user == null) {
             throw new UserNotFoundException("User not found");
         }
-        User result = checkFieldsForNullOrEmpty(id, user);
-
-        userDao.updateUser(id, user);
+        userDao.updateUser(id, checkFieldsForNullOrEmpty(id, user));
+        log.info("Updating user(ID {}): {} {} (Email: {})", id, user.getName(), user.getSurname(), user.getEmail());
     }
 
     @Override
@@ -54,13 +56,16 @@ public class UserAccountServiceImpl implements UserAccountService {
             throw new UserNotFoundException("User not found");
         }
         if (!resumeDao.findResumeByCreator(userId).isEmpty()) {
+            log.info("Selected User(ID: {}) has at least one Resume object, referencing their id", userId);
             throw new RuntimeException("User has Resume attached to their id");
         }
         if(!vacancyDao.findVacancyByCreator(userId).isEmpty()) {
+            log.info("Selected User(ID: {}) has at least one Vacancy object, referencing their id", userId);
             throw new RuntimeException("User has Vacancy attached to their id");
         }
         //TODO add logic to check for necessary fields
         userDao.deleteUserHard(userId);
+        log.info("Deleted user(ID: {})", userId);
     }
 
     @Override
@@ -69,8 +74,10 @@ public class UserAccountServiceImpl implements UserAccountService {
             throw new IllegalArgumentException("File is empty");
         }
         Path uploadPath = Paths.get(subDir);
+        log.info("Saving user avatar (ID: {}) to {}", userId, uploadPath);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
+            log.info("Created new directory: {}", uploadPath);
         }
 
         String fileName = userId + "_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
@@ -80,6 +87,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         String savedPath = filePath.toString();
         userDao.updateAvatarPath(userId, savedPath);
+        log.info("Updated user avatar (ID: {}) to {}", userId, savedPath);
     }
 
     @Override
@@ -144,6 +152,7 @@ public class UserAccountServiceImpl implements UserAccountService {
                 user.getAvatar(),
                 user.getAccountType())
         );
+
     }
 
     private User checkFieldsForNullOrEmpty(Integer id, User newUser){

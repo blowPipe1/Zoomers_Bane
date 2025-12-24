@@ -1,6 +1,7 @@
 package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import springboot.get_a_job.dao.CategoryDao;
 import springboot.get_a_job.dao.UserDao;
@@ -18,6 +19,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class VacancyServiceImpl implements VacancyService {
     private final VacancyDao vacancyDao;
     private final CategoryDao categoryDao;
@@ -28,27 +30,8 @@ public class VacancyServiceImpl implements VacancyService {
         if (vacancy == null) {
             throw new VacancyNotFoundException("Vacancy cannot be null");
         }
-        Integer categoryId = categoryDao.findIdByName(vacancy.getCategory())
-                .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + vacancy.getCategory()));
-
-        // TODO check for null & empty string etc.
-        String[] name = vacancy.getAuthor().split(" ");
-        Integer authorId = Integer.valueOf(userDao.findIdBySurname(name[1]));
-        Vacancy result = new Vacancy(
-                0,
-                vacancy.getName(),
-                vacancy.getDescription(),
-                categoryId,
-                vacancy.getSalary(),
-                vacancy.getExpFrom(),
-                vacancy.getExpTo(),
-                vacancy.getIsActive(),
-                authorId,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-                );
-
-        vacancyDao.createVacancy(result);
+        vacancyDao.createVacancy(convertIntoModel(vacancy));
+        log.info("New Vacancy with name: {} & category: {} created", vacancy.getName(), vacancy.getCategory());
     }
 
     @Override
@@ -56,35 +39,17 @@ public class VacancyServiceImpl implements VacancyService {
         if (vacancy == null) {
             throw new VacancyNotFoundException("Vacancy cannot be null");
         }
-        Integer categoryId = categoryDao.findIdByName(vacancy.getCategory())
-                .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + vacancy.getCategory()));
-
-        String[] name = vacancy.getAuthor().split(" ");
-        Integer authorId = Integer.valueOf(userDao.findIdBySurname(name[1]));
-
-        Vacancy result = new Vacancy(
-                0,
-                vacancy.getName(),
-                vacancy.getDescription(),
-                categoryId,
-                vacancy.getSalary(),
-                vacancy.getExpFrom(),
-                vacancy.getExpTo(),
-                vacancy.getIsActive(),
-                authorId,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
-        vacancyDao.updateVacancy(id, result);
+        vacancyDao.updateVacancy(id, convertIntoModel(vacancy));
+        log.info("Vacancy(ID: {}) was updated", id);
     }
 
     @Override
     public void deleteVacancy(Integer id) {
         if (vacancyDao.findVacancyById(id) == null) {
             throw new VacancyNotFoundException("Vacancy cannot be null");
-        } else {
-            vacancyDao.deleteVacancy(id);
         }
+        vacancyDao.deleteVacancy(id);
+        log.info("Vacancy(ID: {}) was deleted", id);
     }
 
     @Override
@@ -129,7 +94,6 @@ public class VacancyServiceImpl implements VacancyService {
         if (vacancies == null || vacancies.isEmpty()) {
             throw new VacancyNotFoundException("Vacancies not found");
         }
-
         List<VacancyDto>vacancyDtos = new ArrayList<>();
         for (Vacancy vacancy : vacancies){
             vacancyDtos.add(new VacancyDto(
@@ -143,6 +107,7 @@ public class VacancyServiceImpl implements VacancyService {
                             userDao.findNameById(vacancy.getAuthorId())
                     )
             );
+            log.info("Mapping (ID: {})Vacancy into Vacancy Model", vacancy.getId());
         }
         return Optional.of(vacancyDtos);
     }
@@ -151,6 +116,7 @@ public class VacancyServiceImpl implements VacancyService {
         if (vacancy == null) {
             throw new VacancyNotFoundException("Vacancy not found");
         }
+        log.info("Mapping (ID: {})Vacancy created by (creator ID: {}) into Vacancy DTO", vacancy.getId(), vacancy.getAuthorId());
         return Optional.of(new VacancyDto(
                 vacancy.getName(),
                 vacancy.getDescription(),
@@ -163,6 +129,29 @@ public class VacancyServiceImpl implements VacancyService {
         ));
     }
 
+    private Vacancy convertIntoModel(VacancyDto vacancy) {
+        Integer categoryId = categoryDao.findIdByName(vacancy.getCategory())
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + vacancy.getCategory()));
+
+        // TODO check for null & empty string etc.
+        String[] name = vacancy.getAuthor().split(" ");
+        Integer authorId = Integer.valueOf(userDao.findIdBySurname(name[1]));
+        log.info("Mapping Vacancy created by {} {} into Vacancy Model", name[0], name[1]);
+        return new Vacancy(
+                0,
+                vacancy.getName(),
+                vacancy.getDescription(),
+                categoryId,
+                vacancy.getSalary(),
+                vacancy.getExpFrom(),
+                vacancy.getExpTo(),
+                vacancy.getIsActive(),
+                authorId,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+    }
 
 }
 

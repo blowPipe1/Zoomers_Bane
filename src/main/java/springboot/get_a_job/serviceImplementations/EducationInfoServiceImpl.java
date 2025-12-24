@@ -1,10 +1,11 @@
 package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import springboot.get_a_job.dao.*;
 import springboot.get_a_job.dto.EducationDto;
-import springboot.get_a_job.exceptions.ResourceNotFoundException;
+import springboot.get_a_job.exceptions.EducationInfoNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.services.EducationInfoService;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EducationInfoServiceImpl implements EducationInfoService {
     private final ResumeDao resumeDao;
     private final EducationInfoDao educationDao;
@@ -24,6 +26,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
         }
         for (EducationDto edu : educationDtos){
             educationDao.addEducationInfo(edu, resumeId);
+            log.info("Added education with id: {} for Resume(ID: {})", edu.getId(), resumeId);
         }
 
     }
@@ -31,8 +34,9 @@ public class EducationInfoServiceImpl implements EducationInfoService {
     @Override
     public void updateResumesEducationInfo(Integer educationId, EducationDto educationDto) {
         if (educationDao.findInfoById(educationId) == null) {
-            throw new ResourceNotFoundException("Education info with id: " + educationId + " not found");
+            throw new EducationInfoNotFoundException("Education info with id: " + educationId + " not found");
         }
         educationDao.updateEducationInfo(educationDto, educationId);
+        log.info("Updated Education Info(ID: {})", educationId);
     }
 }
