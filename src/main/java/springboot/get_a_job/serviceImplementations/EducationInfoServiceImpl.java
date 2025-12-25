@@ -10,6 +10,7 @@ import springboot.get_a_job.exceptions.EducationInfoNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.services.EducationInfoService;
 
+import java.security.PublicKey;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
         if (educationDtos != null  || !educationDtos.isEmpty()) {
             for (EducationDto edu : educationDtos){
                 educationDao.addEducationInfo(edu, resumeId);
-                log.info("New Education Info for Resume(ID: {}) added", resumeId);
+                log.info("Server Successfully created new Education Info for Resume(ID: {}) added", resumeId);
             }
         }
 
@@ -38,12 +39,27 @@ public class EducationInfoServiceImpl implements EducationInfoService {
     @Override
     public void updateResumesEducationInfo(List<EducationDto> educationDto) {
         if (educationDto == null || educationDto.isEmpty()) {
-            throw new EducationInfoNotFoundException("Education info list id null or empty");
+            log.debug("No education dto to update");
+            return;
         }
         for (EducationDto edu : educationDto){
             educationDao.updateEducationInfo(checkedEducation(edu), edu.getId());
-            log.info("Updated Education Info(ID: {})", edu.getId());
+            log.info("Server Successfully updated Education Info(ID: {})", edu.getId());
         }
+    }
+
+    @Override
+    public void deleteEducationInfo(Integer resumeId) {
+        if (educationDao.getResumesEducationInfo(resumeId) == null){
+            throw new EducationInfoNotFoundException("Education info for Resume " + resumeId + " not found");
+        }
+        educationDao.deleteEducationInfo(resumeId);
+        log.info("Server Successfully deleted Education Info of Resume(ID: {})", resumeId);
+    }
+
+    @Override
+    public List<EducationDto> getResumesEducationInfo(Integer resumeId) {
+        return educationDao.getResumesEducationInfo(resumeId);
     }
 
     private EducationDto checkedEducation(EducationDto newEducation) {
@@ -80,5 +96,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
         }
         return result;
     }
+
+
 
 }

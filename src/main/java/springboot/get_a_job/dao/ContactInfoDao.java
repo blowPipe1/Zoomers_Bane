@@ -73,7 +73,7 @@ public class ContactInfoDao {
         jdbcTemplate.update(sql, contactInfo.getTypeId(), contactInfo.getResumeId(), contactInfo.getValue(), contactId);
     }
 
-    public ContactInfo findInfoByID(Integer id) {
+    public ContactInfo findInfoById(Integer id) {
         String sql = "select * from CONTACT_INFO where ID = ?;";
         try {
             return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(ContactInfo.class), id);
@@ -81,4 +81,5 @@ public class ContactInfoDao {
             return null;
         }
     }
+
 }

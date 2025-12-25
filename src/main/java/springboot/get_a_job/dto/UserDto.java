@@ -15,12 +15,12 @@ import springboot.get_a_job.dto.validation.OnUpdate;
 public class UserDto {
     @NotBlank(groups = OnCreate.class, message = "Name is Required")
     @NotNull(groups = OnUpdate.class, message = "Name cant be null")
-    @Size(min = 3, max = 20, message = "Name's length must be between 3 and 20 characters")
+    @Size(groups = OnCreate.class, min = 3, max = 20, message = "Name's length must be between 3 and 20 characters")
     private String name;
 
     @NotBlank(groups = OnCreate.class, message = "Surname is Required")
     @NotNull(groups = OnUpdate.class, message = "Surname cant be null")
-    @Size(min = 5, max = 25, message = "Surname's length must be between 5 and 25 characters")
+    @Size(groups = OnCreate.class, min = 5, max = 25, message = "Surname's length must be between 5 and 25 characters")
     private String surname;
 
     @NotNull(groups = OnCreate.class, message = "Age is Required")
@@ -36,12 +36,12 @@ public class UserDto {
 
     @NotBlank(groups = OnCreate.class, message = "Password is Required")
     @NotNull(groups = OnUpdate.class, message = "Password cant be null")
-    @Size(min = 7, max = 30, message = "Password's length must be between 7 and 30 characters")
+    @Size(groups = OnCreate.class, min = 7, max = 30, message = "Password's length must be between 7 and 30 characters")
     private String password;
 
     @NotBlank(groups = OnCreate.class, message = "Phone Number is Required")
     @NotNull(groups = OnUpdate.class, message = "Phone Number cant be null")
-    @Size(min = 10, max = 15, message = "Phone number length is invalid")
+    @Size(groups = OnCreate.class, min = 10, max = 15, message = "Phone number length is invalid")
     private String phoneNumber;
 
     @NotNull(groups = OnCreate.class, message = "Avatar must al least be empty")
@@ -49,6 +49,6 @@ public class UserDto {
 
     @NotBlank(groups = OnCreate.class, message = "Account type is Required (Applicant / Employer)")
     @NotNull(groups = OnUpdate.class, message = "Account type cant be null")
-    @Size(min = 8, max = 9, message = "Format Should look like this: 'applicant' / 'employer'")
+    @Size(groups = OnCreate.class, min = 8, max = 9, message = "Format Should look like this: 'applicant' / 'employer'")
     private String accountType;
 }

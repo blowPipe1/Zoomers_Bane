@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import springboot.get_a_job.dao.*;
 import springboot.get_a_job.dto.ContactInfoDto;
 import springboot.get_a_job.exceptions.ContactInfoNotFoundException;
+import springboot.get_a_job.exceptions.EducationInfoNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.models.ContactInfo;
 import springboot.get_a_job.services.ContactInfoService;
@@ -28,26 +29,41 @@ public class ContactInfoServiceImpl implements ContactInfoService {
             contactInfoDao.addContactInfo(new ContactInfo(
                     0, contactInfoDao.findIdByName(contact.getType()), resumeId, contact.getValue()
             ), resumeId);
-            log.info("Added contact info({} {}) for Resume(ID: {})", contact.getType(), contact.getValue(), resumeId);
+            log.info("Server Successfully added contact info({} {}) for Resume(ID: {})", contact.getType(), contact.getValue(), resumeId);
         }
     }
 
     @Override
     public void updateContactInfo(List<ContactInfoDto> contactInfo){
         if (contactInfo == null || contactInfo.isEmpty()) {
-            throw new ContactInfoNotFoundException("Contact info  not found");
+            log.debug("No Contact info dto to update");
+            return;
         }
         for (ContactInfoDto contact : contactInfo){
             if (contactInfoDao.findIdByName(contact.getType()) == null ) {
                 throw new ContactInfoNotFoundException("Contact info with type: " + contact.getType() + " not found");
             }
             contactInfoDao.updateContactInfo(convert(checkedContact(contact)), contact.getId());
-            log.info("Updated contact info(ID: {})",  contact.getId());
+            log.info("Server Successfully updated contact info(ID: {})",  contact.getId());
         }
     }
 
+    @Override
+    public  void deleteContactInfo(Integer resumeId) {
+        if (contactInfoDao.getResumesContacts(resumeId) == null){
+            throw new EducationInfoNotFoundException("Contact info " + resumeId + " not found");
+        }
+        contactInfoDao.deleteContactInfo(resumeId);
+        log.info("Server Successfully deleted Contact Info of Resume(ID: {})", resumeId);
+    }
+
+    @Override
+    public List<ContactInfoDto>getResumesContacts(Integer resumeId){
+        return contactInfoDao.getResumesContacts(resumeId);
+    }
+
     private ContactInfoDto checkedContact(ContactInfoDto newContactInfo) {
-        ContactInfo old = contactInfoDao.findInfoByID(newContactInfo.getId());
+        ContactInfo old = contactInfoDao.findInfoById(newContactInfo.getId());
 
         if (old == null) {
             throw new ContactInfoNotFoundException("Contact info with id: " + newContactInfo.getId() + " not found");

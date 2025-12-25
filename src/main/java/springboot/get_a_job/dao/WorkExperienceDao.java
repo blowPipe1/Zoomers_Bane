@@ -38,6 +38,7 @@ public class WorkExperienceDao {
         }
     }
 
+
     public void addWorkExperience(WorkExperienceDto workExp, Integer resumeId) {
         String sql = "insert into WORK_EXPERIENCE_INFO(resume_id, years, company_name, position, responsibilities)" +
                 "values (?, ?, ?, ?, ?);";

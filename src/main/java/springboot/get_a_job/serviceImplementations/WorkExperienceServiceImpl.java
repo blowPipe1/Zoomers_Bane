@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import springboot.get_a_job.dao.*;
+import springboot.get_a_job.dto.EducationDto;
 import springboot.get_a_job.dto.WorkExperienceDto;
+import springboot.get_a_job.exceptions.EducationInfoNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.exceptions.WorkExpNotFoundException;
 import springboot.get_a_job.services.WorkExperienceService;
@@ -25,20 +27,34 @@ public class WorkExperienceServiceImpl implements WorkExperienceService {
         }
         for (WorkExperienceDto workExp : workExperienceDtos){
             workExperienceDao.addWorkExperience(workExp, resumeId);
-            log.info("Added work experience(ID {}) for Resume(ID: {})", workExp.getId(), resumeId);
+            log.info("Server Successfully added Work Experience(ID {}) for Resume(ID: {})", workExp.getId(), resumeId);
         }
     }
 
     @Override
     public void updateResumesWorkExperienceInfo(List<WorkExperienceDto> workExperienceDto) {
         if (workExperienceDto == null || workExperienceDto.isEmpty()) {
+            log.debug("No Work Experience dto to update");
             return;
         }
         for (WorkExperienceDto workExp : workExperienceDto) {
             workExperienceDao.updateWorkExperience(checkedWorkExp(workExp), workExp.getId());
-            log.info("Updated Work Experience(ID: {})", workExp.getId());
+            log.info("Server Successfully updated Work Experience(ID: {})", workExp.getId());
         }
+    }
 
+    @Override
+    public void deleteWorkExperienceInfo(Integer resumeId) {
+        if (workExperienceDao.getResumesWorkExperience(resumeId) == null){
+            throw new WorkExpNotFoundException("Work Experience " + resumeId + " not found");
+        }
+        workExperienceDao.deleteWorkExperienceInfo(resumeId);
+        log.info("Server Successfully deleted Work Experience of Resume(ID: {})", resumeId);
+    }
+
+    @Override
+    public List<WorkExperienceDto> getResumesWorkExperience(Integer resumeId) {
+        return workExperienceDao.getResumesWorkExperience(resumeId);
     }
 
     private WorkExperienceDto checkedWorkExp(WorkExperienceDto newWorkExp) {

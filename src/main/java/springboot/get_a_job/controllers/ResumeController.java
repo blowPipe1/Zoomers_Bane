@@ -60,67 +60,6 @@ public class ResumeController {
                 .body("Resume successfully deleted");
     }
 
-//    @PostMapping("add/education/{resumeId}")
-//    public ResponseEntity<String> addEducation(@Validated(OnCreate.class) @PathVariable Integer resumeId, @RequestBody List<EducationDto> educationDto) {
-//        log.info("Received request to add education for Resume(ID): {}", resumeId);
-//        educationInfoService.addEducationInfo(resumeId, educationDto);
-//        log.debug("Added education for Resume(ID): {}", resumeId);
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body("Education info for Resume " + resumeId + " successfully added");
-//    }
-//
-//    @PutMapping("update/education/{educationId}")
-//    public ResponseEntity<String> updateEducation(@Validated(OnUpdate.class) @PathVariable Integer educationId, @RequestBody EducationDto educationDto) {
-//        log.info("Received request to update Education(ID): {}", educationId);
-//        educationInfoService.updateResumesEducationInfo(educationId, educationDto);
-//        log.debug("Updated Education(ID): {}", educationId);
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body("Education info successfully updated");
-//    }
-//
-//    @PostMapping("add/work_exp/{resumeId}")
-//    public ResponseEntity<String> addWorkExperience(@Validated(OnCreate.class) @PathVariable Integer resumeId, @RequestBody List<WorkExperienceDto> workExperienceDtos) {
-//        log.info("Received request to add Work experience for Resume(ID): {}", resumeId);
-//        workExperienceService.addWorkExperienceInfo(resumeId, workExperienceDtos);
-//        log.debug("Added work experience for Resume(ID): {}", resumeId);
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body("Work Experience info for Resume " + resumeId + " successfully added");
-//    }
-//
-//    @PutMapping("update/work_exp/{workExpId}")
-//    public ResponseEntity<String> updateWorkExperience(@Validated(OnUpdate.class) @PathVariable Integer workExpId, @RequestBody WorkExperienceDto workExperienceDto) {
-//        log.info("Received request to update Work Experience(ID): {}", workExpId);
-//        workExperienceService.updateResumesWorkExperienceInfo(workExpId, workExperienceDto);
-//        log.debug("Updated Work Experience(ID): {}", workExpId);
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body("Work Experience info successfully updated");
-//    }
-//
-//    @PostMapping("add/contact_info/{resumeId}")
-//    public ResponseEntity<String> addContactInfo(@Validated(OnCreate.class) @PathVariable Integer resumeId, @RequestBody List<ContactInfoDto> contactInfoDtos) {
-//        log.info("Received request to add Contact Info for Resume(ID): {}", resumeId);
-//        contactInfoService.addContactInfo(resumeId, contactInfoDtos);
-//        log.debug("Added Contact Info for Resume(ID): {}", resumeId);
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body("Contact info for Resume " + resumeId + " successfully added");
-//    }
-//
-//    @PutMapping("update/contact_info/{contactInfoId}")
-//    public ResponseEntity<String> updateContactInfo(@Validated(OnUpdate.class) @PathVariable Integer contactInfoId, @RequestBody ContactInfoDto contactInfoDto) {
-//        log.info("Received request to update Contact Info(ID): {}", contactInfoId);
-//        contactInfoService.updateContactInfo(contactInfoId, contactInfoDto);
-//        log.debug("Updated Contact Info(ID): {}", contactInfoId);
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body("Contact info successfully updated");
-//    }
-
-
     @GetMapping("/all")
     public ResponseEntity<List<ResumeDto>> getAllActiveResumes() {
         log.info("Received request to get all Resumes");
@@ -168,5 +107,66 @@ public class ResumeController {
         return resumeService.findResumeByCreator(name)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    //figuring out
+    @PostMapping("add/education/{resumeId}")
+    public ResponseEntity<String> addEducation(@Validated(OnCreate.class) @PathVariable Integer resumeId, @RequestBody List<EducationDto> educationDto) {
+        log.info("Received request to add education for Resume(ID): {}", resumeId);
+        educationInfoService.addEducationInfo(resumeId, educationDto);
+        log.debug("Added education for Resume(ID): {}", resumeId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Education info for Resume " + resumeId + " successfully added");
+    }
+
+    @PutMapping("update/education/{educationId}")
+    public ResponseEntity<String> updateEducation(@Validated(OnUpdate.class) @PathVariable Integer educationId, @RequestBody List<EducationDto> educationDto) {
+        log.info("Received request to update Education(ID): {}", educationId);
+        educationInfoService.updateResumesEducationInfo(educationDto);
+        log.debug("Updated Education(ID): {}", educationId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Education info successfully updated");
+    }
+
+    @PostMapping("add/work_exp/{resumeId}")
+    public ResponseEntity<String> addWorkExperience(@Validated(OnCreate.class) @PathVariable Integer resumeId, @RequestBody List<WorkExperienceDto> workExperienceDtos) {
+        log.info("Received request to add Work experience for Resume(ID): {}", resumeId);
+        workExperienceService.addWorkExperienceInfo(resumeId, workExperienceDtos);
+        log.debug("Added work experience for Resume(ID): {}", resumeId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Work Experience info for Resume " + resumeId + " successfully added");
+    }
+
+    @PutMapping("update/work_exp/{workExpId}")
+    public ResponseEntity<String> updateWorkExperience(@Validated(OnUpdate.class) @PathVariable Integer workExpId, @RequestBody List<WorkExperienceDto> workExperienceDto) {
+        log.info("Received request to update Work Experience(ID): {}", workExpId);
+        workExperienceService.updateResumesWorkExperienceInfo(workExperienceDto);
+        log.debug("Updated Work Experience(ID): {}", workExpId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Work Experience info successfully updated");
+    }
+
+    @PostMapping("add/contact_info/{resumeId}")
+    public ResponseEntity<String> addContactInfo(@Validated(OnCreate.class) @PathVariable Integer resumeId, @RequestBody List<ContactInfoDto> contactInfoDtos) {
+        log.info("Received request to add Contact Info for Resume(ID): {}", resumeId);
+        contactInfoService.addContactInfo(resumeId, contactInfoDtos);
+        log.debug("Added Contact Info for Resume(ID): {}", resumeId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Contact info for Resume " + resumeId + " successfully added");
+    }
+
+    @PutMapping("update/contact_info/{contactInfoId}")
+    public ResponseEntity<String> updateContactInfo(@Validated(OnUpdate.class) @PathVariable Integer contactInfoId, @RequestBody List<ContactInfoDto> contactInfoDtos) {
+        log.info("Received request to update Contact Info(ID): {}", contactInfoId);
+        contactInfoService.updateContactInfo(contactInfoDtos);
+        log.debug("Updated Contact Info(ID): {}", contactInfoId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Contact info successfully updated");
     }
 }

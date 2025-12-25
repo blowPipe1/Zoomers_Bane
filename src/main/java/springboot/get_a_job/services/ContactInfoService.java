@@ -7,4 +7,6 @@ import java.util.List;
 public interface ContactInfoService {
     void addContactInfo(Integer resumeId, List<ContactInfoDto> contacts);
     void updateContactInfo(List<ContactInfoDto> contactInfo);
+    void deleteContactInfo(Integer contactInfoId);
+    List<ContactInfoDto>getResumesContacts(Integer resumeId);
 }

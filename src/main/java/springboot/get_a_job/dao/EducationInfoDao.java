@@ -38,6 +38,7 @@ public class EducationInfoDao {
         }
     }
 
+
     public void addEducationInfo(EducationDto edu, Integer resumeId) {
         String sql = "insert into EDUCATION_INFO(resume_id, institution, program, start_date, end_date, degree)" +
                 "values (?, ?, ?, ?, ?, ?);";

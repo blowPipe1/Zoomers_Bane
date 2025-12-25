@@ -33,7 +33,7 @@ public class VacancyServiceImpl implements VacancyService {
             throw new VacancyNotFoundException("Vacancy cannot be null");
         }
         vacancyDao.createVacancy(convertIntoModel(vacancy));
-        log.info("New Vacancy with name: {} & category: {} created", vacancy.getName(), vacancy.getCategory());
+        log.info("Server Successfully created New Vacancy with name: {} & category: {}", vacancy.getName(), vacancy.getCategory());
     }
 
     @Override
@@ -43,7 +43,7 @@ public class VacancyServiceImpl implements VacancyService {
         }
         VacancyDto checkedVacancy = checkFieldsForNullOrEmpty(id, vacancy);
         vacancyDao.updateVacancy(id, convertIntoModel(checkedVacancy));
-        log.info("Vacancy(ID: {}) was updated", id);
+        log.info("Server Successfully updated Vacancy(ID: {})", id);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class VacancyServiceImpl implements VacancyService {
             throw new VacancyNotFoundException("Vacancy cannot be null");
         }
         vacancyDao.deleteVacancy(id);
-        log.info("Vacancy(ID: {}) was deleted", id);
+        log.info("Server Successfully deleted Vacancy(ID: {})", id);
     }
 
     @Override

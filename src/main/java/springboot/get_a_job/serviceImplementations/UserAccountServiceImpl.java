@@ -37,7 +37,7 @@ public class UserAccountServiceImpl implements UserAccountService {
             throw new UserNotFoundException("Error registering user");
         }
         userDao.registerUser(convertIntoModel(userDto));
-        log.info("Registered user: {} {} (Email: {})", userDto.getName(), userDto.getSurname(), userDto.getEmail());
+        log.info("Server Successfully registered user: {} {} (Email: {})", userDto.getName(), userDto.getSurname(), userDto.getEmail());
     }
 
     @Override
@@ -47,7 +47,7 @@ public class UserAccountServiceImpl implements UserAccountService {
             throw new UserNotFoundException("User not found");
         }
         userDao.updateUser(id, checkFieldsForNullOrEmpty(id, userDto));
-        log.info("Updating user(ID {}): {} {} (Email: {})", id, userDto.getName(), userDto.getSurname(), userDto.getEmail());
+        log.info("Server Successfully updated user(ID {}): {} {} (Email: {})", id, userDto.getName(), userDto.getSurname(), userDto.getEmail());
     }
 
     @Override
@@ -65,7 +65,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         }
         //TODO add logic to check for necessary fields
         userDao.deleteUserHard(userId);
-        log.info("Deleted user(ID: {})", userId);
+        log.info("Server Successfully deleted user(ID: {})", userId);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         log.info("Saving user avatar (ID: {}) to {}", userId, uploadPath);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
-            log.info("Created new directory: {}", uploadPath);
+            log.info("Server Successfully created new directory: {}", uploadPath);
         }
 
         String fileName = userId + "_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
@@ -87,7 +87,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         String savedPath = filePath.toString();
         userDao.updateAvatarPath(userId, savedPath);
-        log.info("Updated user avatar (ID: {}) to {}", userId, savedPath);
+        log.info("Server Successfully updated user avatar (ID: {}) to {}", userId, savedPath);
     }
 
     @Override

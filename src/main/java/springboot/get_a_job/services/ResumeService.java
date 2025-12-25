@@ -1,10 +1,7 @@
 package springboot.get_a_job.services;
 
-import springboot.get_a_job.dto.ContactInfoDto;
-import springboot.get_a_job.dto.EducationDto;
 import springboot.get_a_job.dto.ResumeDto;
-import springboot.get_a_job.dto.WorkExperienceDto;
-import springboot.get_a_job.models.Resume;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -19,5 +16,6 @@ public interface ResumeService {
     Optional<List<ResumeDto>> findResumeByCreator(Integer applicant_id);
     Optional<List<ResumeDto>> findResumeByCreator(String creatorName);
     void createResume(ResumeDto resumeDto);
-
+    String findResumeNameById(Integer id);
+    Integer findResumeIdByName(String name);
 }
