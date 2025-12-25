@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import springboot.get_a_job.dao.CategoryDao;
 import springboot.get_a_job.dao.UserDao;
 import springboot.get_a_job.dao.VacancyDao;
+import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.VacancyDto;
 import springboot.get_a_job.exceptions.CategoryNotFoundException;
+import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.exceptions.VacancyNotFoundException;
 import springboot.get_a_job.models.Vacancy;
 import springboot.get_a_job.services.VacancyService;
@@ -39,7 +41,8 @@ public class VacancyServiceImpl implements VacancyService {
         if (vacancy == null) {
             throw new VacancyNotFoundException("Vacancy cannot be null");
         }
-        vacancyDao.updateVacancy(id, convertIntoModel(vacancy));
+        VacancyDto checkedVacancy = checkFieldsForNullOrEmpty(id, vacancy);
+        vacancyDao.updateVacancy(id, convertIntoModel(checkedVacancy));
         log.info("Vacancy(ID: {}) was updated", id);
     }
 
@@ -130,6 +133,7 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     private Vacancy convertIntoModel(VacancyDto vacancy) {
+        log.info("Fetching category's id by category name {}", vacancy.getCategory());
         Integer categoryId = categoryDao.findIdByName(vacancy.getCategory())
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + vacancy.getCategory()));
 
@@ -151,6 +155,54 @@ public class VacancyServiceImpl implements VacancyService {
                 LocalDateTime.now()
         );
 
+    }
+
+    private VacancyDto checkFieldsForNullOrEmpty(Integer id, VacancyDto newVacancy){
+        Optional<VacancyDto> oldVacancy = convert(vacancyDao.findVacancyById(id));
+        if (oldVacancy.isEmpty()){
+            throw new VacancyNotFoundException("Vacancy with id: " + id + " not found");
+        }
+        VacancyDto result = new VacancyDto();
+
+        if (newVacancy.getName() == null || newVacancy.getName().isEmpty()) {
+            result.setName(oldVacancy.get().getName());
+        } else {
+            result.setName(newVacancy.getName());
+        }
+        if (newVacancy.getDescription() == null || newVacancy.getDescription().isEmpty()) {
+            result.setDescription(oldVacancy.get().getDescription());
+        } else {
+            result.setDescription(newVacancy.getDescription());
+        }
+        if (newVacancy.getCategory() == null || newVacancy.getCategory().isEmpty()) {
+            result.setCategory(oldVacancy.get().getCategory());
+        } else {
+            result.setCategory(newVacancy.getCategory());
+        }
+        if (newVacancy.getSalary() == null || newVacancy.getSalary() == 0){
+            result.setSalary(oldVacancy.get().getSalary());
+        } else {
+            result.setSalary(newVacancy.getSalary());
+        }
+        if (newVacancy.getExpFrom() == null || newVacancy.getExpFrom() == 0){
+            result.setExpFrom(oldVacancy.get().getExpFrom());
+        } else {
+            result.setExpFrom(newVacancy.getExpFrom());
+        }
+        if (newVacancy.getExpTo() == null || newVacancy.getExpTo() == 0){
+            result.setExpTo(oldVacancy.get().getExpTo());
+        } else {
+            result.setExpTo(newVacancy.getExpTo());
+        }
+        if (newVacancy.getAuthor() == null || newVacancy.getAuthor().isEmpty()){
+            result.setAuthor(oldVacancy.get().getAuthor());
+        }
+        if (newVacancy.getIsActive() == null){
+            result.setIsActive(oldVacancy.get().getIsActive());
+        } else {
+            result.setIsActive(newVacancy.getIsActive());
+        }
+        return result;
     }
 
 }
