@@ -5,15 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import springboot.get_a_job.dto.validation.OnCreate;
+import springboot.get_a_job.dto.validation.OnUpdate;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
-    private interface OnCreate{}
-    private interface OnUpdate{}
-
     @NotBlank(groups = OnCreate.class, message = "Name is Required")
     @NotNull(groups = OnUpdate.class, message = "Name cant be null")
     @Size(min = 3, max = 20, message = "Name's length must be between 3 and 20 characters")

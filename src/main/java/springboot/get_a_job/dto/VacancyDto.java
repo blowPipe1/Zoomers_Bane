@@ -5,18 +5,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import springboot.get_a_job.dto.validation.OnCreate;
+import springboot.get_a_job.dto.validation.OnUpdate;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class VacancyDto {
-    private interface OnCreate{}
-    private interface OnUpdate{}
-
     @NotBlank(groups = OnCreate.class, message = "Vacancy's title is Required")
     @NotNull(groups = OnUpdate.class, message = "Vacancy's title cant be null")
-    @Size(min = 3, max = 20, message = "Vacancy's title's length must be between 3 and 20 characters")
+    @Size(min = 3, max = 30, message = "Vacancy's title's length must be between 3 and 30 characters")
     private String name;
 
     @NotNull(message = "Vacancy's description can be empty bu can't be null")

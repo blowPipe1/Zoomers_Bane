@@ -54,6 +54,15 @@ public class ContactInfoDao {
         }
     }
 
+    public String findNameById(Integer id) {
+        String sql = "SELECT type FROM CONTACT_TYPES WHERE id ilike ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, String.class, id);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
     public void deleteContactInfo(Integer resumeId) {
         String sql = "delete from CONTACT_INFO where resume_id = ?;";
         jdbcTemplate.update(sql, resumeId);

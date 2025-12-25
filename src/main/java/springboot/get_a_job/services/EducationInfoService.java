@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface EducationInfoService {
     void addEducationInfo(Integer resumeId, List<EducationDto> educationDtos);
-    void updateResumesEducationInfo(Integer educationID, EducationDto educationDto);
+    void updateResumesEducationInfo(List<EducationDto> educationDto);
 }

@@ -122,4 +122,22 @@ public class ResumeDao {
         jdbcTemplate.update(sql, resumeId);
     }
 
+    public String findResumeNameById(Integer id) {
+        String sql = "SELECT name FROM RESUMES WHERE id ilike ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, String.class, id);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    public Integer findResumeIdByName(String name) {
+        String sql = "SELECT id FROM RESUMES WHERE NAME ilike ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, Integer.class, name);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
 }

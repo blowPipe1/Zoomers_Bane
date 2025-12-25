@@ -33,19 +33,54 @@ public class ContactInfoServiceImpl implements ContactInfoService {
     }
 
     @Override
-    public void updateContactInfo(Integer contactId, ContactInfoDto contactInfo){
-        if (contactInfoDao.findInfoByID(contactId) == null) {
-            throw new ContactInfoNotFoundException("Contact info with id: " + contactId + " not found");
+    public void updateContactInfo(List<ContactInfoDto> contactInfo){
+        if (contactInfo == null || contactInfo.isEmpty()) {
+            throw new ContactInfoNotFoundException("Contact info  not found");
         }
-        if (contactInfoDao.findIdByName(contactInfo.getType()) == null ) {
-            throw new ContactInfoNotFoundException("Contact info with type: " + contactInfo.getType() + " not found");
+        for (ContactInfoDto contact : contactInfo){
+            if (contactInfoDao.findIdByName(contact.getType()) == null ) {
+                throw new ContactInfoNotFoundException("Contact info with type: " + contact.getType() + " not found");
+            }
+            contactInfoDao.updateContactInfo(convert(checkedContact(contact)), contact.getId());
+            log.info("Updated contact info(ID: {})",  contact.getId());
         }
-        contactInfoDao.updateContactInfo(new ContactInfo(
-                0,
+    }
+
+    private ContactInfoDto checkedContact(ContactInfoDto newContactInfo) {
+        ContactInfo old = contactInfoDao.findInfoByID(newContactInfo.getId());
+
+        if (old == null) {
+            throw new ContactInfoNotFoundException("Contact info with id: " + newContactInfo.getId() + " not found");
+        }
+
+        ContactInfoDto result = new ContactInfoDto();
+        result.setId(0);
+
+        result.setType(isInvalid(newContactInfo.getType())
+                ? contactInfoDao.findNameById(old.getTypeId())
+                : newContactInfo.getType());
+
+        result.setResume(isInvalid(newContactInfo.getResume())
+                ? resumeDao.findResumeNameById(old.getResumeId())
+                : newContactInfo.getResume());
+
+        result.setValue(isInvalid(newContactInfo.getValue())
+                ? old.getValue()
+                : newContactInfo.getValue());
+
+        return result;
+    }
+
+    private boolean isInvalid(String str) {
+        return str == null || str.isEmpty();
+    }
+
+    private ContactInfo convert(ContactInfoDto contactInfo){
+        return new ContactInfo(
+                contactInfo.getId(),
                 contactInfoDao.findIdByName(contactInfo.getType()),
-                contactInfoDao.findInfoByID(contactId).getResumeId(),
+                resumeDao.findResumeIdByName(contactInfo.getResume()),
                 contactInfo.getValue()
-        ), contactId);
-        log.info("Updated contact info(ID: {})",  contactId);
+        );
     }
 }

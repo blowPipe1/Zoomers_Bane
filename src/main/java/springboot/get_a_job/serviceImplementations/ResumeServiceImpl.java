@@ -31,6 +31,9 @@ public class ResumeServiceImpl implements ResumeService {
     private final WorkExperienceDao workExperienceDao;
     private final UserDao userDao;
     private final ContactInfoDao contactInfoDao;
+    private final EducationInfoServiceImpl educationInfoService;
+    private final WorkExperienceServiceImpl workExperienceService;
+    private final ContactInfoServiceImpl contactInfoService;
 
     @Override
     public void createResume(ResumeDto resumeDto) {
@@ -42,26 +45,15 @@ public class ResumeServiceImpl implements ResumeService {
         log.info("Resume with ID {} created", resumeId);
 
         if (resumeDto.getEducation() != null  || !resumeDto.getEducation().isEmpty()) {
-            for (EducationDto edu : resumeDto.getEducation()){
-                educationDao.addEducationInfo(edu, resumeId);
-                log.info("New Education Info for Resume(ID: {}) added", resumeId);
-            }
+            educationInfoService.addEducationInfo(resumeId, resumeDto.getEducation());
         }
 
         if (resumeDto.getWorkExperience() != null || !resumeDto.getWorkExperience().isEmpty()) {
-            for (WorkExperienceDto workExp : resumeDto.getWorkExperience()) {
-                workExperienceDao.addWorkExperience(workExp, resumeId);
-                log.info("New Work Experience for Resume(ID: {}) added" , resumeId);
-            }
+            workExperienceService.addWorkExperienceInfo(resumeId, resumeDto.getWorkExperience());
         }
 
         if (resumeDto.getContactInfo() != null || !resumeDto.getContactInfo().isEmpty()) {
-            for (ContactInfoDto contact : resumeDto.getContactInfo()) {
-                contactInfoDao.addContactInfo(new ContactInfo(
-                        0, contactInfoDao.findIdByName(contact.getType()), resumeId, contact.getValue()
-                ), resumeId);
-                log.info("Contact Info(Type: {}, Value: {}) for Resume({}) added", contact.getType(), contact.getValue(), resumeId);
-            }
+            contactInfoService.addContactInfo(resumeId, resumeDto.getContactInfo());
         }
     }
 
@@ -73,49 +65,25 @@ public class ResumeServiceImpl implements ResumeService {
 
         ResumeDto checkedResume = checkFieldsForNullOrEmpty(id, resumeDto);
 
-        Integer resumeId = resumeDao.updateResume(id, convertIntoModel(resumeDto));
+        Integer resumeId = resumeDao.updateResume(id, convertIntoModel(checkedResume));
         log.info("Updating resume({})", resumeId);
 
         if (checkedResume.getEducation() != null) {
-            for (EducationDto edu : resumeDto.getEducation()){
-                educationDao.updateEducationInfo(edu, edu.getId());
-                log.info("Education Info(ID: {}) for Resume(ID: {}) updated", edu.getId(), resumeId);
-            }
+            educationInfoService.updateResumesEducationInfo(checkedResume.getEducation());
         } else {
-            for (EducationDto edu : resumeDto.getEducation()){
-                educationDao.addEducationInfo(edu, resumeId);
-                log.info("New Education Info for Resume(ID: {}) added(no info was found to update)", resumeId);
-            }
-
+            educationInfoService.addEducationInfo(resumeId, checkedResume.getEducation());
         }
 
         if (checkedResume.getWorkExperience() != null || !checkedResume.getWorkExperience().isEmpty()) {
-            for (WorkExperienceDto workExp : resumeDto.getWorkExperience()) {
-                workExperienceDao.updateWorkExperience(workExp, workExp.getId());
-                log.info("Work Experience(ID: {}) for Resume(ID: {}) updated", workExp.getId(), resumeId);
-            }
+           workExperienceService.updateResumesWorkExperienceInfo(checkedResume.getWorkExperience());
         } else {
-            for (WorkExperienceDto workExp : resumeDto.getWorkExperience()){
-                workExperienceDao.addWorkExperience(workExp, resumeId);
-                log.info("New Work Experience for Resume(ID: {}) added(no info was found to update)", resumeId);
-            }
+            workExperienceService.addWorkExperienceInfo(resumeId, checkedResume.getWorkExperience());
         }
 
         if (checkedResume.getContactInfo() != null || !checkedResume.getContactInfo().isEmpty()) {
-            for (ContactInfoDto contact : resumeDto.getContactInfo()) {
-                contactInfoDao.updateContactInfo(
-                        new ContactInfo(
-                                0, contactInfoDao.findIdByName(contact.getType()), resumeId, contact.getValue()
-                        ), contact.getId());
-                log.info("Contact Info(Type: {}, Value: {}) for Resume({}) updated", contact.getType(), contact.getValue(), resumeId);
-            }
+            contactInfoService.updateContactInfo(checkedResume.getContactInfo());
         } else {
-            for (ContactInfoDto contact : resumeDto.getContactInfo()){
-                contactInfoDao.addContactInfo(new ContactInfo(
-                        0, contactInfoDao.findIdByName(contact.getType()), resumeId, contact.getValue()
-                ), resumeId);
-                log.info("New Contact Info(Type: {}, Value: {}) for Resume({}) added(no info for update was found)", contact.getType(), contact.getValue(), resumeId);
-            }
+            contactInfoService.addContactInfo(resumeId, checkedResume.getContactInfo());
         }
     }
 

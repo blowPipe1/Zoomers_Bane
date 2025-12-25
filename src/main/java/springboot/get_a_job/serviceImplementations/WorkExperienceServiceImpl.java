@@ -27,15 +27,47 @@ public class WorkExperienceServiceImpl implements WorkExperienceService {
             workExperienceDao.addWorkExperience(workExp, resumeId);
             log.info("Added work experience(ID {}) for Resume(ID: {})", workExp.getId(), resumeId);
         }
-
     }
 
     @Override
-    public void updateResumesWorkExperienceInfo(Integer workExpID, WorkExperienceDto workExperienceDto) {
-        if (workExperienceDao.findInfoById(workExpID) == null) {
-            throw new WorkExpNotFoundException("WorkExperience with id: " + workExpID + " not found");
+    public void updateResumesWorkExperienceInfo(List<WorkExperienceDto> workExperienceDto) {
+        if (workExperienceDto == null || workExperienceDto.isEmpty()) {
+            return;
         }
-        workExperienceDao.updateWorkExperience(workExperienceDto, workExpID);
-        log.info("Updated Work Experience(ID: {})", workExpID);
+        for (WorkExperienceDto workExp : workExperienceDto) {
+            workExperienceDao.updateWorkExperience(checkedWorkExp(workExp), workExp.getId());
+            log.info("Updated Work Experience(ID: {})", workExp.getId());
+        }
+
+    }
+
+    private WorkExperienceDto checkedWorkExp(WorkExperienceDto newWorkExp) {
+        if (workExperienceDao.findInfoById(newWorkExp.getId()) == null) {
+            throw new WorkExpNotFoundException("Work Experience with id: " + newWorkExp.getId() + " not found");
+        }
+        WorkExperienceDto oldWorkExp = workExperienceDao.findInfoById(newWorkExp.getId());
+        WorkExperienceDto result = new WorkExperienceDto();
+
+        if (newWorkExp.getYears() == 0){
+            result.setYears(oldWorkExp.getYears());
+        } else {
+            result.setYears(newWorkExp.getYears());
+        }
+        if (newWorkExp.getCompanyName() == null || newWorkExp.getCompanyName().isEmpty()) {
+            result.setCompanyName(oldWorkExp.getCompanyName());
+        } else {
+            result.setCompanyName(newWorkExp.getCompanyName());
+        }
+        if (newWorkExp.getPosition() == null || newWorkExp.getPosition().isEmpty()) {
+            result.setPosition(oldWorkExp.getPosition());
+        } else {
+            result.setPosition(newWorkExp.getPosition());
+        }
+        if (newWorkExp.getResponsibilities() == null || newWorkExp.getResponsibilities().isEmpty()) {
+            result.setResponsibilities(oldWorkExp.getResponsibilities());
+        } else {
+            result.setResponsibilities(newWorkExp.getResponsibilities());
+        }
+        return result;
     }
 }

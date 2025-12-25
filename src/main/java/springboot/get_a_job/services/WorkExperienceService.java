@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface WorkExperienceService {
     void addWorkExperienceInfo(Integer resumeId, List<WorkExperienceDto> workExperienceDtos);
-    void updateResumesWorkExperienceInfo(Integer workExpId, WorkExperienceDto workExperienceDto);
+    void updateResumesWorkExperienceInfo(List<WorkExperienceDto> workExperienceDto);
 }
