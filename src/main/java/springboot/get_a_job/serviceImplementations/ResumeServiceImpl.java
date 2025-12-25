@@ -142,16 +142,6 @@ public class ResumeServiceImpl implements ResumeService {
         return convertIntoDto(resumeDao.findResumeByCreator(creatorName));
     }
 
-    @Override
-    public String findResumeNameById(Integer id) {
-        return resumeDao.findResumeNameById(id);
-    }
-
-    @Override
-    public Integer findResumeIdByName(String name){
-        return resumeDao.findResumeIdByName(name);
-    }
-
     private Optional<List<ResumeDto>> convertIntoDto(List<Resume>resumes){
         if (resumes == null || resumes.isEmpty()) {
             throw new ResumeNotFoundException("Resumes not Found");
