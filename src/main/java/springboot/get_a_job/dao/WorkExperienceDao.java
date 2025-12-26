@@ -2,6 +2,7 @@
 package springboot.get_a_job.dao;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,42 +17,55 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class WorkExperienceDao {
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public List<WorkExperienceDto> getResumesWorkExperience(Integer resumeId) {
         String sql = "SELECT * FROM work_experience_info WHERE resume_id = :id;";
-        return namedParameterJdbcTemplate.query(
-                sql,
-                new MapSqlParameterSource()
-                        .addValue("id", resumeId),
-                new BeanPropertyRowMapper<>(WorkExperienceDto.class));
+        try {
+            log.debug("Fetching Work Experience for Resume(ID): {}", resumeId);
+            return namedParameterJdbcTemplate.query(
+                    sql,
+                    new MapSqlParameterSource()
+                            .addValue("id", resumeId),
+                    new BeanPropertyRowMapper<>(WorkExperienceDto.class));
+        } catch (EmptyResultDataAccessException e) {
+            log.warn("No Work Experience for Resume(ID): {} was found", resumeId);
+            return null;
+        }
     }
 
     public WorkExperienceDto findInfoById(int id) {
         String sql = "select * from WORK_EXPERIENCE_INFO where id = ?;";
         try {
+            log.debug("Fetching Work Experience (ID): {}", id);
             return jdbcTemplate.queryForObject(sql,new BeanPropertyRowMapper<>(WorkExperienceDto.class), id);
         } catch (EmptyResultDataAccessException e) {
+            log.warn("No Work Experience with ID: {} was found", id);
             return null;
         }
     }
 
+
     public void addWorkExperience(WorkExperienceDto workExp, Integer resumeId) {
         String sql = "insert into WORK_EXPERIENCE_INFO(resume_id, years, company_name, position, responsibilities)" +
                 "values (?, ?, ?, ?, ?);";
+        log.debug("Executing SQL to Save Work Experience: {}", sql);
         jdbcTemplate.update(sql, resumeId, workExp.getYears(), workExp.getCompanyName(), workExp.getPosition(), workExp.getResponsibilities());
 
     }
 
     public void updateWorkExperience(WorkExperienceDto workExp, Integer id) {
         String sql = "update WORK_EXPERIENCE_INFO set years = ?, company_name = ?, position = ?, responsibilities = ? where id = ?";
+        log.debug("Executing SQL to Update Work Experience(ID: {}): {}", id, sql);
         jdbcTemplate.update(sql, workExp.getYears(), workExp.getCompanyName(), workExp.getPosition(), workExp.getResponsibilities(), id);
     }
 
     public void deleteWorkExperienceInfo(Integer resumeId) {
         String sql = "delete from WORK_EXPERIENCE_INFO where resume_id = ?;";
+        log.debug("Executing SQL to Delete Work Experience(Resume ID: {}): {}", resumeId, sql);
         jdbcTemplate.update(sql, resumeId);
     }
 

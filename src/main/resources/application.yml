@@ -9,3 +9,14 @@ spring:
 
   liquibase:
     change-log: classpath:/db/changelog/master.yaml
+
+# Logging
+logging:
+  level:
+    root: INFO
+    springboot.get_a_job: DEBUG
+  file:
+    path: log
+
+
+

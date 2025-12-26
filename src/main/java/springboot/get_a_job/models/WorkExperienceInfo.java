@@ -10,10 +10,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WorkExperienceInfo {
-    public Integer id;
-    public Integer resumeId;
-    public Integer years;
-    public String companyName;
-    public String position;
-    public String responsibilities;
+    private Integer id;
+    private Integer resumeId;
+    private Integer years;
+    private String companyName;
+    private String position;
+    private String responsibilities;
 }
