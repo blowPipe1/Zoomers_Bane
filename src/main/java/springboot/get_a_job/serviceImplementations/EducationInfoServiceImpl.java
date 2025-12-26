@@ -37,6 +37,21 @@ public class EducationInfoServiceImpl implements EducationInfoService {
     }
 
     @Override
+    public void updateOrAddEducationInfo(Integer resumeId, List<EducationDto> educationDtos) {
+        if (educationDtos != null || !educationDtos.isEmpty()) {
+            if (getResumesEducationInfo(resumeId).isEmpty() || getResumesEducationInfo(resumeId) == null) {
+                log.debug("No Education Info Was Found to Update, Saving new record for Resume(ID): {}", resumeId);
+                addEducationInfo(resumeId, educationDtos);
+            } else {
+                updateResumesEducationInfo(educationDtos);
+            }
+        } else {
+            addEducationInfo(resumeId, educationDtos);
+        }
+    }
+
+
+    @Override
     public void updateResumesEducationInfo(List<EducationDto> educationDto) {
         if (educationDto == null || educationDto.isEmpty()) {
             log.debug("No education dto to update");

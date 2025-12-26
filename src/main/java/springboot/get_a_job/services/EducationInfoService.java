@@ -9,4 +9,5 @@ public interface EducationInfoService {
     void updateResumesEducationInfo(List<EducationDto> educationDto);
     void deleteEducationInfo(Integer educationId);
     List<EducationDto> getResumesEducationInfo(Integer resumeId);
+    void updateOrAddEducationInfo(Integer resumeId, List<EducationDto> educationDtos);
 }

@@ -9,4 +9,5 @@ public interface ContactInfoService {
     void updateContactInfo(List<ContactInfoDto> contactInfo);
     void deleteContactInfo(Integer contactInfoId);
     List<ContactInfoDto>getResumesContacts(Integer resumeId);
+    void updateOrAddContactInfo(Integer resumeId, List<ContactInfoDto> contacts);
 }

@@ -9,4 +9,5 @@ public interface WorkExperienceService {
     void updateResumesWorkExperienceInfo(List<WorkExperienceDto> workExperienceDto);
     void deleteWorkExperienceInfo(Integer workExperienceId);
     List<WorkExperienceDto> getResumesWorkExperience(Integer resumeId);
+    void updateOrAddWorkExp(Integer resumeId, List<WorkExperienceDto> workExperienceDtos);
 }

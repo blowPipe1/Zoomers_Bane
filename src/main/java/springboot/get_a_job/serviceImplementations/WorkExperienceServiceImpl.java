@@ -32,6 +32,20 @@ public class WorkExperienceServiceImpl implements WorkExperienceService {
     }
 
     @Override
+    public void updateOrAddWorkExp(Integer resumeId, List<WorkExperienceDto> workExperienceDtos) {
+        if (workExperienceDtos != null || !workExperienceDtos.isEmpty()) {
+            if (getResumesWorkExperience(resumeId).isEmpty() || getResumesWorkExperience(resumeId) == null) {
+                log.debug("No Work Experience Info Was Found to Update, Saving new record for Resume(ID): {}", resumeId);
+                addWorkExperienceInfo(resumeId, workExperienceDtos);
+            } else {
+                updateResumesWorkExperienceInfo(workExperienceDtos);
+            }
+        } else {
+            addWorkExperienceInfo(resumeId, workExperienceDtos);
+        }
+    }
+
+    @Override
     public void updateResumesWorkExperienceInfo(List<WorkExperienceDto> workExperienceDto) {
         if (workExperienceDto == null || workExperienceDto.isEmpty()) {
             log.debug("No Work Experience dto to update");

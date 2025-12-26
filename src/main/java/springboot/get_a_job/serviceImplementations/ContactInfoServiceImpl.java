@@ -38,6 +38,20 @@ public class ContactInfoServiceImpl implements ContactInfoService {
     }
 
     @Override
+    public void updateOrAddContactInfo(Integer resumeId, List<ContactInfoDto> contacts) {
+        if (contacts != null || !contacts.isEmpty()) {
+            if (getResumesContacts(resumeId).isEmpty() || getResumesContacts(resumeId) == null) {
+                log.debug("No Contact Info Was Found to Update, Saving new record for Resume(ID): {}", resumeId);
+                addContactInfo(resumeId, contacts);
+            } else {
+                updateContactInfo(contacts);
+            }
+        } else {
+            addContactInfo(resumeId, contacts);
+        }
+    }
+
+    @Override
     public void updateContactInfo(List<ContactInfoDto> contactInfo){
         if (contactInfo == null || contactInfo.isEmpty()) {
             log.warn("No Contact info dto to update");
