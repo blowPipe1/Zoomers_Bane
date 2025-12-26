@@ -174,7 +174,7 @@ public class ResumeDao {
     public Integer findResumeIdByName(String name) {
         String sql = "SELECT id FROM RESUMES WHERE NAME ilike ?";
         try {
-            log.debug("Fetching Resume's id with ID: {}", name);
+            log.debug("Fetching Resume's id with name: {}", name);
             return jdbcTemplate.queryForObject(sql, Integer.class, name);
         } catch (EmptyResultDataAccessException e) {
             log.warn("No Matching Resume's id with ID: {} was found", name);

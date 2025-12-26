@@ -68,19 +68,34 @@ public class ResumeServiceImpl implements ResumeService {
         log.info("Server Successfully updated Resume({})", resumeId);
 
         if (checkedResume.getEducation() != null) {
-            educationInfoService.updateResumesEducationInfo(checkedResume.getEducation());
+            if (educationInfoService.getResumesEducationInfo(resumeId).isEmpty() || educationInfoService.getResumesEducationInfo(resumeId) == null) {
+                log.debug("No Education Info Was Found to Update, Saving new record for Resume(ID): {}", resumeId);
+                educationInfoService.addEducationInfo(resumeId, checkedResume.getEducation());
+            } else {
+                educationInfoService.updateResumesEducationInfo(checkedResume.getEducation());
+            }
         } else {
             educationInfoService.addEducationInfo(resumeId, checkedResume.getEducation());
         }
 
         if (checkedResume.getWorkExperience() != null || !checkedResume.getWorkExperience().isEmpty()) {
-           workExperienceService.updateResumesWorkExperienceInfo(checkedResume.getWorkExperience());
+            if (workExperienceService.getResumesWorkExperience(resumeId).isEmpty() || workExperienceService.getResumesWorkExperience(resumeId) == null) {
+                log.debug("No Work Experience Info Was Found to Update, Saving new record for Resume(ID): {}", resumeId);
+                workExperienceService.addWorkExperienceInfo(resumeId, checkedResume.getWorkExperience());
+            } else {
+                workExperienceService.updateResumesWorkExperienceInfo(checkedResume.getWorkExperience());
+            }
         } else {
             workExperienceService.addWorkExperienceInfo(resumeId, checkedResume.getWorkExperience());
         }
 
         if (checkedResume.getContactInfo() != null || !checkedResume.getContactInfo().isEmpty()) {
-            contactInfoService.updateContactInfo(checkedResume.getContactInfo());
+            if (contactInfoService.getResumesContacts(resumeId).isEmpty() || contactInfoService.getResumesContacts(resumeId) == null) {
+                log.debug("No Contact Info Was Found to Update, Saving new record for Resume(ID): {}", resumeId);
+                contactInfoService.addContactInfo(resumeId, checkedResume.getContactInfo());
+            } else {
+                contactInfoService.updateContactInfo(checkedResume.getContactInfo());
+            }
         } else {
             contactInfoService.addContactInfo(resumeId, checkedResume.getContactInfo());
         }

@@ -25,6 +25,10 @@ public class ContactInfoServiceImpl implements ContactInfoService {
         if (resumeDao.findResumeById(resumeId) == null) {
             throw new ResumeNotFoundException("Resume with id: " + resumeId + " not found");
         }
+        if (contacts == null || contacts.isEmpty()) {
+            log.warn("No Contact info dto to add");
+            return;
+        }
         for (ContactInfoDto contact : contacts){
             contactInfoDao.addContactInfo(new ContactInfo(
                     0, contactInfoDao.findIdByName(contact.getType()), resumeId, contact.getValue()
@@ -36,7 +40,7 @@ public class ContactInfoServiceImpl implements ContactInfoService {
     @Override
     public void updateContactInfo(List<ContactInfoDto> contactInfo){
         if (contactInfo == null || contactInfo.isEmpty()) {
-            log.debug("No Contact info dto to update");
+            log.warn("No Contact info dto to update");
             return;
         }
         for (ContactInfoDto contact : contactInfo){
