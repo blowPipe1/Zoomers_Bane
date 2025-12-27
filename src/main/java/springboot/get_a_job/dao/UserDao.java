@@ -118,11 +118,11 @@ public class UserDao {
         }
     }
 
-    public String findIdBySurname(String surname) {
+    public Integer findIdBySurname(String surname) {
         String sql = "SELECT id  FROM users WHERE SURNAME ilike ?";
         try {
             log.debug("Fetching ID  of User with surname: {}", surname);
-            return jdbcTemplate.queryForObject(sql, String.class, surname);
+            return jdbcTemplate.queryForObject(sql, Integer.class, surname);
         } catch (EmptyResultDataAccessException e) {
             log.warn("No ID of User with surname {} was found", surname);
             return null;

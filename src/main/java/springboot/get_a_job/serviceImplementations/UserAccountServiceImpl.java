@@ -69,7 +69,7 @@ public class UserAccountServiceImpl implements UserAccountService {
             log.info("Selected User(ID: {}) has at least one Vacancy object, referencing their id", userId);
             throw new RuntimeException("User has Vacancy attached to their id");
         }
-        //TODO add logic to check for necessary fields
+
         userDao.deleteUserHard(userId);
         log.info("Server Successfully deleted user(ID: {})", userId);
     }
@@ -124,6 +124,16 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public Optional<List<UserDto>> findRespondedUsers(Integer vacancy_id) {
         return convert(userDao.findRespondedUsers(vacancy_id));
+    }
+
+    @Override
+    public Integer findIdBySurname(String surname){
+        return userDao.findIdBySurname(surname);
+    }
+
+    @Override
+    public String findNameById(Integer id){
+        return userDao.findNameById(id);
     }
 
     private Optional<List<UserDto>>convert(List<User> users) {

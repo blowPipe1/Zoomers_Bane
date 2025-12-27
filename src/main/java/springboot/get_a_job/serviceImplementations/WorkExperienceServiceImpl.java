@@ -9,6 +9,7 @@ import springboot.get_a_job.dto.WorkExperienceDto;
 import springboot.get_a_job.exceptions.EducationInfoNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.exceptions.WorkExpNotFoundException;
+import springboot.get_a_job.services.ResumeService;
 import springboot.get_a_job.services.WorkExperienceService;
 
 import java.util.List;
@@ -17,12 +18,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class WorkExperienceServiceImpl implements WorkExperienceService {
-    private final ResumeDao resumeDao;
+    private final ResumeService resumeService;
     private final WorkExperienceDao workExperienceDao;
 
     @Override
     public void addWorkExperienceInfo(Integer resumeId, List<WorkExperienceDto> workExperienceDtos) {
-        if (resumeDao.findResumeById(resumeId) == null) {
+        if (resumeService.findResumeById(resumeId).isEmpty()) {
             throw new ResumeNotFoundException("Resume with id: " + resumeId + " not found");
         }
         for (WorkExperienceDto workExp : workExperienceDtos){
