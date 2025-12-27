@@ -25,4 +25,10 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
 
+    @ExceptionHandler(value = InvalidAccountTypeException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public @ResponseBody ErrorResponse handleException(InvalidAccountTypeException ex) {
+        return new ErrorResponse(LocalDateTime.now(), HttpStatus.UNPROCESSABLE_CONTENT.value(), ex.getMessage());
+    }
+
 }

@@ -49,6 +49,6 @@ public class UserDto {
 
     @NotBlank(groups = OnCreate.class, message = "Account type is Required (Applicant / Employer)")
     @NotNull(groups = OnUpdate.class, message = "Account type cant be null")
-    @Size(groups = OnCreate.class, min = 8, max = 9, message = "Format Should look like this: 'applicant' / 'employer'")
+    @Size(groups = OnCreate.class, min = 3, max = 9, message = "Format Should look like this: 'applicant' / 'employer'")
     private String accountType;
 }

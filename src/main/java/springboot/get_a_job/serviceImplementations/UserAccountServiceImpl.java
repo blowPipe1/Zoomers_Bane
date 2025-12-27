@@ -9,6 +9,7 @@ import springboot.get_a_job.dao.ResumeDao;
 import springboot.get_a_job.dao.UserDao;
 import springboot.get_a_job.dao.VacancyDao;
 import springboot.get_a_job.dto.UserDto;
+import springboot.get_a_job.exceptions.InvalidAccountTypeException;
 import springboot.get_a_job.exceptions.UserNotFoundException;
 import springboot.get_a_job.models.User;
 import springboot.get_a_job.services.UserAccountService;
@@ -38,6 +39,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         if (userDto == null) {
             throw new UserNotFoundException("Error registering user");
         }
+
         userDao.registerUser(convertIntoModel(userDto));
         log.info("Server Successfully registered user: {} {} (Email: {})", userDto.getName(), userDto.getSurname(), userDto.getEmail());
     }
@@ -206,10 +208,13 @@ public class UserAccountServiceImpl implements UserAccountService {
         }
 
         if (ifNull(newUser.getAccountType()) || newUser.getAccountType().isEmpty()) {
-            result.setAccountType(oldUser.getAccountType());
+            result.setAccountType(oldUser.getAccountType().toLowerCase());
+        } else if (!ValidAccountType(newUser.getAccountType())) {
+            throw new InvalidAccountTypeException("Invalid account type");
         } else {
-            result.setAccountType(newUser.getAccountType());
+            result.setAccountType(newUser.getAccountType().toLowerCase());
         }
+
         return result;
     }
 
@@ -218,6 +223,9 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     private User convertIntoModel(UserDto user){
+        if (!ValidAccountType(user.getAccountType())) {
+            throw new InvalidAccountTypeException("Invalid account type");
+        }
         return new User(
                 0,
                 user.getName(),
@@ -227,6 +235,15 @@ public class UserAccountServiceImpl implements UserAccountService {
                 user.getPassword(),
                 user.getPhoneNumber(),
                 user.getAvatar(),
-                user.getAccountType());
+                user.getAccountType().toLowerCase());
+    }
+
+    private Boolean ValidAccountType(String accountType) {
+        if (accountType.trim().equalsIgnoreCase("employer") || accountType.trim().equalsIgnoreCase("applicant")) {
+            return true;
+        } else {
+            log.debug("Submitted account type is invalid: {}", accountType);
+            return false;
+        }
     }
 }
