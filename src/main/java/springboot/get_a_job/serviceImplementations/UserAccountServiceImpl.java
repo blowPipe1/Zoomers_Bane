@@ -12,7 +12,9 @@ import springboot.get_a_job.dto.UserDto;
 import springboot.get_a_job.exceptions.InvalidAccountTypeException;
 import springboot.get_a_job.exceptions.UserNotFoundException;
 import springboot.get_a_job.models.User;
+import springboot.get_a_job.services.ResumeService;
 import springboot.get_a_job.services.UserAccountService;
+import springboot.get_a_job.services.VacancyService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,8 +31,8 @@ import java.util.Optional;
 public class UserAccountServiceImpl implements UserAccountService {
     private final String subDir = "src/main/java/springboot/get_a_job/data/images/";
     private final UserDao userDao;
-    private final ResumeDao resumeDao;
-    private final VacancyDao vacancyDao;
+    private final ResumeService resumeService;
+    private final VacancyService vacancyService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -59,11 +61,11 @@ public class UserAccountServiceImpl implements UserAccountService {
         if (userDao.findUserById(userId) == null) {
             throw new UserNotFoundException("User not found");
         }
-        if (!resumeDao.findResumeByCreator(userId).isEmpty()) {
+        if (!resumeService.findResumeByCreator(userId).isEmpty()) {
             log.info("Selected User(ID: {}) has at least one Resume object, referencing their id", userId);
             throw new RuntimeException("User has Resume attached to their id");
         }
-        if(!vacancyDao.findVacancyByCreator(userId).isEmpty()) {
+        if(!vacancyService.findVacancyByCreator(userId).isEmpty()) {
             log.info("Selected User(ID: {}) has at least one Vacancy object, referencing their id", userId);
             throw new RuntimeException("User has Vacancy attached to their id");
         }
@@ -232,7 +234,7 @@ public class UserAccountServiceImpl implements UserAccountService {
                 user.getSurname(),
                 user.getAge(),
                 user.getEmail(),
-                user.getPassword(),
+                passwordEncoder.encode(user.getPassword()),
                 user.getPhoneNumber(),
                 user.getAvatar(),
                 user.getAccountType().toLowerCase());
