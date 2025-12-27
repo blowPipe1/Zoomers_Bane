@@ -18,12 +18,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ContactInfoServiceImpl implements ContactInfoService {
-    private final ResumeService resumeService;
+    private final ResumeDao resumeDao;
     private final ContactInfoDao contactInfoDao;
 
     @Override
     public void addContactInfo(Integer resumeId, List<ContactInfoDto> contacts){
-        if (resumeService.findResumeById(resumeId).isEmpty()) {
+        if (resumeDao.findResumeById(resumeId) == null) {
             throw new ResumeNotFoundException("Resume with id: " + resumeId + " not found");
         }
         if (contacts == null || contacts.isEmpty()) {
@@ -96,7 +96,7 @@ public class ContactInfoServiceImpl implements ContactInfoService {
                 : newContactInfo.getType());
 
         result.setResume(isInvalid(newContactInfo.getResume())
-                ? resumeService.findResumeNameById(old.getResumeId())
+                ? resumeDao.findResumeNameById(old.getResumeId())
                 : newContactInfo.getResume());
 
         result.setValue(isInvalid(newContactInfo.getValue())
@@ -114,7 +114,7 @@ public class ContactInfoServiceImpl implements ContactInfoService {
         return new ContactInfo(
                 contactInfo.getId(),
                 contactInfoDao.findIdByName(contactInfo.getType()),
-                resumeService.findResumeIdByName(contactInfo.getResume()),
+                resumeDao.findResumeIdByName(contactInfo.getResume()),
                 contactInfo.getValue()
         );
     }

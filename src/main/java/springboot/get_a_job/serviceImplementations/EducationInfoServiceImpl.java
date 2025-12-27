@@ -16,12 +16,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class EducationInfoServiceImpl implements EducationInfoService {
-    private final ResumeService resumeService;
+    private final ResumeDao resumeDao;
     private final EducationInfoDao educationDao;
 
     @Override
     public void addEducationInfo(Integer resumeId, List<EducationDto> educationDtos) {
-        if (resumeService.findResumeById(resumeId).isEmpty()) {
+        if (resumeDao.findResumeById(resumeId) == null) {
             throw new ResumeNotFoundException("Resume with id: " + resumeId + " not found");
         }
 

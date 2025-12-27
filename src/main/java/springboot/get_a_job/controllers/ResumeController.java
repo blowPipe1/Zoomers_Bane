@@ -16,6 +16,10 @@ import springboot.get_a_job.serviceImplementations.ContactInfoServiceImpl;
 import springboot.get_a_job.serviceImplementations.EducationInfoServiceImpl;
 import springboot.get_a_job.serviceImplementations.ResumeServiceImpl;
 import springboot.get_a_job.serviceImplementations.WorkExperienceServiceImpl;
+import springboot.get_a_job.services.ContactInfoService;
+import springboot.get_a_job.services.EducationInfoService;
+import springboot.get_a_job.services.ResumeService;
+import springboot.get_a_job.services.WorkExperienceService;
 
 import java.util.List;
 
@@ -25,10 +29,10 @@ import java.util.List;
 @Slf4j
 public class ResumeController {
 
-    private final ResumeServiceImpl resumeService;
-    private final EducationInfoServiceImpl educationInfoService;
-    private final WorkExperienceServiceImpl workExperienceService;
-    private final ContactInfoServiceImpl contactInfoService;
+    private final ResumeService resumeService;
+    private final EducationInfoService educationInfoService;
+    private final WorkExperienceService workExperienceService;
+    private final ContactInfoService contactInfoService;
 
     @PostMapping("/create")
     public ResponseEntity<String> createResume(@Validated(OnCreate.class)  @RequestBody ResumeDto resumeDto) {

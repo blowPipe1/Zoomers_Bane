@@ -18,7 +18,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class VacancyController {
-
     private final VacancyService vacancyService;
 
     @PostMapping("/create")

@@ -18,12 +18,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class WorkExperienceServiceImpl implements WorkExperienceService {
-    private final ResumeService resumeService;
+    private final ResumeDao resumeDao;
     private final WorkExperienceDao workExperienceDao;
 
     @Override
     public void addWorkExperienceInfo(Integer resumeId, List<WorkExperienceDto> workExperienceDtos) {
-        if (resumeService.findResumeById(resumeId).isEmpty()) {
+        if (resumeDao.findResumeById(resumeId) == null) {
             throw new ResumeNotFoundException("Resume with id: " + resumeId + " not found");
         }
         for (WorkExperienceDto workExp : workExperienceDtos){

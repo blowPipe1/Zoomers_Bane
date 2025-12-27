@@ -13,6 +13,8 @@ import springboot.get_a_job.dto.UserDto;
 import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
 import springboot.get_a_job.serviceImplementations.UserAccountServiceImpl;
+import springboot.get_a_job.services.UserAccountService;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.List;
@@ -22,7 +24,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/api/users")
 public class UserAccountController {
-    private final UserAccountServiceImpl userAccountService;
+    private final UserAccountService userAccountService;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@Validated(OnCreate.class) @RequestBody UserDto userDto) {

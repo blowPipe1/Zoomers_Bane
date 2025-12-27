@@ -31,8 +31,8 @@ import java.util.Optional;
 public class UserAccountServiceImpl implements UserAccountService {
     private final String subDir = "src/main/java/springboot/get_a_job/data/images/";
     private final UserDao userDao;
-    private final ResumeService resumeService;
-    private final VacancyService vacancyService;
+    private final ResumeDao resumeDao;
+    private final VacancyDao vacancyService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -61,7 +61,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         if (userDao.findUserById(userId) == null) {
             throw new UserNotFoundException("User not found");
         }
-        if (!resumeService.findResumeByCreator(userId).isEmpty()) {
+        if (!resumeDao.findResumeByCreator(userId).isEmpty()) {
             log.info("Selected User(ID: {}) has at least one Resume object, referencing their id", userId);
             throw new RuntimeException("User has Resume attached to their id");
         }
