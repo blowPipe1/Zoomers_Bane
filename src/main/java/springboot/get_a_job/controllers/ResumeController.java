@@ -30,7 +30,7 @@ public class ResumeController {
     private final WorkExperienceServiceImpl workExperienceService;
     private final ContactInfoServiceImpl contactInfoService;
 
-    @PostMapping("/")
+    @PostMapping("/create")
     public ResponseEntity<String> createResume(@Validated(OnCreate.class)  @RequestBody ResumeDto resumeDto) {
         log.info("Received request to create a Resume with a name: {}", resumeDto.getName());
         resumeService.createResume(resumeDto);
@@ -40,7 +40,7 @@ public class ResumeController {
                 .body("Resume successfully created");
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<String> updateResume(@Validated(OnUpdate.class)  @PathVariable Integer id, @RequestBody ResumeDto resumeDto) {
         log.info("Received request to update a Resume(ID): {}", id);
         resumeService.updateResume(id, resumeDto);
@@ -50,7 +50,7 @@ public class ResumeController {
                 .body("Resume successfully updated");
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteResume(@PathVariable Integer id) {
         log.info("Received request to delete a Resume(ID): {}", id);
         resumeService.deleteResume(id);

@@ -20,7 +20,7 @@ public class ContactInfoDto {
     private String  type;
 
     @NotNull(groups = {OnUpdate.class, OnCreate.class}, message = " cant be null but can be empty''")
-    @Size(max = 20, message = "Contact Info's Resume's name length must be less than 20 characters")
+    @Size(max = 30, message = "Contact Info's Resume's name length must be less than 30, characters")
     private String resume;
 
     @NotNull(groups = {OnUpdate.class, OnCreate.class}, message = " cant be null but can be empty''")

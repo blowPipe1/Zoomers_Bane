@@ -196,6 +196,8 @@ public class VacancyServiceImpl implements VacancyService {
         }
         if (newVacancy.getAuthor() == null || newVacancy.getAuthor().isEmpty()){
             result.setAuthor(oldVacancy.get().getAuthor());
+        } else {
+            result.setAuthor(newVacancy.getAuthor());
         }
         if (newVacancy.getIsActive() == null){
             result.setIsActive(oldVacancy.get().getIsActive());

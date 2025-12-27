@@ -6,11 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.VacancyDto;
 import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
-import springboot.get_a_job.models.Vacancy;
 import springboot.get_a_job.services.VacancyService;
 
 import java.util.List;
@@ -23,7 +21,7 @@ public class VacancyController {
 
     private final VacancyService vacancyService;
 
-    @PostMapping("/")
+    @PostMapping("/create")
     public ResponseEntity<String> createVacancy(@Validated(OnCreate.class) @RequestBody VacancyDto vacancyDto) {
         log.info("Received request to create a Vacancy with a name: {}", vacancyDto.getName());
         vacancyService.createVacancy(vacancyDto);
@@ -33,7 +31,7 @@ public class VacancyController {
                 .body("Vacancy has been created");
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<String> updateVacancy(@Validated(OnUpdate.class) @PathVariable Integer id, @RequestBody VacancyDto vacancyDto) {
         log.info("Received request to update a Vacancy with a id: {}", id);
         vacancyService.updateVacancy(id, vacancyDto);
@@ -43,7 +41,7 @@ public class VacancyController {
                 .body("Vacancy has been updated");
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteVacancy(@PathVariable Integer id) {
         log.info("Received request to delete a Vacancy with a id: {}", id);
         vacancyService.deleteVacancy(id);

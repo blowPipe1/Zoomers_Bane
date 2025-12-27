@@ -24,7 +24,7 @@ import java.util.List;
 public class UserAccountController {
     private final UserAccountServiceImpl userAccountService;
 
-    @PostMapping("/register/")
+    @PostMapping("/register")
     public ResponseEntity<String> registerUser(@Validated(OnCreate.class) @RequestBody UserDto userDto) {
         log.info("Received request to register new User with a name and email: {} {}  {}", userDto.getName(), userDto.getSurname() ,userDto.getEmail());
         userAccountService.registerUser(userDto);

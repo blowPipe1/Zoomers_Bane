@@ -2,6 +2,7 @@ package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import springboot.get_a_job.dao.ResumeDao;
@@ -29,6 +30,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final UserDao userDao;
     private final ResumeDao resumeDao;
     private final VacancyDao vacancyDao;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void registerUser(UserDto userDto) {
@@ -131,7 +133,7 @@ public class UserAccountServiceImpl implements UserAccountService {
                             user.getSurname(),
                             user.getAge(),
                             user.getEmail(),
-                            user.getPassword(),
+                            passwordEncoder.encode(user.getPassword()),
                             user.getPhoneNumber(),
                             user.getAvatar(),
                             user.getAccountType())
@@ -149,7 +151,7 @@ public class UserAccountServiceImpl implements UserAccountService {
                 user.getSurname(),
                 user.getAge(),
                 user.getEmail(),
-                user.getPassword(),
+                passwordEncoder.encode(user.getPassword()),
                 user.getPhoneNumber(),
                 user.getAvatar(),
                 user.getAccountType())
