@@ -2,12 +2,12 @@ package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import springboot.get_a_job.dao.ResumeDao;
 import springboot.get_a_job.dao.UserDao;
-import springboot.get_a_job.dao.VacancyDao;
 import springboot.get_a_job.dto.UserDto;
 import springboot.get_a_job.exceptions.InvalidAccountTypeException;
 import springboot.get_a_job.exceptions.UserNotFoundException;
@@ -31,8 +31,12 @@ import java.util.Optional;
 public class UserAccountServiceImpl implements UserAccountService {
     private final String subDir = "src/main/java/springboot/get_a_job/data/images/";
     private final UserDao userDao;
-    private final ResumeDao resumeDao;
-    private final VacancyDao vacancyService;
+    @Autowired
+    @Lazy
+    private ResumeService resumeService;
+    @Autowired
+    @Lazy
+    private VacancyService vacancyService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -61,7 +65,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         if (userDao.findUserById(userId) == null) {
             throw new UserNotFoundException("User not found");
         }
-        if (!resumeDao.findResumeByCreator(userId).isEmpty()) {
+        if (!resumeService.findResumeByCreator(userId).isEmpty()) {
             log.info("Selected User(ID: {}) has at least one Resume object, referencing their id", userId);
             throw new RuntimeException("User has Resume attached to their id");
         }

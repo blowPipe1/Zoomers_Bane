@@ -2,6 +2,8 @@ package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import springboot.get_a_job.dao.*;
 import springboot.get_a_job.dto.ContactInfoDto;
@@ -18,12 +20,14 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ContactInfoServiceImpl implements ContactInfoService {
-    private final ResumeDao resumeDao;
+    @Autowired
+    @Lazy
+    private ResumeService resumeService;
     private final ContactInfoDao contactInfoDao;
 
     @Override
     public void addContactInfo(Integer resumeId, List<ContactInfoDto> contacts){
-        if (resumeDao.findResumeById(resumeId) == null) {
+        if (resumeService.findResumeById(resumeId).isEmpty()) {
             throw new ResumeNotFoundException("Resume with id: " + resumeId + " not found");
         }
         if (contacts == null || contacts.isEmpty()) {
@@ -96,7 +100,7 @@ public class ContactInfoServiceImpl implements ContactInfoService {
                 : newContactInfo.getType());
 
         result.setResume(isInvalid(newContactInfo.getResume())
-                ? resumeDao.findResumeNameById(old.getResumeId())
+                ? resumeService.findResumeNameById(old.getResumeId())
                 : newContactInfo.getResume());
 
         result.setValue(isInvalid(newContactInfo.getValue())
@@ -114,7 +118,7 @@ public class ContactInfoServiceImpl implements ContactInfoService {
         return new ContactInfo(
                 contactInfo.getId(),
                 contactInfoDao.findIdByName(contactInfo.getType()),
-                resumeDao.findResumeIdByName(contactInfo.getResume()),
+                resumeService.findResumeIdByName(contactInfo.getResume()),
                 contactInfo.getValue()
         );
     }
