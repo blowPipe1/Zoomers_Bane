@@ -16,6 +16,10 @@ import springboot.get_a_job.serviceImplementations.ContactInfoServiceImpl;
 import springboot.get_a_job.serviceImplementations.EducationInfoServiceImpl;
 import springboot.get_a_job.serviceImplementations.ResumeServiceImpl;
 import springboot.get_a_job.serviceImplementations.WorkExperienceServiceImpl;
+import springboot.get_a_job.services.ContactInfoService;
+import springboot.get_a_job.services.EducationInfoService;
+import springboot.get_a_job.services.ResumeService;
+import springboot.get_a_job.services.WorkExperienceService;
 
 import java.util.List;
 
@@ -25,12 +29,12 @@ import java.util.List;
 @Slf4j
 public class ResumeController {
 
-    private final ResumeServiceImpl resumeService;
-    private final EducationInfoServiceImpl educationInfoService;
-    private final WorkExperienceServiceImpl workExperienceService;
-    private final ContactInfoServiceImpl contactInfoService;
+    private final ResumeService resumeService;
+    private final EducationInfoService educationInfoService;
+    private final WorkExperienceService workExperienceService;
+    private final ContactInfoService contactInfoService;
 
-    @PostMapping("/")
+    @PostMapping("/create")
     public ResponseEntity<String> createResume(@Validated(OnCreate.class)  @RequestBody ResumeDto resumeDto) {
         log.info("Received request to create a Resume with a name: {}", resumeDto.getName());
         resumeService.createResume(resumeDto);
@@ -40,7 +44,7 @@ public class ResumeController {
                 .body("Resume successfully created");
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<String> updateResume(@Validated(OnUpdate.class)  @PathVariable Integer id, @RequestBody ResumeDto resumeDto) {
         log.info("Received request to update a Resume(ID): {}", id);
         resumeService.updateResume(id, resumeDto);
@@ -50,7 +54,7 @@ public class ResumeController {
                 .body("Resume successfully updated");
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteResume(@PathVariable Integer id) {
         log.info("Received request to delete a Resume(ID): {}", id);
         resumeService.deleteResume(id);

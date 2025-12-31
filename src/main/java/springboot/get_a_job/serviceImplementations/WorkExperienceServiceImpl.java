@@ -2,6 +2,8 @@ package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import springboot.get_a_job.dao.*;
 import springboot.get_a_job.dto.EducationDto;
@@ -9,6 +11,7 @@ import springboot.get_a_job.dto.WorkExperienceDto;
 import springboot.get_a_job.exceptions.EducationInfoNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.exceptions.WorkExpNotFoundException;
+import springboot.get_a_job.services.ResumeService;
 import springboot.get_a_job.services.WorkExperienceService;
 
 import java.util.List;
@@ -17,12 +20,14 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class WorkExperienceServiceImpl implements WorkExperienceService {
-    private final ResumeDao resumeDao;
+    @Autowired
+    @Lazy
+    private ResumeService resumeService;
     private final WorkExperienceDao workExperienceDao;
 
     @Override
     public void addWorkExperienceInfo(Integer resumeId, List<WorkExperienceDto> workExperienceDtos) {
-        if (resumeDao.findResumeById(resumeId) == null) {
+        if (resumeService.findResumeById(resumeId).isEmpty()) {
             throw new ResumeNotFoundException("Resume with id: " + resumeId + " not found");
         }
         for (WorkExperienceDto workExp : workExperienceDtos){

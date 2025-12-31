@@ -20,4 +20,6 @@ public interface UserAccountService {
     Optional<List<UserDto>>findUserByEmail(String email);
     Optional<List<UserDto>> findUserByName(String name);
     Optional<List<UserDto>> findRespondedUsers(Integer vacancy_id);
+    Integer findIdBySurname(String surname);
+    String findNameById(Integer id);
 }

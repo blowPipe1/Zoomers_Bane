@@ -3,6 +3,8 @@ package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import springboot.get_a_job.dao.*;
 import springboot.get_a_job.dto.ContactInfoDto;
@@ -12,10 +14,7 @@ import springboot.get_a_job.dto.WorkExperienceDto;
 import springboot.get_a_job.exceptions.CategoryNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.models.Resume;
-import springboot.get_a_job.services.ContactInfoService;
-import springboot.get_a_job.services.EducationInfoService;
-import springboot.get_a_job.services.ResumeService;
-import springboot.get_a_job.services.WorkExperienceService;
+import springboot.get_a_job.services.*;
 
 
 import java.time.LocalDateTime;
@@ -28,8 +27,8 @@ import java.util.Optional;
 @Slf4j
 public class ResumeServiceImpl implements ResumeService {
     private final ResumeDao resumeDao;
-    private final CategoryDao categoryDao;
-    private final UserDao userDao;
+    private final CategoryService categoryService;
+    private final UserAccountService userAccountService;
     private final EducationInfoService educationInfoService;
     private final WorkExperienceService workExperienceService;
     private final ContactInfoService contactInfoService;
@@ -128,6 +127,17 @@ public class ResumeServiceImpl implements ResumeService {
         return convertIntoDto(resumeDao.findResumeByCreator(creatorName));
     }
 
+    @Override
+    public String findResumeNameById(Integer resumeId){
+        return resumeDao.findResumeNameById(resumeId);
+    }
+
+    @Override
+    public Integer findResumeIdByName(String name){
+        return resumeDao.findResumeIdByName(name);
+    }
+
+
     private Optional<List<ResumeDto>> convertIntoDto(List<Resume>resumes){
         if (resumes == null || resumes.isEmpty()) {
             throw new ResumeNotFoundException("Resumes not Found");
@@ -140,9 +150,9 @@ public class ResumeServiceImpl implements ResumeService {
             log.info("Mapping (ID: {})Resume into Resume DTO, stored in list", resume.getId());
 
             resumeDtos.add(new ResumeDto(
-                    userDao.findNameById(resume.getApplicantId()),
+                    userAccountService.findNameById(resume.getApplicantId()),
                     resume.getName(),
-                    categoryDao.findNameById(resume.getCategoryId()),
+                    categoryService.findNameById(resume.getCategoryId()),
                     resume.getSalary(),
                     resume.getIsActive(),
                     educationInfo,
@@ -163,9 +173,9 @@ public class ResumeServiceImpl implements ResumeService {
         log.info("Mapping (ID: {})Resume into Resume DTO", resume.getId());
 
         return Optional.of(new ResumeDto(
-                userDao.findNameById(resume.getApplicantId()),
+                userAccountService.findNameById(resume.getApplicantId()),
                 resume.getName(),
-                categoryDao.findNameById(resume.getCategoryId()),
+                categoryService.findNameById(resume.getCategoryId()),
                 resume.getSalary(),
                 resume.getIsActive(),
                 educationInfo,
@@ -229,12 +239,12 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     private Resume convertIntoModel(ResumeDto resumeDto){
-        Integer categoryId = categoryDao.findIdByName(resumeDto.getCategory())
+        Integer categoryId = categoryService.findIdByName(resumeDto.getCategory())
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + resumeDto.getCategory()));
 
         // TODO check for null & empty string etc.
         String[] name = resumeDto.getApplicant().split(" ");
-        Integer applicantId = Integer.valueOf(userDao.findIdBySurname(name[1]));
+        Integer applicantId = userAccountService.findIdBySurname(name[1]);
         log.info("Mapping Resume DTO into Resume for User with ID: {} Name: {} {}", applicantId, name[0], name[1]);
 
         return new Resume(

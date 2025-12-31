@@ -16,4 +16,6 @@ public interface ResumeService {
     Optional<List<ResumeDto>> findResumeByCreator(Integer applicant_id);
     Optional<List<ResumeDto>> findResumeByCreator(String creatorName);
     void createResume(ResumeDto resumeDto);
+    String findResumeNameById(Integer id);
+    Integer findResumeIdByName(String resumeName);
 }

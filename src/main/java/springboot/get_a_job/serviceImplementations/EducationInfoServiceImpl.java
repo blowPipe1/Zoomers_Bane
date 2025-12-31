@@ -2,28 +2,30 @@ package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import springboot.get_a_job.dao.*;
 import springboot.get_a_job.dto.EducationDto;
-import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.exceptions.EducationInfoNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.services.EducationInfoService;
+import springboot.get_a_job.services.ResumeService;
 
-import java.security.PublicKey;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class EducationInfoServiceImpl implements EducationInfoService {
-    private final ResumeDao resumeDao;
+    @Autowired
+    @Lazy
+    private ResumeService resumeService;
     private final EducationInfoDao educationDao;
 
     @Override
     public void addEducationInfo(Integer resumeId, List<EducationDto> educationDtos) {
-        if (resumeDao.findResumeById(resumeId) == null) {
+        if (resumeService.findResumeById(resumeId).isEmpty()) {
             throw new ResumeNotFoundException("Resume with id: " + resumeId + " not found");
         }
 

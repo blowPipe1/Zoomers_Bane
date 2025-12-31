@@ -2,15 +2,19 @@ package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import springboot.get_a_job.dao.ResumeDao;
 import springboot.get_a_job.dao.UserDao;
-import springboot.get_a_job.dao.VacancyDao;
 import springboot.get_a_job.dto.UserDto;
+import springboot.get_a_job.exceptions.InvalidAccountTypeException;
 import springboot.get_a_job.exceptions.UserNotFoundException;
 import springboot.get_a_job.models.User;
+import springboot.get_a_job.services.ResumeService;
 import springboot.get_a_job.services.UserAccountService;
+import springboot.get_a_job.services.VacancyService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,8 +31,13 @@ import java.util.Optional;
 public class UserAccountServiceImpl implements UserAccountService {
     private final String subDir = "src/main/java/springboot/get_a_job/data/images/";
     private final UserDao userDao;
-    private final ResumeDao resumeDao;
-    private final VacancyDao vacancyDao;
+    @Autowired
+    @Lazy
+    private ResumeService resumeService;
+    @Autowired
+    @Lazy
+    private VacancyService vacancyService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void registerUser(UserDto userDto) {
@@ -36,6 +45,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         if (userDto == null) {
             throw new UserNotFoundException("Error registering user");
         }
+
         userDao.registerUser(convertIntoModel(userDto));
         log.info("Server Successfully registered user: {} {} (Email: {})", userDto.getName(), userDto.getSurname(), userDto.getEmail());
     }
@@ -55,15 +65,15 @@ public class UserAccountServiceImpl implements UserAccountService {
         if (userDao.findUserById(userId) == null) {
             throw new UserNotFoundException("User not found");
         }
-        if (!resumeDao.findResumeByCreator(userId).isEmpty()) {
+        if (!resumeService.findResumeByCreator(userId).isEmpty()) {
             log.info("Selected User(ID: {}) has at least one Resume object, referencing their id", userId);
             throw new RuntimeException("User has Resume attached to their id");
         }
-        if(!vacancyDao.findVacancyByCreator(userId).isEmpty()) {
+        if(!vacancyService.findVacancyByCreator(userId).isEmpty()) {
             log.info("Selected User(ID: {}) has at least one Vacancy object, referencing their id", userId);
             throw new RuntimeException("User has Vacancy attached to their id");
         }
-        //TODO add logic to check for necessary fields
+
         userDao.deleteUserHard(userId);
         log.info("Server Successfully deleted user(ID: {})", userId);
     }
@@ -120,6 +130,16 @@ public class UserAccountServiceImpl implements UserAccountService {
         return convert(userDao.findRespondedUsers(vacancy_id));
     }
 
+    @Override
+    public Integer findIdBySurname(String surname){
+        return userDao.findIdBySurname(surname);
+    }
+
+    @Override
+    public String findNameById(Integer id){
+        return userDao.findNameById(id);
+    }
+
     private Optional<List<UserDto>>convert(List<User> users) {
         if (users == null || users.isEmpty()) {
             throw new UserNotFoundException("User not found");
@@ -131,7 +151,7 @@ public class UserAccountServiceImpl implements UserAccountService {
                             user.getSurname(),
                             user.getAge(),
                             user.getEmail(),
-                            user.getPassword(),
+                            passwordEncoder.encode(user.getPassword()),
                             user.getPhoneNumber(),
                             user.getAvatar(),
                             user.getAccountType())
@@ -149,7 +169,7 @@ public class UserAccountServiceImpl implements UserAccountService {
                 user.getSurname(),
                 user.getAge(),
                 user.getEmail(),
-                user.getPassword(),
+                passwordEncoder.encode(user.getPassword()),
                 user.getPhoneNumber(),
                 user.getAvatar(),
                 user.getAccountType())
@@ -204,10 +224,13 @@ public class UserAccountServiceImpl implements UserAccountService {
         }
 
         if (ifNull(newUser.getAccountType()) || newUser.getAccountType().isEmpty()) {
-            result.setAccountType(oldUser.getAccountType());
+            result.setAccountType(oldUser.getAccountType().toLowerCase());
+        } else if (!ValidAccountType(newUser.getAccountType())) {
+            throw new InvalidAccountTypeException("Invalid account type");
         } else {
-            result.setAccountType(newUser.getAccountType());
+            result.setAccountType(newUser.getAccountType().toLowerCase());
         }
+
         return result;
     }
 
@@ -216,15 +239,27 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     private User convertIntoModel(UserDto user){
+        if (!ValidAccountType(user.getAccountType())) {
+            throw new InvalidAccountTypeException("Invalid account type");
+        }
         return new User(
                 0,
                 user.getName(),
                 user.getSurname(),
                 user.getAge(),
                 user.getEmail(),
-                user.getPassword(),
+                passwordEncoder.encode(user.getPassword()),
                 user.getPhoneNumber(),
                 user.getAvatar(),
-                user.getAccountType());
+                user.getAccountType().toLowerCase());
+    }
+
+    private Boolean ValidAccountType(String accountType) {
+        if (accountType.trim().equalsIgnoreCase("employer") || accountType.trim().equalsIgnoreCase("applicant")) {
+            return true;
+        } else {
+            log.debug("Submitted account type is invalid: {}", accountType);
+            return false;
+        }
     }
 }

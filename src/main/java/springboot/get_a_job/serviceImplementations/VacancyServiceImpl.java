@@ -12,6 +12,8 @@ import springboot.get_a_job.exceptions.CategoryNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.exceptions.VacancyNotFoundException;
 import springboot.get_a_job.models.Vacancy;
+import springboot.get_a_job.services.CategoryService;
+import springboot.get_a_job.services.UserAccountService;
 import springboot.get_a_job.services.VacancyService;
 
 import java.time.LocalDateTime;
@@ -24,8 +26,8 @@ import java.util.Optional;
 @Slf4j
 public class VacancyServiceImpl implements VacancyService {
     private final VacancyDao vacancyDao;
-    private final CategoryDao categoryDao;
-    private final UserDao userDao;
+    private final CategoryService categoryService;
+    private final UserAccountService userAccountService;
 
     @Override
     public void createVacancy(VacancyDto vacancy) {
@@ -102,12 +104,12 @@ public class VacancyServiceImpl implements VacancyService {
             vacancyDtos.add(new VacancyDto(
                             vacancy.getName(),
                             vacancy.getDescription(),
-                            categoryDao.findNameById(vacancy.getCategoryId()),
+                            categoryService.findNameById(vacancy.getCategoryId()),
                             vacancy.getSalary(),
                             vacancy.getExpFrom(),
                             vacancy.getExpTo(),
                             vacancy.getIsActive(),
-                            userDao.findNameById(vacancy.getAuthorId())
+                    userAccountService.findNameById(vacancy.getAuthorId())
                     )
             );
             log.info("Mapping (ID: {})Vacancy into Vacancy Model", vacancy.getId());
@@ -123,23 +125,23 @@ public class VacancyServiceImpl implements VacancyService {
         return Optional.of(new VacancyDto(
                 vacancy.getName(),
                 vacancy.getDescription(),
-                categoryDao.findNameById(vacancy.getCategoryId()),
+                categoryService.findNameById(vacancy.getCategoryId()),
                 vacancy.getSalary(),
                 vacancy.getExpFrom(),
                 vacancy.getExpTo(),
                 vacancy.getIsActive(),
-                userDao.findNameById(vacancy.getAuthorId())
+                userAccountService.findNameById(vacancy.getAuthorId())
         ));
     }
 
     private Vacancy convertIntoModel(VacancyDto vacancy) {
         log.info("Fetching category's id by category name {}", vacancy.getCategory());
-        Integer categoryId = categoryDao.findIdByName(vacancy.getCategory())
+        Integer categoryId = categoryService.findIdByName(vacancy.getCategory())
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + vacancy.getCategory()));
 
         // TODO check for null & empty string etc.
         String[] name = vacancy.getAuthor().split(" ");
-        Integer authorId = Integer.valueOf(userDao.findIdBySurname(name[1]));
+        Integer authorId = userAccountService.findIdBySurname(name[1]);
         log.info("Mapping Vacancy created by {} {} into Vacancy Model", name[0], name[1]);
         return new Vacancy(
                 0,
@@ -196,6 +198,8 @@ public class VacancyServiceImpl implements VacancyService {
         }
         if (newVacancy.getAuthor() == null || newVacancy.getAuthor().isEmpty()){
             result.setAuthor(oldVacancy.get().getAuthor());
+        } else {
+            result.setAuthor(newVacancy.getAuthor());
         }
         if (newVacancy.getIsActive() == null){
             result.setIsActive(oldVacancy.get().getIsActive());
