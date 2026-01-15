@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springboot.get_a_job.dto.ContactInfoDto;
@@ -12,6 +14,7 @@ import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.WorkExperienceDto;
 import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
+import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.serviceImplementations.ContactInfoServiceImpl;
 import springboot.get_a_job.serviceImplementations.EducationInfoServiceImpl;
 import springboot.get_a_job.serviceImplementations.ResumeServiceImpl;
@@ -21,9 +24,10 @@ import springboot.get_a_job.services.EducationInfoService;
 import springboot.get_a_job.services.ResumeService;
 import springboot.get_a_job.services.WorkExperienceService;
 
+import java.util.Collection;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/resumes")
 @RequiredArgsConstructor
 public class ResumeController {
@@ -58,12 +62,12 @@ public class ResumeController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ResumeDto>> getAllActiveResumes() {
-        return resumeService.getAllActiveResumes()
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-
+    public String getAllActiveResumes(Model model) {
+        List<ResumeDto> resumes = resumeService.getAllActiveResumes().orElseGet(null);
+        model.addAttribute("resumes", resumes);
+        return "resume-list";
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<ResumeDto> findResumeById(@PathVariable Integer id) {

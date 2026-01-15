@@ -1,9 +1,10 @@
 package springboot.get_a_job.controllers;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springboot.get_a_job.dto.VacancyDto;
@@ -13,7 +14,7 @@ import springboot.get_a_job.services.VacancyService;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/vacancies")
 @RequiredArgsConstructor
 public class VacancyController {
@@ -50,11 +51,12 @@ public class VacancyController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<VacancyDto>> searchAllActiveVacancies() {
-        return vacancyService.getAllActiveVacancies()
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public String getAllActiveResumes(Model model) {
+        List<VacancyDto> vacancies = vacancyService.getAllActiveVacancies().orElseGet(null);
+        model.addAttribute("vacancies", vacancies);
+        return "vacancy-list";
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<VacancyDto> findVacancyById(@PathVariable Integer id) {
