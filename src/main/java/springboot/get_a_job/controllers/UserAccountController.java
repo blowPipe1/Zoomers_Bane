@@ -1,56 +1,106 @@
 package springboot.get_a_job.controllers;
 
-
-import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.UserDto;
+import springboot.get_a_job.dto.VacancyDto;
 import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
-import springboot.get_a_job.serviceImplementations.UserAccountServiceImpl;
+import springboot.get_a_job.exceptions.UserNotFoundException;
+import springboot.get_a_job.models.CustomUserDetails;
+import springboot.get_a_job.services.ResumeService;
 import springboot.get_a_job.services.UserAccountService;
+import springboot.get_a_job.services.VacancyService;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
+import java.util.Collections;
 import java.util.List;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
-@Slf4j
 @RequestMapping("/api/users")
 public class UserAccountController {
     private final UserAccountService userAccountService;
+    private final ResumeService resumeService;
+    private final VacancyService vacancyService;
+
+    @GetMapping("/register")
+    public String showForm(Model model) {
+        model.addAttribute("userDto", new UserDto());
+        return "registration";
+    }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@Validated(OnCreate.class) @RequestBody UserDto userDto) {
-        log.info("Received request to register new User with a name and email: {} {}  {}", userDto.getName(), userDto.getSurname() ,userDto.getEmail());
+    public String registerUser(@Validated(OnCreate.class) @ModelAttribute("userDto") UserDto userDto,
+                               BindingResult result) {
+        if (result.hasErrors()) {
+            return "registration";
+        }
         userAccountService.registerUser(userDto);
-        log.debug("Registered user with name {} {} and email {}", userDto.getName(), userDto.getSurname(), userDto.getEmail());
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body("User successfully Registered");
+        return "redirect:/api/users/dashboard";
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser( @PathVariable Integer id, @Validated(OnUpdate.class) @RequestBody UserDto userDto) {
-        log.info("Received request to update User(ID: {}) with a name and email: {} {}  {}", id, userDto.getName(), userDto.getSurname() ,userDto.getEmail());
-        userAccountService.updateUser(id, userDto);
-        log.debug("Updated a User(ID: {}) with a name and email: {} {}  {}", id, userDto.getName(), userDto.getSurname() ,userDto.getEmail());
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body("User successfully updated");
+    @GetMapping("/dashboard")
+    public String dashboard(
+            Model model,
+            @AuthenticationPrincipal CustomUserDetails currentUserA) {
+        UserDto currentUser = userAccountService.findUserById(currentUserA.getId())
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + currentUserA.getId()));
+
+        model.addAttribute("user", currentUser);
+
+        if (currentUser.getAccountType().equalsIgnoreCase("applicant")) {
+            List<ResumeDto> items = resumeService.findResumeByCreator(currentUserA.getId()).orElseGet(Collections::emptyList);
+            model.addAttribute("itemsList", items);
+        } else if (currentUser.getAccountType().equalsIgnoreCase("employer")) {
+            List<VacancyDto> items = vacancyService.findVacancyByCreator(currentUserA.getId()).orElseGet(Collections::emptyList);
+            model.addAttribute("itemsList", items);
+        }
+
+        return "dashboard";
     }
 
-    @DeleteMapping("/{id}")
+    @GetMapping("/edit")
+    public String editPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+        UserDto userDto = userAccountService.findUserById(userDetails.getId())
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userDetails.getId()));
+
+        model.addAttribute("userDto", userDto);
+
+        return "edit-profile";
+    }
+
+
+    @PostMapping("/update")
+    public String updateProfile(
+            @AuthenticationPrincipal CustomUserDetails currentUser,
+            @Validated(OnUpdate.class) @ModelAttribute("userDto") UserDto userDto,
+            BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            return "edit-profile";
+        }
+
+        Integer userId = currentUser.getId();
+        userAccountService.updateUser(userId, userDto);
+
+        return "redirect:/api/users/dashboard";
+    }
+
+
+
+    @DeleteMapping("")
     public ResponseEntity<String> deleteUser(@PathVariable Integer id) {
-        log.info("Received request to delete User with a id {}", id);
         userAccountService.deleteUser(id);
-        log.debug("Deleted a User with a id {}", id);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("User successfully deleted");
@@ -59,15 +109,11 @@ public class UserAccountController {
     @PostMapping("/{userId}/avatar")
     public ResponseEntity<String> uploadAvatar(@PathVariable Integer userId, @RequestParam("file") MultipartFile file) {
         try {
-            log.info("Received request to upload avatar for user ID: {} ", userId);
             userAccountService.saveAvatar(userId, file);
-            log.debug("Uploaded avatar for user ID: {} ", userId);
             return ResponseEntity.ok("Successfully uploaded avatar");
         } catch (IOException e) {
-            log.error("Error occurred {}", e.getMessage());
             return ResponseEntity.internalServerError().body("Error while uploading avatar");
         } catch (IllegalArgumentException e) {
-            log.error("IllegalArgumentException error occurred {}", e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -75,7 +121,6 @@ public class UserAccountController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> findUserById(@PathVariable Integer id) {
-        log.info("Received request to find User with a id {}", id);
         return userAccountService.findUserById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -83,7 +128,6 @@ public class UserAccountController {
 
     @GetMapping("/all")
     public ResponseEntity<List<UserDto>> findAllUsers() {
-        log.info("Received request to find all Users");
         return userAccountService.findAllUsers()
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -91,7 +135,6 @@ public class UserAccountController {
 
     @GetMapping("phone/{phone_number}")
     public ResponseEntity<List<UserDto>> findUserByPhone(@PathVariable String phone_number ) {
-        log.info("Received request to find User with a phone number {}", phone_number);
         return userAccountService.findUserByPhone(phone_number)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -99,14 +142,12 @@ public class UserAccountController {
 
     @GetMapping("email/{email}")
     public ResponseEntity<List<UserDto>> findUserByEmail(@PathVariable String email) {
-        log.info("Received request to find User with a email {}", email);
         return userAccountService.findUserByEmail(email)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
     @GetMapping("username/{name}")
     public ResponseEntity<List<UserDto>> findUserByName(@PathVariable String name) {
-        log.info("Received request to find User with a name {}", name);
         return userAccountService.findUserByName(name)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -114,7 +155,6 @@ public class UserAccountController {
 
     @GetMapping("/responded/{vacancy_id}")
     public ResponseEntity<List<UserDto>> findRespondedUsers(@PathVariable Integer vacancy_id) {
-        log.info("Received request to find Users responded to Vacancy with id {}", vacancy_id);
         return userAccountService.findRespondedUsers(vacancy_id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
