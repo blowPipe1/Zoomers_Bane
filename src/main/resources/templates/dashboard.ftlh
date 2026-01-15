@@ -25,7 +25,7 @@
             <div class="user-info">
                 <h3>${user.name! "Not Found"} ${user.surname! "Not Found"}</h3>
                 <p>Age: ${user.age! 0}</p>
-                <button class="btn-edit">Edit</button>
+                <a href="/api/users/edit" class="btn-edit" style="text-decoration: none; display: inline-block;">Edit</a>
             </div>
             <div class="actions">
                 <button class="btn-create">Create Resume</button>

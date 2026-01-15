@@ -4,6 +4,7 @@ package springboot.get_a_job.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,7 +17,7 @@ import springboot.get_a_job.dto.VacancyDto;
 import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
 import springboot.get_a_job.exceptions.UserNotFoundException;
-import springboot.get_a_job.models.Vacancy;
+import springboot.get_a_job.models.CustomUserDetails;
 import springboot.get_a_job.services.ResumeService;
 import springboot.get_a_job.services.UserAccountService;
 import springboot.get_a_job.services.VacancyService;
@@ -24,7 +25,6 @@ import springboot.get_a_job.services.VacancyService;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -48,38 +48,59 @@ public class UserAccountController {
             return "registration";
         }
         userAccountService.registerUser(userDto);
-        return ("User successfully Registered");
+        return "redirect:/api/users/dashboard";
     }
 
-    @GetMapping("/dashboard/{userId}")
-    public String dashboard(@PathVariable Integer userId, Model model) {
-        UserDto currentUser = userAccountService.findUserById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+    @GetMapping("/dashboard")
+    public String dashboard(
+            Model model,
+            @AuthenticationPrincipal CustomUserDetails currentUserA) {
+        UserDto currentUser = userAccountService.findUserById(currentUserA.getId())
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + currentUserA.getId()));
 
         model.addAttribute("user", currentUser);
 
         if (currentUser.getAccountType().equalsIgnoreCase("applicant")) {
-            List<ResumeDto> items = resumeService.findResumeByCreator(userId).orElseGet(Collections::emptyList);
+            List<ResumeDto> items = resumeService.findResumeByCreator(currentUserA.getId()).orElseGet(Collections::emptyList);
             model.addAttribute("itemsList", items);
         } else if (currentUser.getAccountType().equalsIgnoreCase("employer")) {
-            List<VacancyDto> items = vacancyService.findVacancyByCreator(userId).orElseGet(Collections::emptyList);
+            List<VacancyDto> items = vacancyService.findVacancyByCreator(currentUserA.getId()).orElseGet(Collections::emptyList);
             model.addAttribute("itemsList", items);
         }
 
         return "dashboard";
     }
 
+    @GetMapping("/edit")
+    public String editPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+        UserDto userDto = userAccountService.findUserById(userDetails.getId())
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userDetails.getId()));
 
+        model.addAttribute("userDto", userDto);
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser( @PathVariable Integer id, @Validated(OnUpdate.class) @RequestBody UserDto userDto) {
-        userAccountService.updateUser(id, userDto);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body("User successfully updated");
+        return "edit-profile";
     }
 
-    @DeleteMapping("/{id}")
+
+    @PostMapping("/update")
+    public String updateProfile(
+            @AuthenticationPrincipal CustomUserDetails currentUser,
+            @Validated(OnUpdate.class) @ModelAttribute("userDto") UserDto userDto,
+            BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            return "edit-profile";
+        }
+
+        Integer userId = currentUser.getId();
+        userAccountService.updateUser(userId, userDto);
+
+        return "redirect:/api/users/dashboard";
+    }
+
+
+
+    @DeleteMapping("")
     public ResponseEntity<String> deleteUser(@PathVariable Integer id) {
         userAccountService.deleteUser(id);
         return ResponseEntity
