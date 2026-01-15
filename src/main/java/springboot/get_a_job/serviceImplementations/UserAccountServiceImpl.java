@@ -29,7 +29,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class UserAccountServiceImpl implements UserAccountService {
-    private final String subDir = "src/main/java/springboot/get_a_job/data/images/";
+    private final String subDir = "src/main/resources/static/images/";
     private final UserDao userDao;
     @Autowired
     @Lazy
@@ -96,7 +96,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         String savedPath = filePath.toString();
-        userDao.updateAvatarPath(userId, savedPath);
+        userDao.updateAvatarPath(userId, fileName);
         log.info("Server Successfully updated user avatar (ID: {}) to {}", userId, savedPath);
     }
 

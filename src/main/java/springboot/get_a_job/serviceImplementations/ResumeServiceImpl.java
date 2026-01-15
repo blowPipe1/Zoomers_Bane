@@ -211,10 +211,10 @@ public class ResumeServiceImpl implements ResumeService {
         } else {
             result.setSalary(newResume.getSalary());
         }
-        if (newResume.isActive() == oldResume.get().isActive() || ifNull(newResume.isActive())) {
-            result.setActive(oldResume.get().isActive());
+        if (newResume.getIsActive() == oldResume.get().getIsActive() || ifNull(newResume.getIsActive())) {
+            result.setIsActive(oldResume.get().getIsActive());
         } else {
-            result.setActive(newResume.isActive());
+            result.setIsActive(newResume.getIsActive());
         }
         if (ifNull(newResume.getEducation()) || newResume.getEducation().isEmpty()) {
             result.setEducation(oldResume.get().getEducation());
@@ -253,7 +253,7 @@ public class ResumeServiceImpl implements ResumeService {
                 resumeDto.getName(),
                 categoryId,
                 resumeDto.getSalary(),
-                resumeDto.isActive(),
+                resumeDto.getIsActive(),
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );

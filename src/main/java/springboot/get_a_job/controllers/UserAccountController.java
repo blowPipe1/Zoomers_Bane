@@ -10,19 +10,29 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.UserDto;
+import springboot.get_a_job.dto.VacancyDto;
 import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
+import springboot.get_a_job.exceptions.UserNotFoundException;
+import springboot.get_a_job.models.Vacancy;
+import springboot.get_a_job.services.ResumeService;
 import springboot.get_a_job.services.UserAccountService;
+import springboot.get_a_job.services.VacancyService;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
 public class UserAccountController {
     private final UserAccountService userAccountService;
+    private final ResumeService resumeService;
+    private final VacancyService vacancyService;
 
 
     @GetMapping("/register")
@@ -39,6 +49,24 @@ public class UserAccountController {
         }
         userAccountService.registerUser(userDto);
         return ("User successfully Registered");
+    }
+
+    @GetMapping("/dashboard/{userId}")
+    public String dashboard(@PathVariable Integer userId, Model model) {
+        UserDto currentUser = userAccountService.findUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+
+        model.addAttribute("user", currentUser);
+
+        if (currentUser.getAccountType().equalsIgnoreCase("applicant")) {
+            List<ResumeDto> items = resumeService.findResumeByCreator(userId).orElseGet(Collections::emptyList);
+            model.addAttribute("itemsList", items);
+        } else if (currentUser.getAccountType().equalsIgnoreCase("employer")) {
+            List<VacancyDto> items = vacancyService.findVacancyByCreator(userId).orElseGet(Collections::emptyList);
+            model.addAttribute("itemsList", items);
+        }
+
+        return "dashboard";
     }
 
 

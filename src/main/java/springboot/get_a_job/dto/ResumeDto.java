@@ -32,7 +32,7 @@ public class ResumeDto {
     private Double salary;
 
     @NotNull(message = "Resume's status is Required")
-    private boolean isActive;
+    private Boolean isActive;
 
 
     @Valid
