@@ -48,12 +48,6 @@
     </div>
 
     <div class="form-group">
-        <label>Avatar (URL):</label>
-        <@spring.formInput "userDto.avatar" />
-        <@spring.showErrors "<br/>", "error" />
-    </div>
-
-    <div class="form-group">
         <label>Account Type:</label>
         <#assign accountTypes = {
         "applicant": "Applicant",
@@ -62,9 +56,10 @@
         <@spring.formSingleSelect "userDto.accountType", accountTypes, "class='form-control'" />
         <@spring.showErrors "<br/>", "error" />
     </div>
-
     <button type="submit">Save Changes</button>
 </form>
+
+
     <a href="/api/users/dashboard">Back to Profile</a>
 </body>
 </html>

@@ -1,6 +1,5 @@
 package springboot.get_a_job.controllers;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +32,6 @@ public class UserAccountController {
     private final UserAccountService userAccountService;
     private final ResumeService resumeService;
     private final VacancyService vacancyService;
-
 
     @GetMapping("/register")
     public String showForm(Model model) {

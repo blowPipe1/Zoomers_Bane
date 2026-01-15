@@ -34,7 +34,6 @@ public class ResumeDto {
     @NotNull(message = "Resume's status is Required")
     private Boolean isActive;
 
-
     @Valid
     private List<EducationDto> education;
 
@@ -43,5 +42,4 @@ public class ResumeDto {
 
     @Valid
     private List<ContactInfoDto>contactInfo;
-
 }
