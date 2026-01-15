@@ -1,7 +1,6 @@
 package springboot.get_a_job.controllers;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,17 +13,11 @@ import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.WorkExperienceDto;
 import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
-import springboot.get_a_job.exceptions.ResumeNotFoundException;
-import springboot.get_a_job.serviceImplementations.ContactInfoServiceImpl;
-import springboot.get_a_job.serviceImplementations.EducationInfoServiceImpl;
-import springboot.get_a_job.serviceImplementations.ResumeServiceImpl;
-import springboot.get_a_job.serviceImplementations.WorkExperienceServiceImpl;
 import springboot.get_a_job.services.ContactInfoService;
 import springboot.get_a_job.services.EducationInfoService;
 import springboot.get_a_job.services.ResumeService;
 import springboot.get_a_job.services.WorkExperienceService;
 
-import java.util.Collection;
 import java.util.List;
 
 @Controller
