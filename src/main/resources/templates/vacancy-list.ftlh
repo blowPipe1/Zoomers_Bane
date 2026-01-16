@@ -6,29 +6,33 @@
     <title>Vacancies</title>
     <style>
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: #f0f2f5;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
             margin: 0;
-            padding: 40px 20px;
+            padding: 20px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
         }
 
-        header {
+        h2 {
             text-align: center;
-            margin-bottom: 40px;
+            margin-top: 0;
+            font-size: 24px;
+            margin-bottom: 30px;
         }
 
-        .vacancy-grid {
+        .vacancy-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
+            margin-top: 20px;
         }
 
-        .card {
+        .vacancy-card {
             background: white;
             border-radius: 12px;
             padding: 20px;
@@ -38,90 +42,65 @@
             flex-direction: column;
         }
 
-        .category {
-            color: #007bff;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .name {
-            font-size: 18px;
-            margin: 0 0 10px 0;
-            color: #222;
-        }
-
-        .salary {
-            font-size: 20px;
-            color: #28a745;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .meta-info {
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        .btn-apply {
+        .btn-view{
             display: block;
+            width: 100%;
+            padding: 14px;
             text-align: center;
-            background: #222;
-            color: white;
-            padding: 10px;
             text-decoration: none;
             border-radius: 6px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
             margin-top: auto;
         }
 
-        .status{color: blue; font-weight: bold;}
+        .vacancy-info, .meta-info{
+            gap: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f2f5;
+            margin-bottom: 30px;
+        }
+
+        .meta-info{
+            margin-top: auto;
+        }
+
+        .vacancy-card h3{
+            margin-bottom: 4px;
+            margin-top: 4px;
+        }
+        .vacancy-card p{
+            margin-bottom: 4px;
+            margin-top: 4px;
+        }
+
+        .vacancy-card span{
+            font-weight: lighter;
+        }
 
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <h1>Available Vacancies</h1>
-        <div class="subtitle">Become Ultimate Dungeon Master</div>
-    </header>
+    <h2>Vacancies</h2>
 
-    <div class="vacancy-grid">
+    <div class="vacancy-list">
         <#list vacancies as vacancy>
-            <div class="card">
-                <div class="category">${vacancy.category}</div>
-                <h2 class="name">${vacancy.name}</h2>
-
-                <div class="salary">
-                    ${vacancy.salary?string.currency}
+            <div class="vacancy-card">
+                <div class="vacancy-info">
+                    <h3>${vacancy.name! "N/A"}</h3>
+                    <p><span>Category: </span> ${vacancy.category! "N/A"}</p>
+                    <p><span>Salary: </span> ${vacancy.salary! 0}</p>
+                    <p><span>Company(Owner): </span> ${vacancy.author! "N/A"}</p>
                 </div>
-
-                <div class="description">
-                    ${vacancy.description!"Employer did't submit a description"}
-                </div>
-
                 <div class="meta-info">
-                    <span class="experience">
-                            Experience: from ${vacancy.expFrom!0} to ${vacancy.expTo!0} years
-                    </span>
-                    <br>
-                    <span>
-                        Status: <span class="status"> ${(vacancy.isActive)?string('Active', 'Occupied')}</span>
-                    </span>
+                    <p><span>Experience: </span>from ${vacancy.expFrom! 0} to ${vacancy.expTo! 0}</p>
+                    <p><span>Status: </span> ${vacancy.isActive?string('Active', 'Inactive')}</p>
                 </div>
-
-                <div class="author">
-                    <span>Company(representative): <strong>${vacancy.author}</strong></span>
-                    <a href="#" class="btn-apply">Respond</a>
-                </div>
-            </div>
-        <#else>
-            <div class="empty-state">
-                <h3>No vacancies</h3>
+                <button type="submit" class="btn-view">Open</button>
             </div>
         </#list>
     </div>

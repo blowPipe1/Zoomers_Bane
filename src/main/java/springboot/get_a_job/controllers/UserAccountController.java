@@ -49,25 +49,48 @@ public class UserAccountController {
         return "redirect:/api/users/dashboard";
     }
 
-    @GetMapping("/dashboard")
+//    @GetMapping("/dashboard")
+//    public String dashboard(
+//            Model model,
+//            @AuthenticationPrincipal CustomUserDetails currentUserA) {
+//        UserDto currentUser = userAccountService.findUserById(currentUserA.getId())
+//                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + currentUserA.getId()));
+//
+//        model.addAttribute("user", currentUser);
+//
+//        if (currentUser.getAccountType().equalsIgnoreCase("applicant")) {
+//            List<ResumeDto> items = resumeService.findResumeByCreator(currentUserA.getId()).orElseGet(Collections::emptyList);
+//            model.addAttribute("itemsList", items);
+//        } else if (currentUser.getAccountType().equalsIgnoreCase("employer")) {
+//            List<VacancyDto> items = vacancyService.findVacancyByCreator(currentUserA.getId()).orElseGet(Collections::emptyList);
+//            model.addAttribute("itemsList", items);
+//        }
+//
+//        return "dashboard";
+//    }
+
+
+    @GetMapping("/dashboard/{userId}")
     public String dashboard(
+            @PathVariable Integer userId,
             Model model,
             @AuthenticationPrincipal CustomUserDetails currentUserA) {
-        UserDto currentUser = userAccountService.findUserById(currentUserA.getId())
+        UserDto currentUser = userAccountService.findUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + currentUserA.getId()));
 
         model.addAttribute("user", currentUser);
 
         if (currentUser.getAccountType().equalsIgnoreCase("applicant")) {
-            List<ResumeDto> items = resumeService.findResumeByCreator(currentUserA.getId()).orElseGet(Collections::emptyList);
+            List<ResumeDto> items = resumeService.findResumeByCreator(userId).orElseGet(Collections::emptyList);
             model.addAttribute("itemsList", items);
         } else if (currentUser.getAccountType().equalsIgnoreCase("employer")) {
-            List<VacancyDto> items = vacancyService.findVacancyByCreator(currentUserA.getId()).orElseGet(Collections::emptyList);
+            List<VacancyDto> items = vacancyService.findVacancyByCreator(userId).orElseGet(Collections::emptyList);
             model.addAttribute("itemsList", items);
         }
 
         return "dashboard";
     }
+    //
 
     @GetMapping("/edit")
     public String editPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {

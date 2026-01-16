@@ -18,189 +18,122 @@
             margin: 0 auto;
         }
 
-        header {
+        h2 {
             text-align: center;
-            margin-bottom: 40px;
+            margin-top: 0;
+            font-size: 24px;
+            margin-bottom: 30px;
         }
 
-        h1 { color: #2c3e50; margin-bottom: 10px; }
-        .subtitle { color: #7f8c8d; font-size: 1.1rem; }
-
-        .resume-grid {
+        .resume-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
         }
 
-        .card {
-            background: #fff;
-            border-radius: 12px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 1px solid #eef0f2;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 20px rgba(0,0,0,0.1);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-        }
-
-        .name {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin: 0;
-        }
-
-        .category-tag {
-            background: #e8f0fe;
-            color: #1967d2;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .salary {
-            font-size: 1.15rem;
-            color: #27ae60;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .section-title {
-            font-size: 0.75rem;
-            color: #95a5a6;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-            margin-top: 15px;
-        }
-
-        .info-block {
-            padding-left: 12px;
-            border-left: 2px solid #3498db;
-            margin-bottom: 10px;
-        }
-
-        .info-main { font-size: 0.95rem; font-weight: 600; display: block; color: #2c3e50; }
-        .info-sub { font-size: 0.85rem; color: #7f8c8d; }
-
-        .card-footer {
-            margin-top: auto;
-            padding-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .btn-view {
-            background-color: #2c3e50;
-            color: white;
-            text-align: center;
-            padding: 12px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-
-        .btn-view:hover { background-color: #34495e; }
-
-        .contacts-preview {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            color: #95a5a6;
-            font-size: 0.8rem;
-        }
-
-        .empty-state {
-            text-align: center;
-            grid-column: 1 / -1;
-            padding: 50px;
+        .resume-card {
             background: white;
             border-radius: 12px;
-            color: #95a5a6;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
         }
+
+        .resume-card h3{
+            margin-bottom: 2px;
+            margin-top: 2px;
+        }
+        .resume-card p{
+            margin-bottom: 2px;
+            margin-top: 2px;
+        }
+
+        .resume-card span{
+            font-weight: lighter;
+        }
+
+        .resume-info, .experience, .education, .contacts{
+            gap: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f2f5;
+            margin-bottom: 30px;
+        }
+
+        .experience, .education, .contacts{
+            margin-top: auto;
+        }
+
+        .btn-view{
+            display: block;
+            width: 100%;
+            padding: 14px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 6px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: auto;
+        }
+
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <h1>Resumes</h1>
-        <div class="subtitle">Find yourself an employee</div>
-    </header>
+        <h2>Resumes</h2>
 
-    <div class="resume-grid">
+    <div class="resume-list">
         <#list resumes as resume>
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="name">${resume.name!"Not Submitted"}</h2>
-                    <span class="category-tag">${resume.category!"Category"}</span>
+            <div class="resume-card">
+                <div class="resume-info" style="margin-bottom: 10px">
+                    <h3>${resume.name! "N/A"}</h3>
+                    <p><span>Category: </span> ${resume.category! "N/A"}</p>
+                    <p><span>Salary: </span> ${resume.salary! 0}</p>
+                    <p><span>Status: </span> ${resume.isActive?string('Active', 'Inactive')}</p>
                 </div>
 
-                <div class="salary">
-                    <#if resume.salary??>
-                        ${resume.salary?string.currency}
+                <div class="experience"  style="margin-bottom: 10px">
+                    <h3>Experience:</h3>
+                    <#if resume.workExperience?has_content>
+                        <p><span>Company: </span> ${resume.workExperience[0].companyName! "N/A"}</p>
+                        <p><span>Position: </span> ${resume.workExperience[0].position! "N/A"} • ${resume.workExperience[0].years! 0} year(s)</p>
                     <#else>
-                        Not Submitted
+                        <p>N/A</p>
                     </#if>
                 </div>
 
-                <div class="section-title">Experience</div>
-                <#if resume.workExperience?has_content>
-                    <div class="info-block">
-                        <span class="info-main">${resume.workExperience[0].position}</span>
-                        <span class="info-sub">${resume.workExperience[0].companyName} • ${resume.workExperience[0].years} г.</span>
-                    </div>
-                <#else>
-                    <span class="info-sub">None</span>
-                </#if>
-
-                <div class="section-title">Education</div>
-                <#if resume.education?has_content>
-                    <div class="info-block" style="border-color: #9b59b6;">
-                        <span class="info-main">${resume.education[0].degree}</span>
-                        <span class="info-sub">${resume.education[0].institution}</span>
-                    </div>
-                <#else>
-                    <span class="info-sub">Not Submitted</span>
-                </#if>
-
-                <div class="card-footer">
-                    <a href="/resumes/${resume.applicant}" class="btn-view">Open</a>
-
-                    <div class="contacts-preview">
-                        <#if resume.contactInfo?has_content>
-                            <#list resume.contactInfo as contact>
-                                <span>${contact.type!"Contact"}</span>
-
-                                <#if contact_index == 1><#break></#if>
-                            </#list>
-                        <#else>
-                            <span style="color: #bdc3c7;">No contacts provided</span>
-                        </#if>
-                    </div>
+                <div class="education"  style="margin-bottom: 10px">
+                    <h3>Education:</h3>
+                    <#if resume.education?has_content>
+                        <p><span>Institution: </span> ${resume.education[0].institution! "N/A"}</p>
+                        <p><span>Program: </span> ${resume.education[0].program! "N/A"}</p>
+                        <p><span>Degree: </span> ${resume.education[0].degree! "N/A"}</p>
+                        <p><span>Period: </span> ${resume.education[0].startDate! 'N/A'} to ${resume.education[0].endDate! 'N/A'}</p>
+                    <#else>
+                        <p>N/A</p>
+                    </#if>
                 </div>
-            </div>
-        <#else>
-            <div class="empty-state">
-                <p>Nothing's in the Dungeon.</p>
+
+
+                <div class="contacts"  style="margin-bottom: 10px">
+                    <#if resume.contactInfo?has_content>
+                        <#list resume.contactInfo as contact>
+                            <p><span>${contact.type!"Contact"}: </span>${contact.value!"N/A"}</p>
+                            <#if contact_index == 1><#break></#if>
+                        </#list>
+                    <#else>
+                        <p>Contacts Not Provided</p>
+                    </#if>
+                    </div>
+                <button type="submit" class="btn-view">Open</button>
             </div>
         </#list>
+
     </div>
 </div>
 

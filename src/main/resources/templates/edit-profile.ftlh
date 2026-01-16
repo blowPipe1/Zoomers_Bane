@@ -5,29 +5,28 @@
     <meta charset="UTF-8">
     <title>Edit Profile</title>
     <style>
-        body {
+        body{
             font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 40px 20px;
             display: flex;
             justify-content: center;
         }
 
-        .form-card {
+        .container{
             background: white;
-            max-width: 500px;
+            max-width: 600px;
             width: 100%;
-            padding: 40px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             border: 1px solid #e0e0e0;
+            padding: 40px;
         }
 
         h2 {
             text-align: center;
             margin-top: 0;
-            color: #222;
             font-size: 24px;
             margin-bottom: 30px;
         }
@@ -44,7 +43,6 @@
             color: #444;
         }
 
-
         .form-group input,
         .form-group select {
             width: 100%;
@@ -54,13 +52,6 @@
             font-size: 16px;
             background: #f8f9fa;
             box-sizing: border-box;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #007bff;
-            background: #fff;
         }
 
         .error {
@@ -73,8 +64,6 @@
         .btn-submit {
             display: block;
             width: 100%;
-            background: #222;
-            color: white;
             padding: 14px;
             text-align: center;
             text-decoration: none;
@@ -83,19 +72,13 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: opacity 0.3s;
             margin-top: 20px;
-        }
-
-        .btn-submit:hover {
-            opacity: 0.9;
         }
 
         .back-link {
             display: block;
-            text-align: center;
+            text-align: left;
             margin-top: 20px;
-            color: #666;
             text-decoration: none;
             font-size: 14px;
         }
@@ -107,7 +90,7 @@
 </head>
 <body>
 
-<div class="form-card">
+<div class = "container">
     <h2>Edit Profile</h2>
 
     <form action="/api/users/update" method="post">
@@ -162,7 +145,7 @@
         <button type="submit" class="btn-submit">Save Changes</button>
     </form>
 
-    <a href="/api/users/dashboard" class="back-link">← Back to Profile</a>
+    <a href="/api/users/dashboard" class="back-link">♂ Back to Profile ♂</a>
 </div>
 
 </body>

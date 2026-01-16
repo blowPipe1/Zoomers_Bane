@@ -6,20 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
     <style>
-        .registration-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            font-family: 'Segoe UI', Arial, sans-serif;
-        }
-
-        .form-card {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-
         .profile-header {
             display: flex;
             align-items: center;
@@ -30,23 +16,10 @@
         }
 
         .user-avatar img {
-            border-radius: 50%;
             object-fit: cover;
             border: 3px solid #007bff;
-        }
-
-        .btn-edit {
-            background: #f0f2f5;
-            color: #222;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 14px;
-            margin-top: 10px;
-            transition: background 0.3s;
-        }
-
-        .btn-edit:hover {
-            background: #e0e0e0;
+            width: 120px;
+            height: 120px;
         }
 
         .resume-list, .vacancy-list {
@@ -66,101 +39,99 @@
             flex-direction: column;
         }
 
-        .resume-card h5, .vacancy-card h5 {
-            font-size: 18px;
-            margin: 0 0 10px 0;
-            color: #222;
-        }
-
-        .resume-card p:nth-of-type(1), .vacancy-card p:nth-of-type(1) {
-            color: #007bff;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            order: -1;
-        }
-
-        .resume-card p:nth-of-type(2), .vacancy-card p:nth-of-type(2) {
-            font-size: 20px;
-            color: #28a745;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .resume-card p:nth-of-type(3), .vacancy-card p:nth-of-type(3) {
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 15px;
-            color: #666;
-        }
-
-        .btn-update, .btn-edit-resume, .btn-create {
+        .btn-update, .btn-edit-resume {
             display: inline-block;
             text-align: center;
-            background: #222;
-            color: white;
             padding: 10px;
             text-decoration: none;
-            border-radius: 6px;
-            border: none;
             cursor: pointer;
             margin-top: 5px;
-            font-size: 14px;
-            transition: opacity 0.3s;
         }
 
-        .btn-edit-resume {
-            background: #6c757d;
+
+        body{
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
 
-        .btn-update:hover, .btn-edit-resume:hover {
-            opacity: 0.8;
+        .container{
+            background: white;
+            max-width: 1100px;
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid #e0e0e0;
+            padding: 40px;
         }
 
-        .btn-create {
-            background: #007bff;
-            margin-bottom: 10px;
+        h2 {
+            text-align: center;
+            margin-top: 0;
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        .profile-header a, .profile-header p{
+            margin: 5px 0;
+        }
+
+
+        .actions{
+            display: grid;
+            margin-left: auto;
+            margin-right: 0;
+            flex-direction: row;
+            gap: 4px;
+
+        }
+
+        .action{
+            background: #fff;
+            border-radius: 12px;
+            padding: 7px 70px;
+            display: flex;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #eef0f2;
+            justify-content: center;
         }
     </style>
 
 </head>
 <body>
 
-<div class="registration-container">
-    <div class="form-card">
+    <div class="container">
         <h2>Profile</h2>
 
         <div class="profile-header">
-            <div class="avatar-placeholder"></div>
+
             <div class="user-avatar">
                 <#if user.avatar?has_content>
-                    <img src="/images/${user.avatar}" alt="Avatar" width="100">
+                    <img src="/images/${user.avatar}" alt="Avatar">
                 <#else>
-                    <img src="/images/gachi.jpg" alt="No Avatar" width="100">
+                    <img src="/images/gachi.jpg" alt="No Avatar">
                 </#if>
             </div>
             <div class="user-info">
                 <h3>${user.name! "Not Found"} ${user.surname! "Not Found"}</h3>
-                <p>Age: ${user.age! 0}</p>
-                <a href="/api/users/edit" class="btn-edit" style="text-decoration: none; display: inline-block;">Edit</a>
+                <h3 style="font-weight: normal">Age: ${user.age! 0} years</h3>
+
             </div>
             <div class="actions">
-                <button class="btn-create">Create Resume</button>
-                <div class="notifications">
-                    Responses
-                </div>
+                <div class="action"> <a href="#" style="text-decoration: none;">Responses</a></div>
+                <div class="action"> <a href="#" style="text-decoration: none;">Create Resume</a></div>
+                <div class="action"> <a href="/api/users/edit" target="_blank" style="text-decoration: none;">Edit</a></div>
             </div>
         </div>
 
         <#if (user.accountType! "") == "applicant">
-        <h4>Resumes:</h4>
+        <h2>Resumes:</h2>
         <div class="resume-list">
             <#list itemsList![] as items>
                 <div class="resume-card">
-                    <h5>${items.name! "Resume's Title"}</h5>
+                    <h3>${items.name! "Resume's Title"}</h3>
                     <p>Category: ${items.category! ""}</p>
                     <p>Salary: ${items.salary! 0}</p>
                     <p>Status: ${items.isActive?string('Active', 'Inactive')}</p>
@@ -170,11 +141,11 @@
             </#list>
         </div>
         <#elseif (user.accountType! "") == "employer">
-            <h4>Vacancies:</h4>
+            <h2>Vacancies:</h2>
             <div class="vacancy-list">
                 <#list itemsList![] as items>
                     <div class="vacancy-card">
-                        <h5>${items.name! "Vacancy's Title"}</h5>
+                        <h3>${items.name! "Vacancy's Title"}</h3>
                         <p>Category: ${items.category! ""}</p>
                         <p>Salary: ${items.salary! 0}</p>
                         <p>Status: ${items.isActive?string('Active', 'Inactive')}</p>
@@ -187,7 +158,6 @@
             <p>Can's identify Account Type</p>
         </#if>
     </div>
-</div>
 
 </body>
 </html>
