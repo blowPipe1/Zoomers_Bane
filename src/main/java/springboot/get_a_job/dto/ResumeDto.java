@@ -13,8 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResumeDto {
-//    @NotBlank(groups = OnCreate.class, message = "Email is Required")
-//    @Email(message = "Email should be valid")
+    @NotBlank(groups = OnCreate.class, message = "Email is Required")
+    @Email(message = "Email should be valid")
     private String applicantEmail;
 
     @NotBlank(groups = OnCreate.class, message = "Resume's title is Required")

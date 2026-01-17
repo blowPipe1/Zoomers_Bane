@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import springboot.get_a_job.dao.VacancyDao;
 import springboot.get_a_job.dto.VacancyDto;
 import springboot.get_a_job.exceptions.CategoryNotFoundException;
+import springboot.get_a_job.exceptions.UserNotFoundException;
 import springboot.get_a_job.exceptions.VacancyNotFoundException;
 import springboot.get_a_job.models.Vacancy;
 import springboot.get_a_job.services.CategoryService;
@@ -135,10 +136,9 @@ public class VacancyServiceImpl implements VacancyService {
         Integer categoryId = categoryService.findIdByName(vacancy.getCategory())
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + vacancy.getCategory()));
 
-        // TODO check for null & empty string etc.
-        String[] name = vacancy.getAuthor().split(" ");
-        Integer authorId = userAccountService.findIdBySurname(name[1]);
-        log.info("Mapping Vacancy created by {} {} into Vacancy Model", name[0], name[1]);
+        Integer authorId = userAccountService.findIdByEmail(vacancy.getAuthor())
+                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + vacancy.getAuthor()));
+
         return new Vacancy(
                 0,
                 vacancy.getName(),

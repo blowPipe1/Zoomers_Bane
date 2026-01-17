@@ -131,7 +131,13 @@
 
             <div class="actions">
                 <div class="action"> <a href="#" style="text-decoration: none;">Responses</a></div>
-                <div class="action"> <a href="/api/resumes/form" style="text-decoration: none;">Create Resume</a></div>
+                <#if (user.accountType! "")?lower_case == "applicant">
+                    <div class="action"> <a href="/api/resumes/form" style="text-decoration: none;">Create Resume</a></div>
+                <#elseif (user.accountType! "")?lower_case == "employer">
+                    <div class="action"> <a href="/api/vacancies/form" style="text-decoration: none;">Create Vacancy</a></div>
+                <#else>
+                    <p>Cannot identify Account Type</p>
+                </#if>
                 <div class="action"> <a href="/api/users/edit" style="text-decoration: none;">Edit</a></div>
             </div>
         </div>
@@ -155,7 +161,6 @@
                     </div>
                 </#list>
             </div>
-
         <#elseif (user.accountType! "")?lower_case == "employer">
             <h2>Vacancies:</h2>
             <div class="vacancy-list">
