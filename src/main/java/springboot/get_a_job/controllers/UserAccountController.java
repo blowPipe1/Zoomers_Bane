@@ -49,48 +49,27 @@ public class UserAccountController {
         return "redirect:/api/users/dashboard";
     }
 
-//    @GetMapping("/dashboard")
-//    public String dashboard(
-//            Model model,
-//            @AuthenticationPrincipal CustomUserDetails currentUserA) {
-//        UserDto currentUser = userAccountService.findUserById(currentUserA.getId())
-//                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + currentUserA.getId()));
-//
-//        model.addAttribute("user", currentUser);
-//
-//        if (currentUser.getAccountType().equalsIgnoreCase("applicant")) {
-//            List<ResumeDto> items = resumeService.findResumeByCreator(currentUserA.getId()).orElseGet(Collections::emptyList);
-//            model.addAttribute("itemsList", items);
-//        } else if (currentUser.getAccountType().equalsIgnoreCase("employer")) {
-//            List<VacancyDto> items = vacancyService.findVacancyByCreator(currentUserA.getId()).orElseGet(Collections::emptyList);
-//            model.addAttribute("itemsList", items);
-//        }
-//
-//        return "dashboard";
-//    }
-
-
-    @GetMapping("/dashboard/{userId}")
+    @GetMapping("/dashboard")
     public String dashboard(
-            @PathVariable Integer userId,
             Model model,
             @AuthenticationPrincipal CustomUserDetails currentUserA) {
-        UserDto currentUser = userAccountService.findUserById(userId)
+        UserDto currentUser = userAccountService.findUserById(currentUserA.getId())
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + currentUserA.getId()));
 
         model.addAttribute("user", currentUser);
 
         if (currentUser.getAccountType().equalsIgnoreCase("applicant")) {
-            List<ResumeDto> items = resumeService.findResumeByCreator(userId).orElseGet(Collections::emptyList);
+            List<ResumeDto> items = resumeService.findResumeByCreator(currentUserA.getId()).orElseGet(Collections::emptyList);
             model.addAttribute("itemsList", items);
         } else if (currentUser.getAccountType().equalsIgnoreCase("employer")) {
-            List<VacancyDto> items = vacancyService.findVacancyByCreator(userId).orElseGet(Collections::emptyList);
+            List<VacancyDto> items = vacancyService.findVacancyByCreator(currentUserA.getId()).orElseGet(Collections::emptyList);
             model.addAttribute("itemsList", items);
         }
 
         return "dashboard";
     }
-    //
+
+
 
     @GetMapping("/edit")
     public String editPage(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
@@ -129,15 +108,15 @@ public class UserAccountController {
                 .body("User successfully deleted");
     }
 
-    @PostMapping("/{userId}/avatar")
-    public ResponseEntity<String> uploadAvatar(@PathVariable Integer userId, @RequestParam("file") MultipartFile file) {
+    @PostMapping("/avatar")
+    public String uploadAvatar(@AuthenticationPrincipal CustomUserDetails currentUserA, @RequestParam("file") MultipartFile file) {
         try {
-            userAccountService.saveAvatar(userId, file);
-            return ResponseEntity.ok("Successfully uploaded avatar");
+            userAccountService.saveAvatar(currentUserA.getId(), file);
+            return "redirect:/api/users/dashboard";
         } catch (IOException e) {
-            return ResponseEntity.internalServerError().body("Error while uploading avatar");
+            return ("Error while uploading avatar");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return (e.getMessage());
         }
     }
 

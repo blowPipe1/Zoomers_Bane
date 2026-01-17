@@ -21,6 +21,10 @@
             width: 120px;
             height: 120px;
         }
+        .user-avatar img:hover {
+            opacity: 0.8;
+            border: 2px solid #007bff;
+        }
 
         .resume-list, .vacancy-list {
             display: grid;
@@ -97,6 +101,8 @@
             border: 1px solid #eef0f2;
             justify-content: center;
         }
+
+
     </style>
 
 </head>
@@ -106,23 +112,31 @@
         <h2>Profile</h2>
 
         <div class="profile-header">
-
             <div class="user-avatar">
-                <#if user.avatar?has_content>
-                    <img src="/images/${user.avatar}" alt="Avatar">
-                <#else>
-                    <img src="/images/gachi.jpg" alt="No Avatar">
-                </#if>
+                <label for="avatarInput" style="cursor: pointer;" title="Change Image">
+                    <#if user.avatar?has_content>
+                        <img src="/images/${user.avatar}" alt="Avatar" id="avatarPreview">
+                    <#else>
+                        <img src="/images/gachi.jpg" alt="No Avatar" id="avatarPreview">
+                    </#if>
+                </label>
+                <form id="avatarForm" action="/api/users/avatar" method="post" enctype="multipart/form-data">
+                    <div style="margin-top: 10px; display: flex; flex-direction: column; width: 120px">
+                        <input type="file" id="avatarInput" name="file" accept="image/*">
+                        <button type="submit" class="btn-update">Update</button>
+                    </div>
+                </form>
             </div>
+
             <div class="user-info">
                 <h3>${user.name! "Not Found"} ${user.surname! "Not Found"}</h3>
                 <h3 style="font-weight: normal">Age: ${user.age! 0} years</h3>
-
             </div>
+
             <div class="actions">
                 <div class="action"> <a href="#" style="text-decoration: none;">Responses</a></div>
                 <div class="action"> <a href="#" style="text-decoration: none;">Create Resume</a></div>
-                <div class="action"> <a href="/api/users/edit" target="_blank" style="text-decoration: none;">Edit</a></div>
+                <div class="action"> <a href="/api/users/edit" style="text-decoration: none;">Edit</a></div>
             </div>
         </div>
 
