@@ -93,8 +93,7 @@ public class VacancyController {
     @PostMapping("/update/{vacancyId}")
     public String updateVacancy(
             @PathVariable Integer vacancyId,
-            @AuthenticationPrincipal CustomUserDetails currentUser,
-             @ModelAttribute("vacancyDto") VacancyDto vacancyDto,
+            @Validated(OnUpdate.class) @ModelAttribute("vacancyDto") VacancyDto vacancyDto,
             @AuthenticationPrincipal CustomUserDetails userDetails,
             BindingResult bindingResult
     ) {
@@ -131,7 +130,7 @@ public class VacancyController {
 //    }
 
     @GetMapping("/all")
-    public String getAllActiveResumes(Model model) {
+    public String getAllActiveVacancies(Model model) {
         List<VacancyDto> vacancies = vacancyService.getAllActiveVacancies().orElseGet(null);
         model.addAttribute("vacancies", vacancies);
         return "vacancy-list";
