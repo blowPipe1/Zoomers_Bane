@@ -13,10 +13,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResumeDto {
-    @NotBlank(groups = OnCreate.class, message = "Creator's Name is Required")
-    @NotNull(groups = OnUpdate.class, message = "Creator's Name cant be null")
-    @Size(min = 3, max = 30, message = "Creator's Name's length must be between 3 and 30 characters")
-    private String applicant;
+//    @NotBlank(groups = OnCreate.class, message = "Email is Required")
+//    @Email(message = "Email should be valid")
+    private String applicantEmail;
 
     @NotBlank(groups = OnCreate.class, message = "Resume's title is Required")
     @NotNull(groups = OnUpdate.class, message = "Resume's title cant be null")

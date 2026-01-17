@@ -119,7 +119,7 @@
 
 <div class="container">
         <h2>Create account</h2>
-        <form action="/register" method="post">
+        <form action="/api/users/register" method="post">
             <div class="form-group">
                 <label for="name">Name</label>
                 <@spring.formInput "userDto.name" "class='form-control' placeholder='Enter your Name'" />

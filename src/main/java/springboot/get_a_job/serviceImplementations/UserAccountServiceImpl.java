@@ -140,6 +140,14 @@ public class UserAccountServiceImpl implements UserAccountService {
         return userDao.findNameById(id);
     }
 
+    @Override
+    public Optional<Integer> findIdByEmail(String email){
+        if (userDao.findIdByEmail(email) == null) {
+            return Optional.empty();
+        }
+        return Optional.of(userDao.findIdByEmail(email));
+    }
+
     private Optional<List<UserDto>>convert(List<User> users) {
         if (users == null || users.isEmpty()) {
             throw new UserNotFoundException("User not found");

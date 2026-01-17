@@ -9,7 +9,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import springboot.get_a_job.dto.ContactInfoDto;
+import springboot.get_a_job.models.Category;
 import springboot.get_a_job.models.ContactInfo;
+import springboot.get_a_job.models.ContactType;
 
 import java.util.List;
 
@@ -41,8 +43,18 @@ public class ContactInfoDao {
             log.warn("No Contact Info for Resume(ID: {}) was found", resumeId);
             return null;
         }
-
     }
+
+    public List<ContactType> findAll() {
+        String sql = "SELECT * FROM CONTACT_TYPES";
+        try {
+            return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(ContactType.class));
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+
 
     public void addContactInfo(ContactInfo contactInfo, Integer resumeId) {
         String sql = "insert into CONTACT_INFO(resume_id, type_id, value)" +

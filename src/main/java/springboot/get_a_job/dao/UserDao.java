@@ -89,6 +89,15 @@ public class UserDao {
         }
     }
 
+    public Integer findIdByEmail(String email){
+        String sql = "select ID from USERS where EMAIL = ?;";
+        try {
+            return jdbcTemplate.queryForObject(sql, Integer.class, email);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
     public List<User> findRespondedUsers(Integer vacancy_id) {
         String sql = "SELECT u.* FROM users u\n" +
                 "    JOIN resumes r ON u.id = r.applicant_id\n" +

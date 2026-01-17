@@ -3,9 +3,13 @@ package springboot.get_a_job.dao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import springboot.get_a_job.models.Category;
+import springboot.get_a_job.models.User;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -36,5 +40,14 @@ public class CategoryDao {
             return null;
         }
 
+    }
+
+    public List<Category> findAll() {
+        String sql = "SELECT * FROM categories";
+        try {
+            return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Category.class));
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 }

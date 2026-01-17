@@ -21,10 +21,6 @@
             width: 120px;
             height: 120px;
         }
-        .user-avatar img:hover {
-            opacity: 0.8;
-            border: 2px solid #007bff;
-        }
 
         .resume-list, .vacancy-list {
             display: grid;
@@ -135,26 +131,32 @@
 
             <div class="actions">
                 <div class="action"> <a href="#" style="text-decoration: none;">Responses</a></div>
-                <div class="action"> <a href="#" style="text-decoration: none;">Create Resume</a></div>
+                <div class="action"> <a href="/api/resumes/form" style="text-decoration: none;">Create Resume</a></div>
                 <div class="action"> <a href="/api/users/edit" style="text-decoration: none;">Edit</a></div>
             </div>
         </div>
 
-        <#if (user.accountType! "") == "applicant">
-        <h2>Resumes:</h2>
-        <div class="resume-list">
-            <#list itemsList![] as items>
-                <div class="resume-card">
-                    <h3>${items.name! "Resume's Title"}</h3>
-                    <p>Category: ${items.category! ""}</p>
-                    <p>Salary: ${items.salary! 0}</p>
-                    <p>Status: ${items.isActive?string('Active', 'Inactive')}</p>
-                    <button class="btn-update">Update</button>
-                    <button class="btn-edit-resume">Edit</button>
-                </div>
-            </#list>
-        </div>
-        <#elseif (user.accountType! "") == "employer">
+        <#if (user.accountType! "")?lower_case == "applicant">
+            <h2>Resumes:</h2>
+            <div class="resume-list">
+                <#list itemsList![] as items>
+                    <div class="resume-card">
+                        <h3>${items.name! "Resume's Title"}</h3>
+                        <p>Category: ${items.category! ""}</p>
+                        <p>Salary: ${items.salary! 0}</p>
+                        <p>Status: ${items.isActive?string('Active', 'Inactive')}</p>
+                        <button class="btn-update">Update</button>
+                        <button class="btn-edit-resume">Edit</button>
+                    </div>
+                <#else>
+                    <div class="empty-state">
+                        <p>You haven't created any resumes yet.</p>
+                        <a href="/api/resumes/form">Create your first resume</a>
+                    </div>
+                </#list>
+            </div>
+
+        <#elseif (user.accountType! "")?lower_case == "employer">
             <h2>Vacancies:</h2>
             <div class="vacancy-list">
                 <#list itemsList![] as items>
@@ -166,10 +168,15 @@
                         <button class="btn-update">Update</button>
                         <button class="btn-edit-resume">Edit</button>
                     </div>
+                <#else>
+                    <div class="empty-state">
+                        <p>You have no active vacancies.</p>
+                        <a href="/api/vacancies/form">Post a new vacancy</a>
+                    </div>
                 </#list>
             </div>
         <#else>
-            <p>Can's identify Account Type</p>
+            <p>Cannot identify Account Type</p>
         </#if>
     </div>
 

@@ -13,6 +13,7 @@ import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.WorkExperienceDto;
 import springboot.get_a_job.exceptions.CategoryNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
+import springboot.get_a_job.exceptions.UserNotFoundException;
 import springboot.get_a_job.models.Resume;
 import springboot.get_a_job.services.*;
 
@@ -119,16 +120,28 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public Optional<List<ResumeDto>> findResumeByCreator(Integer applicant_id) {
+        if (resumeDao.findResumeByCreator(applicant_id).isEmpty()) {
+            log.info("empty list");
+            return Optional.empty();
+        }
         return convertIntoDto(resumeDao.findResumeByCreator(applicant_id));
     }
 
     @Override
     public Optional<List<ResumeDto>> findResumeByCreator(String creatorName) {
+        if (resumeDao.findResumeByCreator(creatorName).isEmpty()) {
+            log.info("empty list");
+            return Optional.empty();
+        }
         return convertIntoDto(resumeDao.findResumeByCreator(creatorName));
     }
 
     @Override
     public String findResumeNameById(Integer resumeId){
+        if (resumeDao.findResumeNameById(resumeId).isEmpty()) {
+            log.info("empty");
+            return null;
+        }
         return resumeDao.findResumeNameById(resumeId);
     }
 
@@ -191,10 +204,10 @@ public class ResumeServiceImpl implements ResumeService {
         }
         ResumeDto result = new ResumeDto();
 
-        if (ifNull(newResume.getApplicant()) || newResume.getApplicant().isEmpty()) {
-            result.setApplicant(oldResume.get().getApplicant());
+        if (ifNull(newResume.getApplicantEmail()) || newResume.getApplicantEmail().isEmpty()) {
+            result.setApplicantEmail(oldResume.get().getApplicantEmail());
         } else {
-            result.setApplicant(newResume.getApplicant());
+            result.setApplicantEmail(newResume.getApplicantEmail());
         }
         if (ifNull(newResume.getName()) || newResume.getName().isEmpty()) {
             result.setName(oldResume.get().getName());
@@ -238,14 +251,14 @@ public class ResumeServiceImpl implements ResumeService {
         return object == null;
     }
 
-    private Resume convertIntoModel(ResumeDto resumeDto){
+    private Resume convertIntoModel(ResumeDto resumeDto) {
         Integer categoryId = categoryService.findIdByName(resumeDto.getCategory())
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + resumeDto.getCategory()));
 
-        // TODO check for null & empty string etc.
-        String[] name = resumeDto.getApplicant().split(" ");
-        Integer applicantId = userAccountService.findIdBySurname(name[1]);
-        log.info("Mapping Resume DTO into Resume for User with ID: {} Name: {} {}", applicantId, name[0], name[1]);
+        Integer applicantId = userAccountService.findIdByEmail(resumeDto.getApplicantEmail())
+                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + resumeDto.getApplicantEmail()));
+
+        log.info("Mapping Resume DTO into Resume for User ID: {}, Email: {}", applicantId, resumeDto.getApplicantEmail());
 
         return new Resume(
                 0,

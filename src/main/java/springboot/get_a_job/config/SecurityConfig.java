@@ -22,7 +22,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/register/**", "/api/vacancies/all").permitAll()
+                        .requestMatchers("/api/users/register-form/**", "/api/users/register/**", "/api/vacancies/all").permitAll()
                         .requestMatchers("/images/**", "/css/**", "/js/**", "/static/**").permitAll()
 
                         .requestMatchers("/api/vacancies/create").hasRole("EMPLOYER")

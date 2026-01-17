@@ -15,14 +15,15 @@ import springboot.get_a_job.dto.validation.OnUpdate;
 public class UserDto {
     @NotBlank(groups = OnCreate.class, message = "Name is Required")
     @NotNull(groups = OnUpdate.class, message = "Name cant be null")
-    @Size(groups = OnCreate.class, min = 3, max = 20, message = "Name's length must be between 3 and 20 characters")
+    @Size(groups = {OnCreate.class, OnUpdate.class}, min = 3, max = 20, message = "Name's length must be between 3 and 20 characters")
     private String name;
 
     @NotBlank(groups = OnCreate.class, message = "Surname is Required")
     @NotNull(groups = OnUpdate.class, message = "Surname cant be null")
-    @Size(groups = OnCreate.class, min = 5, max = 25, message = "Surname's length must be between 5 and 25 characters")
+    @Size(groups = {OnCreate.class, OnUpdate.class}, min = 5, max = 25, message = "Surname's length must be between 5 and 25 characters")
     private String surname;
 
+    @Positive
     @NotNull(groups = OnCreate.class, message = "Age is Required")
     @Min(groups = OnCreate.class, value = 18, message = "Must at least 18 years old")
     @Min(groups = OnUpdate.class, value = 0, message = "Set 0 if no updates are incoming")
@@ -41,7 +42,7 @@ public class UserDto {
 
     @NotBlank(groups = OnCreate.class, message = "Phone Number is Required")
     @NotNull(groups = OnUpdate.class, message = "Phone Number cant be null")
-    @Size(groups = OnCreate.class, min = 10, max = 15, message = "Phone number length is invalid")
+    @Size(groups = {OnCreate.class, OnUpdate.class}, min = 10, max = 15, message = "Phone number length is invalid")
     private String phoneNumber;
 
     @NotNull(groups = OnCreate.class, message = "Avatar must al least be empty")

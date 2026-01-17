@@ -11,10 +11,12 @@ import springboot.get_a_job.exceptions.ContactInfoNotFoundException;
 import springboot.get_a_job.exceptions.EducationInfoNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.models.ContactInfo;
+import springboot.get_a_job.models.ContactType;
 import springboot.get_a_job.services.ContactInfoService;
 import springboot.get_a_job.services.ResumeService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -83,6 +85,13 @@ public class ContactInfoServiceImpl implements ContactInfoService {
     @Override
     public List<ContactInfoDto>getResumesContacts(Integer resumeId){
         return contactInfoDao.getResumesContacts(resumeId);
+    }
+
+    @Override
+    public List<String>findAll(){
+        log.info("{}",contactInfoDao.findAll().toString());
+        return contactInfoDao.findAll().stream().map(ContactType::getType).collect(Collectors.toList());
+
     }
 
     private ContactInfoDto checkedContact(ContactInfoDto newContactInfo) {

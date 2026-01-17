@@ -1,6 +1,7 @@
 package springboot.get_a_job.controllers;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
@@ -33,7 +35,7 @@ public class UserAccountController {
     private final ResumeService resumeService;
     private final VacancyService vacancyService;
 
-    @GetMapping("/register")
+    @GetMapping("/register-form")
     public String showForm(Model model) {
         model.addAttribute("userDto", new UserDto());
         return "registration";
