@@ -99,6 +99,7 @@ public class VacancyServiceImpl implements VacancyService {
         List<VacancyDto>vacancyDtos = new ArrayList<>();
         for (Vacancy vacancy : vacancies){
             vacancyDtos.add(new VacancyDto(
+                            vacancy.getId(),
                             vacancy.getName(),
                             vacancy.getDescription(),
                             categoryService.findNameById(vacancy.getCategoryId()),
@@ -120,6 +121,7 @@ public class VacancyServiceImpl implements VacancyService {
         }
         log.info("Mapping (ID: {})Vacancy created by (creator ID: {}) into Vacancy DTO", vacancy.getId(), vacancy.getAuthorId());
         return Optional.of(new VacancyDto(
+                vacancy.getId(),
                 vacancy.getName(),
                 vacancy.getDescription(),
                 categoryService.findNameById(vacancy.getCategoryId()),

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import springboot.get_a_job.dto.*;
 import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
+import springboot.get_a_job.exceptions.UserNotFoundException;
+import springboot.get_a_job.exceptions.VacancyNotFoundException;
 import springboot.get_a_job.models.Category;
 import springboot.get_a_job.models.CustomUserDetails;
 import springboot.get_a_job.services.CategoryService;
@@ -69,6 +71,41 @@ public class VacancyController {
 
 
         return "vacancy-create";
+    }
+
+
+    @GetMapping("/edit/{vacancyId}")
+    public String editVacancy(@PathVariable Integer vacancyId, Model model) {
+        VacancyDto vacancyDto = vacancyService.findVacancyById(vacancyId).orElseThrow();
+        Map<String, String> categories = categoryService.findAll().stream()
+                .collect(Collectors.toMap(
+                        Category::getName,
+                        Category::getName,
+                        (existing, replacement) -> existing
+                ));
+
+        model.addAttribute("categories", categories);
+        model.addAttribute("vacancyDto", vacancyDto);
+
+        return "edit-vacancy";
+    }
+
+    @PostMapping("/update/{vacancyId}")
+    public String updateVacancy(
+            @PathVariable Integer vacancyId,
+            @AuthenticationPrincipal CustomUserDetails currentUser,
+             @ModelAttribute("vacancyDto") VacancyDto vacancyDto,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            return "edit-vacancy";
+        }
+
+        vacancyDto.setAuthor(userDetails.getUsername());
+        vacancyService.updateVacancy(vacancyId, vacancyDto);
+
+        return "redirect:/api/users/dashboard";
     }
 
 //    @PutMapping("/update/{id}")

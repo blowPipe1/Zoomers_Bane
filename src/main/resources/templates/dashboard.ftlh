@@ -152,7 +152,7 @@
                         <p>Salary: ${items.salary! 0}</p>
                         <p>Status: ${items.isActive?string('Active', 'Inactive')}</p>
                         <button class="btn-update">Update</button>
-                        <button class="btn-edit-resume">Edit</button>
+                        <a>edit-vacancy</a>
                     </div>
                 <#else>
                     <div class="empty-state">
@@ -170,8 +170,9 @@
                         <p>Category: ${items.category! ""}</p>
                         <p>Salary: ${items.salary! 0}</p>
                         <p>Status: ${items.isActive?string('Active', 'Inactive')}</p>
+                        <p>Experience: ${items.expFrom! 0} to ${items.expTo! 0} years</p>
                         <button class="btn-update">Update</button>
-                        <button class="btn-edit-resume">Edit</button>
+                        <div class="action"> <a href="/api/vacancies/edit/${items.id}" style="text-decoration: none;">Edit</a></div>
                     </div>
                 <#else>
                     <div class="empty-state">

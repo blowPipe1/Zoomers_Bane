@@ -13,6 +13,7 @@ import springboot.get_a_job.dto.validation.OnUpdate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VacancyDto {
+    private Integer id;
     @NotBlank(groups = OnCreate.class, message = "Vacancy's title is Required")
     @NotNull(groups = OnUpdate.class, message = "Vacancy's title cant be null")
     @Size(min = 3, max = 30, message = "Vacancy's title's length must be between 3 and 30 characters")
