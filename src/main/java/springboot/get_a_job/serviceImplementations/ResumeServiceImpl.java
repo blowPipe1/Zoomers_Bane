@@ -161,6 +161,7 @@ public class ResumeServiceImpl implements ResumeService {
             log.info("Mapping (ID: {})Resume into Resume DTO, stored in list", resume.getId());
 
             resumeDtos.add(new ResumeDto(
+                    resume.getId(),
                     userAccountService.findNameById(resume.getApplicantId()),
                     resume.getName(),
                     categoryService.findNameById(resume.getCategoryId()),
@@ -184,6 +185,7 @@ public class ResumeServiceImpl implements ResumeService {
         log.info("Mapping (ID: {})Resume into Resume DTO", resume.getId());
 
         return Optional.of(new ResumeDto(
+                resume.getId(),
                 userAccountService.findNameById(resume.getApplicantId()),
                 resume.getName(),
                 categoryService.findNameById(resume.getCategoryId()),

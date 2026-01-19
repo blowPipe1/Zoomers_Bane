@@ -1,6 +1,7 @@
 package springboot.get_a_job.controllers;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -9,10 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import springboot.get_a_job.dto.ContactInfoDto;
-import springboot.get_a_job.dto.EducationDto;
-import springboot.get_a_job.dto.ResumeDto;
-import springboot.get_a_job.dto.WorkExperienceDto;
+import springboot.get_a_job.dto.*;
 import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
 import springboot.get_a_job.models.Category;
@@ -24,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Controller
 @RequestMapping("/api/resumes")
 @RequiredArgsConstructor
@@ -85,6 +84,45 @@ public class ResumeController {
         resumeDto.setApplicantEmail(currentUserA.getUsername());
 
         resumeService.createResume(resumeDto);
+        return "redirect:/api/users/dashboard";
+    }
+
+
+    @GetMapping("/edit/{resumeId}")
+    public String editResume(@PathVariable Integer resumeId, Model model) {
+        ResumeDto resumeDto = resumeService.findResumeById(resumeId).orElseThrow();
+        Map<String, String> categories = categoryService.findAll().stream()
+                .collect(Collectors.toMap(
+                        Category::getName,
+                        Category::getName,
+                        (existing, replacement) -> existing
+                ));
+
+        model.addAttribute("categories", categories);
+        model.addAttribute("resumeDto", resumeDto);
+
+        return "edit-resume";
+    }
+
+    @PostMapping("/update/{resumeId}")
+    public String updateResume(
+            @PathVariable Integer resumeId,
+            @Validated(OnUpdate.class) @ModelAttribute("resumeDto") ResumeDto resumeDto,
+            BindingResult bindingResult,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        if (resumeDto.getEducation() == null) {
+            resumeDto.setEducation(new ArrayList<>());
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "edit-resume";
+        }
+
+        resumeDto.setApplicantEmail(userDetails.getUsername());
+        resumeService.updateResume(resumeId, resumeDto);
+
+
         return "redirect:/api/users/dashboard";
     }
 

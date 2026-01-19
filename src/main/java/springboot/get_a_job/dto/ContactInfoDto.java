@@ -15,15 +15,15 @@ import springboot.get_a_job.dto.validation.OnUpdate;
 public class ContactInfoDto {
     private Integer id;
 
-    @NotNull(groups = {OnUpdate.class, OnCreate.class}, message = "Type of your Contact Info cant be null but can be empty''")
+    @NotNull(groups = {OnCreate.class}, message = "Type of your Contact Info cant be null but can be empty''")
     @Size(max = 20, message = " 's length must be less than 20 characters")
     private String  type;
 
-    @NotNull(groups = {OnUpdate.class, OnCreate.class}, message = " cant be null but can be empty''")
+    @NotNull(groups = {OnCreate.class}, message = " cant be null but can be empty''")
     @Size(max = 30, message = "Contact Info's Resume's name length must be less than 30, characters")
     private String resume;
 
-    @NotNull(groups = {OnUpdate.class, OnCreate.class}, message = " cant be null but can be empty''")
+    @NotNull(groups = {OnCreate.class}, message = " cant be null but can be empty''")
     @Size(max = 20, message = "Contact Info's Value's length must be less than 20 characters")
     private String value;
 }

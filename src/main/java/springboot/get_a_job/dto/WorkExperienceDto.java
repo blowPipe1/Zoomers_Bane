@@ -22,15 +22,15 @@ public class WorkExperienceDto {
     @Positive(message = "Positive number of Years Required")
     private int years;
 
-    @NotNull(groups = {OnUpdate.class, OnCreate.class}, message = "Company's Name cant be null but can be empty''")
+    @NotNull(groups = {OnCreate.class}, message = "Company's Name cant be null but can be empty''")
     @Size(max = 50, message = "Company's name's length must be less than 50 characters")
     private String companyName;
 
-    @NotNull(groups = {OnUpdate.class, OnCreate.class}, message = "Position cant be null but can be empty''")
+    @NotNull(groups = { OnCreate.class}, message = "Position cant be null but can be empty''")
     @Size(max = 50, message = "Position's length must be less than 50 characters")
     private String position;
 
-    @NotNull(groups = {OnUpdate.class, OnCreate.class}, message = "Responsibilities cant be null but can be empty''")
+    @NotNull(groups = { OnCreate.class}, message = "Responsibilities cant be null but can be empty''")
     @Size(max = 200, message = "Responsibilities length must be less than 200 characters")
     private String responsibilities;
 }

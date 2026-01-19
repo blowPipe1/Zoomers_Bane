@@ -152,7 +152,8 @@
                         <p>Salary: ${items.salary! 0}</p>
                         <p>Status: ${items.isActive?string('Active', 'Inactive')}</p>
                         <button class="btn-update">Update</button>
-                        <a>edit-vacancy</a>
+                        <div class="action"> <a href="/api/resumes/edit/${items.id}" style="text-decoration: none;">Edit</a></div>
+
                     </div>
                 <#else>
                     <div class="empty-state">

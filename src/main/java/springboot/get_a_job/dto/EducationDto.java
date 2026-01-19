@@ -7,7 +7,6 @@ import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import springboot.get_a_job.dto.validation.OnCreate;
-import springboot.get_a_job.dto.validation.OnUpdate;
 
 @Getter
 @Setter
@@ -16,11 +15,11 @@ import springboot.get_a_job.dto.validation.OnUpdate;
 public class EducationDto {
     private Integer id;
 
-    @NotNull(groups = {OnUpdate.class, OnCreate.class}, message = "Institution's Name cant be null but can be empty''")
+    @NotNull(groups =OnCreate.class, message = "Institution's Name cant be null but can be empty''")
     @Size(max = 50, message = "Institution's name's length must be less than 50 characters")
     private String institution;
 
-    @NotNull(groups = {OnUpdate.class, OnCreate.class}, message = "Program's Name cant be null but can be empty''")
+    @NotNull(groups = { OnCreate.class}, message = "Program's Name cant be null but can be empty''")
     @Size(max = 100, message = "Program's Name's length must be less than 50 characters")
     private String program;
 
@@ -33,7 +32,7 @@ public class EducationDto {
     @PastOrPresent(message = "Ending Date can't be in the future")
     private LocalDate endDate;
 
-    @NotNull(groups = {OnUpdate.class, OnCreate.class}, message = "Education's Degree cant be null but can be empty''")
+    @NotNull(groups = { OnCreate.class}, message = "Education's Degree cant be null but can be empty''")
     @Size(max = 50, message = "Degree's length must be less than 50 characters")
     private String degree;
 }

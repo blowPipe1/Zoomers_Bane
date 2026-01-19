@@ -137,7 +137,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     public String findNameById(Integer id){
-        return userDao.findNameById(id);
+        return userDao.findEmailById(id);
     }
 
     @Override

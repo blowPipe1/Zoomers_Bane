@@ -80,38 +80,35 @@ public class EducationInfoServiceImpl implements EducationInfoService {
     }
 
     private EducationDto checkedEducation(EducationDto newEducation) {
-        if (educationDao.findInfoById(newEducation.getId()) == null) {
+        // 1. Проверка на null самого объекта и его ID
+        if (newEducation == null || newEducation.getId() == null) {
+            throw new IllegalArgumentException("Education ID must not be null for update");
+        }
+
+        // 2. Получаем старые данные ОДИН раз (не вызывайте метод дважды для производительности)
+        EducationDto oldEducation = educationDao.findInfoById(newEducation.getId());
+
+        if (oldEducation == null) {
             throw new EducationInfoNotFoundException("Education info with id: " + newEducation.getId() + " not found");
         }
-        EducationDto oldEducation = educationDao.findInfoById(newEducation.getId());
-        EducationDto result = new EducationDto();
 
-        if (newEducation.getInstitution() == null || newEducation.getInstitution().isEmpty()) {
-            result.setInstitution(oldEducation.getInstitution());
-        } else {
-            result.setInstitution(newEducation.getInstitution());
-        }
-        if (newEducation.getProgram() == null || newEducation.getProgram().isEmpty()) {
-            result.setProgram(oldEducation.getProgram());
-        } else {
-            result.setProgram(newEducation.getProgram());
-        }
-        if (newEducation.getStartDate() == null){
-            result.setStartDate(oldEducation.getStartDate());
-        } else {
-            result.setStartDate(newEducation.getStartDate());
-        }
-        if (newEducation.getEndDate() == null){
-            result.setEndDate(oldEducation.getEndDate());
-        } else {
-            result.setEndDate(newEducation.getEndDate());
-        }
-        if (newEducation.getDegree() == null || newEducation.getDegree().isEmpty()) {
-            result.setDegree(oldEducation.getDegree());
-        } else {
-            result.setDegree(newEducation.getDegree());
-        }
+        EducationDto result = new EducationDto();
+        // Сохраняем ID в новом объекте
+        result.setId(newEducation.getId());
+
+        // Используем тернарные операторы для краткости
+        result.setInstitution(isBlank(newEducation.getInstitution()) ? oldEducation.getInstitution() : newEducation.getInstitution());
+        result.setProgram(isBlank(newEducation.getProgram()) ? oldEducation.getProgram() : newEducation.getProgram());
+        result.setStartDate(newEducation.getStartDate() == null ? oldEducation.getStartDate() : newEducation.getStartDate());
+        result.setEndDate(newEducation.getEndDate() == null ? oldEducation.getEndDate() : newEducation.getEndDate());
+        result.setDegree(isBlank(newEducation.getDegree()) ? oldEducation.getDegree() : newEducation.getDegree());
+
         return result;
+    }
+
+    // Вспомогательный метод (или используйте StringUtils)
+    private boolean isBlank(String s) {
+        return s == null || s.trim().isEmpty();
     }
 
 

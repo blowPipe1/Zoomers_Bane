@@ -116,8 +116,8 @@ public class UserDao {
         }
     }
 
-    public String findNameById(Integer id) {
-        String sql = "SELECT concat(name, ' ' , surname) as name  FROM users WHERE id = ?";
+    public String findEmailById(Integer id) {
+        String sql = "SELECT EMAIL  FROM users WHERE id = ?";
         try {
             log.debug("Fetching full name of User with ID: {}", id);
             return jdbcTemplate.queryForObject(sql, String.class, id);
