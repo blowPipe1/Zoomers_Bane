@@ -26,14 +26,14 @@ databaseChangeLog:
                   type: INTEGER
               - column:
                   name: company_name
-                  type: TEXT
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
               - column:
                   name: position
-                  type: TEXT
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
               - column:
                   name: responsibilities
-                  type: TEXT
+                  type: VARCHAR(255)

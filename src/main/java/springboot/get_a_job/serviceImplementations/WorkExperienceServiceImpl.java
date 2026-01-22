@@ -2,105 +2,127 @@ package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+
 import org.springframework.stereotype.Service;
-import springboot.get_a_job.dao.*;
+import org.springframework.transaction.annotation.Transactional;
 import springboot.get_a_job.dto.WorkExperienceDto;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.exceptions.WorkExpNotFoundException;
-import springboot.get_a_job.services.ResumeService;
+import springboot.get_a_job.models.Resume;
+import springboot.get_a_job.models.WorkExperienceInfo;
+import springboot.get_a_job.repositories.ResumeRepository;
+import springboot.get_a_job.repositories.WorkExperienceInfoRepository;
+
 import springboot.get_a_job.services.WorkExperienceService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class WorkExperienceServiceImpl implements WorkExperienceService {
-    @Autowired
-    @Lazy
-    private ResumeService resumeService;
-    private final WorkExperienceDao workExperienceDao;
+
+    private final WorkExperienceInfoRepository workExperienceRepository;
+    private final ResumeRepository resumeRepository;
 
     @Override
-    public void addWorkExperienceInfo(Integer resumeId, List<WorkExperienceDto> workExperienceDtos) {
-        if (resumeService.findResumeById(resumeId).isEmpty()) {
-            throw new ResumeNotFoundException("Resume with id: " + resumeId + " not found");
+    @Transactional
+    public void addWorkExperienceInfo(Integer resumeId, List<WorkExperienceDto> dtos) {
+        if (dtos == null || dtos.isEmpty()) return;
+
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new ResumeNotFoundException("Resume with id: " + resumeId + " not found"));
+
+        for (WorkExperienceDto dto : dtos) {
+            WorkExperienceInfo info = new WorkExperienceInfo();
+            info.setResume(resume);
+            mapDtoToEntity(dto, info);
+            workExperienceRepository.save(info);
         }
-        for (WorkExperienceDto workExp : workExperienceDtos){
-            workExperienceDao.addWorkExperience(workExp, resumeId);
-            log.info("Server Successfully added Work Experience(ID {}) for Resume(ID: {})", workExp.getId(), resumeId);
-        }
+        log.info("Successfully added {} work experience records for Resume ID: {}", dtos.size(), resumeId);
     }
 
     @Override
-    public void updateOrAddWorkExp(Integer resumeId, List<WorkExperienceDto> workExperienceDtos) {
-        if (workExperienceDtos != null || !workExperienceDtos.isEmpty()) {
-            if (getResumesWorkExperience(resumeId).isEmpty() || getResumesWorkExperience(resumeId) == null) {
-                log.debug("No Work Experience Info Was Found to Update, Saving new record for Resume(ID): {}", resumeId);
-                addWorkExperienceInfo(resumeId, workExperienceDtos);
+    @Transactional
+    public void updateOrAddWorkExp(Integer resumeId, List<WorkExperienceDto> dtos) {
+        if (dtos == null || dtos.isEmpty()) return;
+
+        for (WorkExperienceDto dto : dtos) {
+            if (dto.getId() != null && dto.getId() != 0) {
+                workExperienceRepository.findById(dto.getId()).ifPresentOrElse(
+                        entity -> {
+                            mapDtoToEntity(dto, entity);
+                            log.info("Updated Work Experience ID: {}", dto.getId());
+                        },
+                        () -> addSingleWorkExp(resumeId, dto)
+                );
             } else {
-                updateResumesWorkExperienceInfo(workExperienceDtos);
+                addSingleWorkExp(resumeId, dto);
             }
-        } else {
-            addWorkExperienceInfo(resumeId, workExperienceDtos);
         }
     }
 
     @Override
-    public void updateResumesWorkExperienceInfo(List<WorkExperienceDto> workExperienceDto) {
-        if (workExperienceDto == null || workExperienceDto.isEmpty()) {
-            log.debug("No Work Experience dto to update");
-            return;
-        }
-        for (WorkExperienceDto workExp : workExperienceDto) {
-            workExperienceDao.updateWorkExperience(checkedWorkExp(workExp), workExp.getId());
-            log.info("Server Successfully updated Work Experience(ID: {})", workExp.getId());
+    @Transactional
+    public void updateResumesWorkExperienceInfo(List<WorkExperienceDto> dtos) {
+        if (dtos == null || dtos.isEmpty()) return;
+
+        for (WorkExperienceDto dto : dtos) {
+            WorkExperienceInfo entity = workExperienceRepository.findById(dto.getId())
+                    .orElseThrow(() -> new WorkExpNotFoundException("Work Experience ID " + dto.getId() + " not found"));
+
+            mapDtoToEntity(dto, entity);
+            log.info("Successfully updated Work Experience ID: {}", dto.getId());
         }
     }
 
     @Override
+    @Transactional
     public void deleteWorkExperienceInfo(Integer resumeId) {
-        if (workExperienceDao.getResumesWorkExperience(resumeId) == null){
-            throw new WorkExpNotFoundException("Work Experience " + resumeId + " not found");
+        List<WorkExperienceInfo> info = workExperienceRepository.findAllByResumeId(resumeId);
+        if (info.isEmpty()) {
+            throw new WorkExpNotFoundException("Work Experience for Resume ID " + resumeId + " not found");
         }
-        workExperienceDao.deleteWorkExperienceInfo(resumeId);
-        log.info("Server Successfully deleted Work Experience of Resume(ID: {})", resumeId);
+        workExperienceRepository.deleteAllByResumeId(resumeId);
+        log.info("Deleted all Work Experience for Resume ID: {}", resumeId);
     }
 
     @Override
     public List<WorkExperienceDto> getResumesWorkExperience(Integer resumeId) {
-        return workExperienceDao.getResumesWorkExperience(resumeId);
+        return workExperienceRepository.findAllByResumeId(resumeId).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    private WorkExperienceDto checkedWorkExp(WorkExperienceDto newWorkExp) {
-        if (workExperienceDao.findInfoById(newWorkExp.getId()) == null) {
-            throw new WorkExpNotFoundException("Work Experience with id: " + newWorkExp.getId() + " not found");
-        }
-        WorkExperienceDto oldWorkExp = workExperienceDao.findInfoById(newWorkExp.getId());
-        WorkExperienceDto result = new WorkExperienceDto();
 
-        if (newWorkExp.getYears() == 0){
-            result.setYears(oldWorkExp.getYears());
-        } else {
-            result.setYears(newWorkExp.getYears());
-        }
-        if (newWorkExp.getCompanyName() == null || newWorkExp.getCompanyName().isEmpty()) {
-            result.setCompanyName(oldWorkExp.getCompanyName());
-        } else {
-            result.setCompanyName(newWorkExp.getCompanyName());
-        }
-        if (newWorkExp.getPosition() == null || newWorkExp.getPosition().isEmpty()) {
-            result.setPosition(oldWorkExp.getPosition());
-        } else {
-            result.setPosition(newWorkExp.getPosition());
-        }
-        if (newWorkExp.getResponsibilities() == null || newWorkExp.getResponsibilities().isEmpty()) {
-            result.setResponsibilities(oldWorkExp.getResponsibilities());
-        } else {
-            result.setResponsibilities(newWorkExp.getResponsibilities());
-        }
-        return result;
+    private void addSingleWorkExp(Integer resumeId, WorkExperienceDto dto) {
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new ResumeNotFoundException("Resume ID " + resumeId + " not found"));
+        WorkExperienceInfo info = new WorkExperienceInfo();
+        info.setResume(resume);
+        mapDtoToEntity(dto, info);
+        workExperienceRepository.save(info);
+    }
+
+    private void mapDtoToEntity(WorkExperienceDto dto, WorkExperienceInfo entity) {
+        if (dto.getYears() != 0) entity.setYears(dto.getYears());
+        if (isNotBlank(dto.getCompanyName())) entity.setCompanyName(dto.getCompanyName());
+        if (isNotBlank(dto.getPosition())) entity.setPosition(dto.getPosition());
+        if (isNotBlank(dto.getResponsibilities())) entity.setResponsibilities(dto.getResponsibilities());
+    }
+
+    private WorkExperienceDto convertToDto(WorkExperienceInfo entity) {
+        WorkExperienceDto dto = new WorkExperienceDto();
+        dto.setId(entity.getId());
+        dto.setYears(entity.getYears());
+        dto.setCompanyName(entity.getCompanyName());
+        dto.setPosition(entity.getPosition());
+        dto.setResponsibilities(entity.getResponsibilities());
+        return dto;
+    }
+
+    private boolean isNotBlank(String s) {
+        return s != null && !s.trim().isEmpty();
     }
 }

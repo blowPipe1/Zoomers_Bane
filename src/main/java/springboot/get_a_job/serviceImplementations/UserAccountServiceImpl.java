@@ -3,25 +3,26 @@ package springboot.get_a_job.serviceImplementations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import springboot.get_a_job.dao.UserDao;
+
 import springboot.get_a_job.dto.UserDto;
 import springboot.get_a_job.exceptions.InvalidAccountTypeException;
 import springboot.get_a_job.exceptions.UserNotFoundException;
 import springboot.get_a_job.models.User;
-import springboot.get_a_job.services.ResumeService;
+import springboot.get_a_job.repositories.ResumeRepository;
+import springboot.get_a_job.repositories.UserRepository;
+import springboot.get_a_job.repositories.VacancyRepository;
 import springboot.get_a_job.services.UserAccountService;
-import springboot.get_a_job.services.VacancyService;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -30,244 +31,137 @@ import java.util.Optional;
 @Slf4j
 public class UserAccountServiceImpl implements UserAccountService {
     private final String subDir = "src/main/resources/static/images/";
-    private final UserDao userDao;
-    @Autowired
-    @Lazy
-    private ResumeService resumeService;
-    @Autowired
-    @Lazy
-    private VacancyService vacancyService;
+    private final UserRepository userRepository;
+    private final ResumeRepository resumeRepository;
+    private final VacancyRepository vacancyRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
     public void registerUser(UserDto userDto) {
-        //TODO add logic to check for necessary fields
         if (userDto == null) {
-            throw new UserNotFoundException("Error registering user");
+            throw new UserNotFoundException("Error registering user: DTO is null");
         }
 
-        userDao.registerUser(convertIntoModel(userDto));
-        log.info("Server Successfully registered user: {} {} (Email: {})", userDto.getName(), userDto.getSurname(), userDto.getEmail());
+        User user = convertIntoModel(userDto);
+        userRepository.save(user);
+        log.info("Server Successfully registered user: {} {} (Email: {})",
+                user.getName(), user.getSurname(), user.getEmail());
     }
 
     @Override
+    @Transactional
     public void updateUser(Integer id, UserDto userDto) {
-        //TODO add logic to check for necessary fields
-        if (userDto == null) {
-            throw new UserNotFoundException("User not found");
-        }
-        userDao.updateUser(id, checkFieldsForNullOrEmpty(id, userDto));
-        log.info("Server Successfully updated user(ID {}): {} {} (Email: {})", id, userDto.getName(), userDto.getSurname(), userDto.getEmail());
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
+
+        updateFields(user, userDto);
+
+        userRepository.save(user);
+        log.info("Server Successfully updated user(ID {}): (Email: {})", id, user.getEmail());
     }
 
     @Override
+    @Transactional
     public void deleteUser(Integer userId) {
-        if (userDao.findUserById(userId) == null) {
-            throw new UserNotFoundException("User not found");
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (!resumeRepository.findAllByApplicantId(userId).isEmpty()) {
+            throw new RuntimeException("User has Resumes attached to their id");
         }
-        if (!resumeService.findResumeByCreator(userId).isEmpty()) {
-            log.info("Selected User(ID: {}) has at least one Resume object, referencing their id", userId);
-            throw new RuntimeException("User has Resume attached to their id");
-        }
-        if(!vacancyService.findVacancyByCreator(userId).isEmpty()) {
-            log.info("Selected User(ID: {}) has at least one Vacancy object, referencing their id", userId);
-            throw new RuntimeException("User has Vacancy attached to their id");
+        if (!vacancyRepository.findAllByAuthorId(userId).isEmpty()) {
+            throw new RuntimeException("User has Vacancies attached to their id");
         }
 
-        userDao.deleteUserHard(userId);
+        userRepository.delete(user);
         log.info("Server Successfully deleted user(ID: {})", userId);
     }
 
     @Override
-    public void saveAvatar(Integer userId, MultipartFile file) throws IOException{
-        if (file.isEmpty()) {
-            throw new IllegalArgumentException("File is empty");
-        }
+    @Transactional
+    public void saveAvatar(Integer userId, MultipartFile file) throws IOException {
+        if (file.isEmpty()) throw new IllegalArgumentException("File is empty");
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
         Path uploadPath = Paths.get(subDir);
-        log.info("Saving user avatar (ID: {}) to {}", userId, uploadPath);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-            log.info("Server Successfully created new directory: {}", uploadPath);
-        }
+        if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
 
         String fileName = userId + "_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
         Path filePath = uploadPath.resolve(fileName);
-
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        String savedPath = filePath.toString();
-        userDao.updateAvatarPath(userId, fileName);
-        log.info("Server Successfully updated user avatar (ID: {}) to {}", userId, savedPath);
+        user.setAvatar(fileName);
+        log.info("Server Successfully updated user avatar (ID: {}) to {}", userId, fileName);
     }
 
     @Override
     public Optional<UserDto> findUserById(Integer id) {
-        return convert(userDao.findUserById(id));
+        return userRepository.findById(id).map(this::convert);
     }
 
     @Override
-    public Optional<List<UserDto>> findAllUsers() {
-        return convert(userDao.getAllUsers());
+    public String findNameById(Integer id) {
+        return userRepository.findEmailById(id).orElse(null);
     }
 
     @Override
-    public Optional<List<UserDto>> findUserByPhone(String phone_number){
-        return convert(userDao.findUserByPhone(phone_number));
+    public Optional<Integer> findIdByEmail(String email) {
+        return userRepository.findIdByEmail(email);
     }
 
     @Override
-    public Optional<List<UserDto>> findUserByEmail(String email) {
-        return convert(userDao.findUserByEmail(email));
+    public Optional<List<UserDto>>findAllUsers(){
+        return Optional.of(userRepository.findAll().stream().map(this::convert).toList());
     }
 
-    @Override
-    public Optional<List<UserDto>> findUserByName(String name) {
-        return convert(userDao.findUserByName(name));
-    }
-
-    @Override
-    public Optional<List<UserDto>> findRespondedUsers(Integer vacancy_id) {
-        return convert(userDao.findRespondedUsers(vacancy_id));
-    }
-
-    @Override
-    public Integer findIdBySurname(String surname){
-        return userDao.findIdBySurname(surname);
-    }
-
-    @Override
-    public String findNameById(Integer id){
-        return userDao.findEmailById(id);
-    }
-
-    @Override
-    public Optional<Integer> findIdByEmail(String email){
-        if (userDao.findIdByEmail(email) == null) {
-            return Optional.empty();
+    private User convertIntoModel(UserDto dto) {
+        if (!isValidAccountType(dto.getAccountType())) {
+            throw new InvalidAccountTypeException("Invalid account type: " + dto.getAccountType());
         }
-        return Optional.of(userDao.findIdByEmail(email));
+        User user = new User();
+        user.setName(dto.getName());
+        user.setSurname(dto.getSurname());
+        user.setAge(dto.getAge());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setPhoneNumber(dto.getPhoneNumber());
+        user.setAvatar(dto.getAvatar());
+        user.setAccountType(dto.getAccountType().toLowerCase().trim());
+        return user;
     }
 
-    private Optional<List<UserDto>>convert(List<User> users) {
-        if (users == null || users.isEmpty()) {
-            throw new UserNotFoundException("User not found");
-        }
-        List<UserDto> userDtos = new ArrayList<>();
-        for (User user : users){
-            userDtos.add(new UserDto(
-                            user.getName(),
-                            user.getSurname(),
-                            user.getAge(),
-                            user.getEmail(),
-                            passwordEncoder.encode(user.getPassword()),
-                            user.getPhoneNumber(),
-                            user.getAvatar(),
-                            user.getAccountType())
-            );
-        }
-        return Optional.of(userDtos);
+    private void updateFields(User user, UserDto dto) {
+        if (dto.getName() != null) user.setName(dto.getName());
+        if (dto.getSurname() != null) user.setSurname(dto.getSurname());
+        if (dto.getAge() != null) user.setAge(dto.getAge());
+        if (dto.getPhoneNumber() != null) user.setPhoneNumber(dto.getPhoneNumber());
+        if (dto.getPassword() != null) user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        if (dto.getEmail() != null) user.setEmail(dto.getEmail());
     }
 
-    private Optional<UserDto> convert(User user) {
-        if (user == null) {
-            throw new UserNotFoundException("User not found");
-        }
-        return Optional.of(new UserDto(
+    private UserDto convert(User user) {
+        return new UserDto(
                 user.getName(),
                 user.getSurname(),
                 user.getAge(),
                 user.getEmail(),
-                passwordEncoder.encode(user.getPassword()),
+                null,
                 user.getPhoneNumber(),
                 user.getAvatar(),
-                user.getAccountType())
+                user.getAccountType()
         );
-
     }
 
-    private User checkFieldsForNullOrEmpty(Integer id, UserDto newUser){
-        User oldUser = userDao.findUserById(id);
-        User result = new User();
-
-        if (ifNull(newUser.getName()) || newUser.getName().isEmpty()) {
-            result.setName(oldUser.getName());
-        } else {
-            result.setName(newUser.getName());
-        }
-
-        if (ifNull(newUser.getSurname()) || newUser.getSurname().isEmpty()) {
-            result.setSurname(oldUser.getSurname());
-        } else {
-            result.setSurname(newUser.getSurname());
-        }
-
-        if (ifNull(newUser.getAge()) || newUser.getAge() <= 0) {
-            result.setAge(oldUser.getAge());
-        } else {
-            result.setAge(newUser.getAge());
-        }
-
-        if (ifNull(newUser.getEmail()) || newUser.getEmail().isEmpty()) {
-            result.setEmail(oldUser.getEmail());
-        } else {
-            result.setEmail(newUser.getEmail());
-        }
-
-        if (ifNull(newUser.getPassword()) || newUser.getPassword().isEmpty()) {
-            result.setPassword(oldUser.getPassword());
-        } else {
-            result.setPassword(newUser.getPassword());
-        }
-
-        if (ifNull(newUser.getPhoneNumber()) || newUser.getPhoneNumber().isEmpty()) {
-            result.setPhoneNumber(oldUser.getPhoneNumber());
-        } else {
-            result.setPhoneNumber(newUser.getPhoneNumber());
-        }
-
-        if (ifNull(newUser.getAvatar()) || newUser.getAvatar().isEmpty()) {
-            result.setAvatar(oldUser.getAvatar());
-        } else {
-            result.setAvatar(newUser.getAvatar());
-        }
-
-        if (ifNull(newUser.getAccountType()) || newUser.getAccountType().isEmpty()) {
-            result.setAccountType(oldUser.getAccountType().toLowerCase());
-        } else if (!ValidAccountType(newUser.getAccountType())) {
-            throw new InvalidAccountTypeException("Invalid account type");
-        } else {
-            result.setAccountType(newUser.getAccountType().toLowerCase());
-        }
-
-        return result;
-    }
-
-    private boolean ifNull(Object object){
-        return object == null;
-    }
-
-    private User convertIntoModel(UserDto user){
-        if (!ValidAccountType(user.getAccountType())) {
-            throw new InvalidAccountTypeException("Invalid account type");
-        }
-        return new User(
-                0,
-                user.getName(),
-                user.getSurname(),
-                user.getAge(),
-                user.getEmail(),
-                passwordEncoder.encode(user.getPassword()),
-                user.getPhoneNumber(),
-                user.getAvatar(),
-                user.getAccountType().toLowerCase());
-    }
-
-    private Boolean ValidAccountType(String accountType) {
-        if (accountType.trim().equalsIgnoreCase("employer") || accountType.trim().equalsIgnoreCase("applicant")) {
-            return true;
-        } else {
-            log.debug("Submitted account type is invalid: {}", accountType);
-            return false;
-        }
+    private boolean isValidAccountType(String type) {
+        if (type == null) return false;
+        String t = type.trim().toLowerCase();
+        return t.equals("employer") || t.equals("applicant");
     }
 }
+
+
+
+

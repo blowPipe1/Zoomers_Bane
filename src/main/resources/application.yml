@@ -7,6 +7,18 @@ spring:
     password: 1234
     driver-class-name: org.h2.Driver
 
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+
   liquibase:
     change-log: classpath:/db/changelog/master.yaml
 

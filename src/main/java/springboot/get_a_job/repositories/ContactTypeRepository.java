@@ -12,4 +12,6 @@ public interface ContactTypeRepository extends JpaRepository<ContactType, Intege
 
     @Query("SELECT ct.type FROM ContactType ct WHERE ct.id = :id")
     String findTypeNameById(Integer id);
+
+    Optional<ContactType> findByTypeIgnoreCase(String type);
 }

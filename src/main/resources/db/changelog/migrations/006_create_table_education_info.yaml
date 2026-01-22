@@ -23,12 +23,12 @@ databaseChangeLog:
                     referencedColumnNames: id
               - column:
                   name: institution
-                  type: TEXT
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
               - column:
                   name: program
-                  type: TEXT
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
               - column:
@@ -41,4 +41,4 @@ databaseChangeLog:
                   type: DATE
               - column:
                   name: degree
-                  type: TEXT
+                  type: VARCHAR(255)

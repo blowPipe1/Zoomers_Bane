@@ -3,210 +3,128 @@ package springboot.get_a_job.serviceImplementations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import springboot.get_a_job.dao.VacancyDao;
+import org.springframework.transaction.annotation.Transactional;
+
 import springboot.get_a_job.dto.VacancyDto;
 import springboot.get_a_job.exceptions.CategoryNotFoundException;
 import springboot.get_a_job.exceptions.UserNotFoundException;
 import springboot.get_a_job.exceptions.VacancyNotFoundException;
+import springboot.get_a_job.models.Category;
+import springboot.get_a_job.models.User;
 import springboot.get_a_job.models.Vacancy;
+import springboot.get_a_job.repositories.CategoryRepository;
+import springboot.get_a_job.repositories.UserRepository;
+import springboot.get_a_job.repositories.VacancyRepository;
 import springboot.get_a_job.services.CategoryService;
 import springboot.get_a_job.services.UserAccountService;
 import springboot.get_a_job.services.VacancyService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class VacancyServiceImpl implements VacancyService {
-    private final VacancyDao vacancyDao;
-    private final CategoryService categoryService;
-    private final UserAccountService userAccountService;
+    private final VacancyRepository vacancyRepository;
+    private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
 
     @Override
-    public void createVacancy(VacancyDto vacancy) {
-        if (vacancy == null) {
+    @Transactional
+    public void createVacancy(VacancyDto vacancyDto) {
+        if (vacancyDto == null) {
             throw new VacancyNotFoundException("Vacancy cannot be null");
         }
-        vacancyDao.createVacancy(convertIntoModel(vacancy));
-        log.info("Server Successfully created New Vacancy with name: {} & category: {}", vacancy.getName(), vacancy.getCategory());
+        Vacancy vacancy = convertIntoModel(vacancyDto);
+        vacancyRepository.save(vacancy);
+        log.info("Server Successfully created New Vacancy (ID: {})", vacancy.getId());
     }
 
     @Override
-    public void updateVacancy(Integer id, VacancyDto vacancy) {
-        if (vacancy == null) {
-            throw new VacancyNotFoundException("Vacancy cannot be null");
+    @Transactional
+    public void updateVacancy(Integer id, VacancyDto vacancyDto) {
+        Vacancy vacancy = vacancyRepository.findById(id)
+                .orElseThrow(() -> new VacancyNotFoundException("Vacancy not found"));
+
+        vacancy.setName(vacancyDto.getName());
+        vacancy.setDescription(vacancyDto.getDescription());
+        vacancy.setSalary(vacancyDto.getSalary());
+        vacancy.setExpFrom(vacancyDto.getExpFrom());
+        vacancy.setExpTo(vacancyDto.getExpTo());
+        vacancy.setIsActive(vacancyDto.getIsActive());
+        vacancy.setUpdateTime(LocalDateTime.now());
+
+
+        if (vacancyDto.getCategory() != null) {
+            Category category = categoryRepository.findByNameIgnoreCase(vacancyDto.getCategory())
+                    .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
+            vacancy.setCategory(category);
         }
-        VacancyDto checkedVacancy = checkFieldsForNullOrEmpty(id, vacancy);
-        vacancyDao.updateVacancy(id, convertIntoModel(checkedVacancy));
+
         log.info("Server Successfully updated Vacancy(ID: {})", id);
     }
 
     @Override
-    public void deleteVacancy(Integer id) {
-        if (vacancyDao.findVacancyById(id) == null) {
-            throw new VacancyNotFoundException("Vacancy cannot be null");
-        }
-        vacancyDao.deleteVacancy(id);
-        log.info("Server Successfully deleted Vacancy(ID: {})", id);
-    }
-
-    @Override
-    public void respondToVacancy(Integer vacancyId, Integer resumeId) {}
-
-    @Override
     public Optional<List<VacancyDto>> getAllActiveVacancies() {
-        return convert(vacancyDao.getAllActiveVacancies());
+        List<Vacancy> vacancies = vacancyRepository.findAllByIsActiveTrue();
+        return vacancies.isEmpty() ? Optional.empty() : Optional.of(convertList(vacancies));
     }
 
     @Override
     public Optional<VacancyDto> findVacancyById(Integer id) {
-        return convert(vacancyDao.findVacancyById(id));
+        return vacancyRepository.findById(id).map(this::convertToDto);
     }
 
     @Override
-    public Optional<List<VacancyDto>> findVacancyByCategory(Integer category_id) {
-        return convert(vacancyDao.findVacancyByCategory(category_id));
+    public Optional<List<VacancyDto>> findVacancyByCreator(Integer authorId) {
+        List<Vacancy> vacancies = vacancyRepository.findAllByAuthorId(authorId);
+        return vacancies.isEmpty() ? Optional.empty() : Optional.of(convertList(vacancies));
     }
 
-    @Override
-    public Optional<List<VacancyDto>> findVacancyByCategory(String category) {
-        return convert(vacancyDao.findVacancyByCategory(category));
+    private List<VacancyDto> convertList(List<Vacancy> vacancies) {
+        return vacancies.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    @Override
-    public Optional<List<VacancyDto>> findVacancyByCreator(Integer applicant_id) {
-        return convert(vacancyDao.findVacancyByCreator(applicant_id));
-    }
-
-    @Override
-    public Optional<List<VacancyDto>> findVacancyByCreator(String creatorName) {
-        return convert(vacancyDao.findVacancyByCreator(creatorName));
-    }
-
-    @Override
-    public Optional<List<VacancyDto>> findRespondedVacancies(Integer applicant_id) {
-        return convert(vacancyDao.findRespondedVacancies(applicant_id));
-    }
-
-    private Optional<List<VacancyDto>>convert(List<Vacancy> vacancies) {
-        if (vacancies == null || vacancies.isEmpty()) {
-            throw new VacancyNotFoundException("Vacancies not found");
-        }
-        List<VacancyDto>vacancyDtos = new ArrayList<>();
-        for (Vacancy vacancy : vacancies){
-            vacancyDtos.add(new VacancyDto(
-                            vacancy.getId(),
-                            vacancy.getName(),
-                            vacancy.getDescription(),
-                            categoryService.findNameById(vacancy.getCategoryId()),
-                            vacancy.getSalary(),
-                            vacancy.getExpFrom(),
-                            vacancy.getExpTo(),
-                            vacancy.getIsActive(),
-                    userAccountService.findNameById(vacancy.getAuthorId())
-                    )
-            );
-            log.info("Mapping (ID: {})Vacancy into Vacancy Model", vacancy.getId());
-        }
-        return Optional.of(vacancyDtos);
-    }
-
-    private Optional<VacancyDto>convert(Vacancy vacancy) {
-        if (vacancy == null) {
-            throw new VacancyNotFoundException("Vacancy not found");
-        }
-        log.info("Mapping (ID: {})Vacancy created by (creator ID: {}) into Vacancy DTO", vacancy.getId(), vacancy.getAuthorId());
-        return Optional.of(new VacancyDto(
+    private VacancyDto convertToDto(Vacancy vacancy) {
+        return new VacancyDto(
                 vacancy.getId(),
                 vacancy.getName(),
                 vacancy.getDescription(),
-                categoryService.findNameById(vacancy.getCategoryId()),
+                vacancy.getCategory() != null ? vacancy.getCategory().getName() : null,
                 vacancy.getSalary(),
                 vacancy.getExpFrom(),
                 vacancy.getExpTo(),
                 vacancy.getIsActive(),
-                userAccountService.findNameById(vacancy.getAuthorId())
-        ));
-    }
-
-    private Vacancy convertIntoModel(VacancyDto vacancy) {
-        log.info("Fetching category's id by category name {}", vacancy.getCategory());
-        Integer categoryId = categoryService.findIdByName(vacancy.getCategory())
-                .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + vacancy.getCategory()));
-
-        Integer authorId = userAccountService.findIdByEmail(vacancy.getAuthor())
-                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + vacancy.getAuthor()));
-
-        return new Vacancy(
-                0,
-                vacancy.getName(),
-                vacancy.getDescription(),
-                categoryId,
-                vacancy.getSalary(),
-                vacancy.getExpFrom(),
-                vacancy.getExpTo(),
-                vacancy.getIsActive(),
-                authorId,
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                vacancy.getAuthor() != null ? vacancy.getAuthor().getEmail() : null
         );
-
     }
 
-    private VacancyDto checkFieldsForNullOrEmpty(Integer id, VacancyDto newVacancy){
-        Optional<VacancyDto> oldVacancy = convert(vacancyDao.findVacancyById(id));
-        if (oldVacancy.isEmpty()){
-            throw new VacancyNotFoundException("Vacancy with id: " + id + " not found");
-        }
-        VacancyDto result = new VacancyDto();
+    private Vacancy convertIntoModel(VacancyDto dto) {
+        Category category = categoryRepository.findByNameIgnoreCase(dto.getCategory())
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + dto.getCategory()));
 
-        if (newVacancy.getName() == null || newVacancy.getName().isEmpty()) {
-            result.setName(oldVacancy.get().getName());
-        } else {
-            result.setName(newVacancy.getName());
-        }
-        if (newVacancy.getDescription() == null || newVacancy.getDescription().isEmpty()) {
-            result.setDescription(oldVacancy.get().getDescription());
-        } else {
-            result.setDescription(newVacancy.getDescription());
-        }
-        if (newVacancy.getCategory() == null || newVacancy.getCategory().isEmpty()) {
-            result.setCategory(oldVacancy.get().getCategory());
-        } else {
-            result.setCategory(newVacancy.getCategory());
-        }
-        if (newVacancy.getSalary() == null || newVacancy.getSalary() == 0){
-            result.setSalary(oldVacancy.get().getSalary());
-        } else {
-            result.setSalary(newVacancy.getSalary());
-        }
-        if (newVacancy.getExpFrom() == null || newVacancy.getExpFrom() == 0){
-            result.setExpFrom(oldVacancy.get().getExpFrom());
-        } else {
-            result.setExpFrom(newVacancy.getExpFrom());
-        }
-        if (newVacancy.getExpTo() == null || newVacancy.getExpTo() == 0){
-            result.setExpTo(oldVacancy.get().getExpTo());
-        } else {
-            result.setExpTo(newVacancy.getExpTo());
-        }
-        if (newVacancy.getAuthor() == null || newVacancy.getAuthor().isEmpty()){
-            result.setAuthor(oldVacancy.get().getAuthor());
-        } else {
-            result.setAuthor(newVacancy.getAuthor());
-        }
-        if (newVacancy.getIsActive() == null){
-            result.setIsActive(oldVacancy.get().getIsActive());
-        } else {
-            result.setIsActive(newVacancy.getIsActive());
-        }
-        return result;
+        User author = userRepository.findByEmail(dto.getAuthor())
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + dto.getAuthor()));
+
+        Vacancy vacancy = new Vacancy();
+        vacancy.setName(dto.getName());
+        vacancy.setDescription(dto.getDescription());
+        vacancy.setCategory(category);
+        vacancy.setAuthor(author);
+        vacancy.setSalary(dto.getSalary());
+        vacancy.setExpFrom(dto.getExpFrom());
+        vacancy.setExpTo(dto.getExpTo());
+        vacancy.setIsActive(dto.getIsActive() != null ? dto.getIsActive() : true);
+        vacancy.setCreatedDate(LocalDateTime.now());
+        vacancy.setUpdateTime(LocalDateTime.now());
+
+        return vacancy;
     }
-
 }
 
 

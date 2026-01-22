@@ -11,11 +11,6 @@ public interface ResumeService {
     void deleteResume(Integer id);
     Optional<List<ResumeDto>>getAllActiveResumes();
     Optional<ResumeDto>findResumeById(Integer id);
-    Optional<List<ResumeDto>> findResumeByCategory(Integer category_id);
-    Optional<List<ResumeDto>> findResumeByCategory(String category);
     Optional<List<ResumeDto>> findResumeByCreator(Integer applicant_id);
-    Optional<List<ResumeDto>> findResumeByCreator(String creatorName);
     void createResume(ResumeDto resumeDto);
-    String findResumeNameById(Integer id);
-    Integer findResumeIdByName(String resumeName);
 }
