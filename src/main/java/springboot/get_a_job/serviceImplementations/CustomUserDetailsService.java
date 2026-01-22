@@ -12,16 +12,16 @@ import java.util.List;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UserRepository userDao;
+    private final UserRepository userRepository;
 
-    public CustomUserDetailsService(UserRepository userDao) {
-        this.userDao = userDao;
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) {
-        User user = userDao.findByEmail(email).orElse(null);
+        User user = userRepository.findByEmail(email).orElse(null);
 
         String roleName = "ROLE_" + user.getAccountType().toUpperCase();
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(roleName));
