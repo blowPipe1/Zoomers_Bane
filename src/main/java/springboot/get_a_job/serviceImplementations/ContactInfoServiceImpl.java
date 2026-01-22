@@ -2,18 +2,20 @@ package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+
 import org.springframework.stereotype.Service;
-import springboot.get_a_job.dao.*;
+import org.springframework.transaction.annotation.Transactional;
 import springboot.get_a_job.dto.ContactInfoDto;
 import springboot.get_a_job.exceptions.ContactInfoNotFoundException;
-import springboot.get_a_job.exceptions.EducationInfoNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.models.ContactInfo;
 import springboot.get_a_job.models.ContactType;
+import springboot.get_a_job.models.Resume;
+import springboot.get_a_job.repositories.ContactInfoRepository;
+import springboot.get_a_job.repositories.ContactTypeRepository;
+import springboot.get_a_job.repositories.ResumeRepository;
 import springboot.get_a_job.services.ContactInfoService;
-import springboot.get_a_job.services.ResumeService;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,113 +24,106 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class ContactInfoServiceImpl implements ContactInfoService {
-    @Autowired
-    @Lazy
-    private ResumeService resumeService;
-    private final ContactInfoDao contactInfoDao;
+
+    private final ContactInfoRepository contactInfoRepository;
+    private final ContactTypeRepository typeRepository;
+    private final ResumeRepository resumeRepository;
 
     @Override
-    public void addContactInfo(Integer resumeId, List<ContactInfoDto> contacts){
-        if (resumeService.findResumeById(resumeId).isEmpty()) {
-            throw new ResumeNotFoundException("Resume with id: " + resumeId + " not found");
-        }
-        if (contacts == null || contacts.isEmpty()) {
-            log.warn("No Contact info dto to add");
-            return;
-        }
-        for (ContactInfoDto contact : contacts){
-            contactInfoDao.addContactInfo(new ContactInfo(
-                    0, contactInfoDao.findIdByName(contact.getType()), resumeId, contact.getValue()
-            ), resumeId);
-            log.info("Server Successfully added contact info({} {}) for Resume(ID: {})", contact.getType(), contact.getValue(), resumeId);
+    @Transactional
+    public void addContactInfo(Integer resumeId, List<ContactInfoDto> contacts) {
+        if (contacts == null || contacts.isEmpty()) return;
+
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new ResumeNotFoundException("Resume with id: " + resumeId + " not found"));
+
+        for (ContactInfoDto dto : contacts) {
+            ContactType type = typeRepository.findByTypeIgnoreCase(dto.getType())
+                    .orElseThrow(() -> new ContactInfoNotFoundException("Type " + dto.getType() + " not found"));
+
+            ContactInfo entity = new ContactInfo();
+            entity.setResume(resume);
+            entity.setType(type);
+            entity.setValue(dto.getValue());
+
+            contactInfoRepository.save(entity);
         }
     }
 
     @Override
+    @Transactional
+    public void updateContactInfo(List<ContactInfoDto> contactInfoDtos) {
+        if (contactInfoDtos == null || contactInfoDtos.isEmpty()) return;
+
+        for (ContactInfoDto dto : contactInfoDtos) {
+            contactInfoRepository.findById(dto.getId()).ifPresentOrElse(entity -> {
+                if (dto.getValue() != null) entity.setValue(dto.getValue());
+
+                if (dto.getType() != null) {
+                    ContactType type = typeRepository.findByTypeIgnoreCase(dto.getType())
+                            .orElseThrow(() -> new ContactInfoNotFoundException("Type not found"));
+                    entity.setType(type);
+                }
+            }, () -> {
+                throw new ContactInfoNotFoundException("Contact with id " + dto.getId() + " not found");
+            });
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteContactInfo(Integer resumeId) {
+        contactInfoRepository.deleteByResumeId(resumeId);
+    }
+
+    @Override
+    public List<ContactInfoDto> getResumesContacts(Integer resumeId) {
+        return contactInfoRepository.findByResumeId(resumeId).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> findAll() {
+        return typeRepository.findAll().stream()
+                .map(ContactType::getType)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
     public void updateOrAddContactInfo(Integer resumeId, List<ContactInfoDto> contacts) {
-        if (contacts != null || !contacts.isEmpty()) {
-            if (getResumesContacts(resumeId).isEmpty() || getResumesContacts(resumeId) == null) {
-                log.debug("No Contact Info Was Found to Update, Saving new record for Resume(ID): {}", resumeId);
-                addContactInfo(resumeId, contacts);
-            } else {
-                updateContactInfo(contacts);
-            }
-        } else {
-            addContactInfo(resumeId, contacts);
-        }
-    }
-
-    @Override
-    public void updateContactInfo(List<ContactInfoDto> contactInfo){
-        if (contactInfo == null || contactInfo.isEmpty()) {
-            log.warn("No Contact info dto to update");
+        if (contacts == null || contacts.isEmpty()) {
+            log.debug("No contacts provided for Resume(ID): {}", resumeId);
             return;
         }
-        for (ContactInfoDto contact : contactInfo){
-            if (contactInfoDao.findIdByName(contact.getType()) == null ) {
-                throw new ContactInfoNotFoundException("Contact info with type: " + contact.getType() + " not found");
-            }
-            contactInfoDao.updateContactInfo(convert(checkedContact(contact)), contact.getId());
-            log.info("Server Successfully updated contact info(ID: {})",  contact.getId());
+
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new ResumeNotFoundException("Resume not found: " + resumeId));
+
+        for (ContactInfoDto dto : contacts) {
+            ContactInfo entity = (dto.getId() != null && dto.getId() != 0)
+                    ? contactInfoRepository.findById(dto.getId()).orElse(new ContactInfo())
+                    : new ContactInfo();
+
+            entity.setResume(resume);
+            entity.setValue(dto.getValue());
+
+            ContactType type = typeRepository.findByTypeIgnoreCase(dto.getType())
+                    .orElseThrow(() -> new ContactInfoNotFoundException("Type " + dto.getType() + " not found"));
+            entity.setType(type);
+
+            contactInfoRepository.save(entity);
+            log.info("Processed contact: {} (id: {}) for Resume: {}", dto.getType(), entity.getId(), resumeId);
         }
     }
 
-    @Override
-    public  void deleteContactInfo(Integer resumeId) {
-        if (contactInfoDao.getResumesContacts(resumeId) == null){
-            throw new EducationInfoNotFoundException("Contact info " + resumeId + " not found");
-        }
-        contactInfoDao.deleteContactInfo(resumeId);
-        log.info("Server Successfully deleted Contact Info of Resume(ID: {})", resumeId);
-    }
-
-    @Override
-    public List<ContactInfoDto>getResumesContacts(Integer resumeId){
-        return contactInfoDao.getResumesContacts(resumeId);
-    }
-
-    @Override
-    public List<String>findAll(){
-        log.info("{}",contactInfoDao.findAll().toString());
-        return contactInfoDao.findAll().stream().map(ContactType::getType).collect(Collectors.toList());
-
-    }
-
-    private ContactInfoDto checkedContact(ContactInfoDto newContactInfo) {
-        ContactInfo old = contactInfoDao.findInfoById(newContactInfo.getId());
-
-        if (old == null) {
-            throw new ContactInfoNotFoundException("Contact info with id: " + newContactInfo.getId() + " not found");
-        }
-
-        ContactInfoDto result = new ContactInfoDto();
-        result.setId(0);
-
-        result.setType(isInvalid(newContactInfo.getType())
-                ? contactInfoDao.findNameById(old.getTypeId())
-                : newContactInfo.getType());
-
-        result.setResume(isInvalid(newContactInfo.getResume())
-                ? resumeService.findResumeNameById(old.getResumeId())
-                : newContactInfo.getResume());
-
-        result.setValue(isInvalid(newContactInfo.getValue())
-                ? old.getValue()
-                : newContactInfo.getValue());
-
-        return result;
-    }
-
-    private boolean isInvalid(String str) {
-        return str == null || str.isEmpty();
-    }
-
-    private ContactInfo convert(ContactInfoDto contactInfo){
-        return new ContactInfo(
-                contactInfo.getId(),
-                contactInfoDao.findIdByName(contactInfo.getType()),
-                resumeService.findResumeIdByName(contactInfo.getResume()),
-                contactInfo.getValue()
-        );
+    private ContactInfoDto convertToDto(ContactInfo entity) {
+        ContactInfoDto dto = new ContactInfoDto();
+        dto.setId(entity.getId());
+        dto.setType(entity.getType().getType());
+        dto.setValue(entity.getValue());
+        dto.setResume(entity.getResume().getName());
+        return dto;
     }
 }

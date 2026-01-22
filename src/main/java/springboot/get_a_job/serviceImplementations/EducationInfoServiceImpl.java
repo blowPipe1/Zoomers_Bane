@@ -2,115 +2,120 @@ package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import springboot.get_a_job.dao.*;
+import org.springframework.transaction.annotation.Transactional;
 import springboot.get_a_job.dto.EducationDto;
 import springboot.get_a_job.exceptions.EducationInfoNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
+import springboot.get_a_job.models.EducationInfo;
+import springboot.get_a_job.models.Resume;
+import springboot.get_a_job.repositories.EducationInfoRepository;
+import springboot.get_a_job.repositories.ResumeRepository;
 import springboot.get_a_job.services.EducationInfoService;
-import springboot.get_a_job.services.ResumeService;
+
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class EducationInfoServiceImpl implements EducationInfoService {
-    @Autowired
-    @Lazy
-    private ResumeService resumeService;
-    private final EducationInfoDao educationDao;
+
+    private final EducationInfoRepository educationRepository;
+    private final ResumeRepository resumeRepository;
 
     @Override
+    @Transactional
     public void addEducationInfo(Integer resumeId, List<EducationDto> educationDtos) {
-        if (resumeService.findResumeById(resumeId).isEmpty()) {
-            throw new ResumeNotFoundException("Resume with id: " + resumeId + " not found");
-        }
+        if (educationDtos == null || educationDtos.isEmpty()) return;
 
-        if (educationDtos != null  || !educationDtos.isEmpty()) {
-            for (EducationDto edu : educationDtos){
-                educationDao.addEducationInfo(edu, resumeId);
-                log.info("Server Successfully created new Education Info for Resume(ID: {}) added", resumeId);
-            }
-        }
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new ResumeNotFoundException("Resume with id: " + resumeId + " not found"));
 
+        for (EducationDto dto : educationDtos) {
+            EducationInfo edu = new EducationInfo();
+            edu.setResume(resume);
+            mapDtoToEntity(dto, edu);
+            educationRepository.save(edu);
+        }
+        log.info("Successfully added {} education records for Resume ID: {}", educationDtos.size(), resumeId);
     }
 
     @Override
-    public void updateOrAddEducationInfo(Integer resumeId, List<EducationDto> educationDtos) {
-        if (educationDtos != null || !educationDtos.isEmpty()) {
-            if (getResumesEducationInfo(resumeId).isEmpty() || getResumesEducationInfo(resumeId) == null) {
-                log.debug("No Education Info Was Found to Update, Saving new record for Resume(ID): {}", resumeId);
-                addEducationInfo(resumeId, educationDtos);
+    @Transactional
+    public void updateOrAddEducationInfo(Integer resumeId, List<EducationDto> dtos) {
+        if (dtos == null || dtos.isEmpty()) return;
+        for (EducationDto dto : dtos) {
+            if (dto.getId() != null && dto.getId() != 0) {
+                educationRepository.findById(dto.getId()).ifPresentOrElse(
+                        entity -> {
+                            mapDtoToEntity(dto, entity);
+                            log.info("Updated Education Info ID: {}", dto.getId());
+                        },
+                        () -> addSingleEducation(resumeId, dto)
+                );
             } else {
-                updateResumesEducationInfo(educationDtos);
+                addSingleEducation(resumeId, dto);
             }
-        } else {
-            addEducationInfo(resumeId, educationDtos);
-        }
-    }
-
-
-    @Override
-    public void updateResumesEducationInfo(List<EducationDto> educationDto) {
-        if (educationDto == null || educationDto.isEmpty()) {
-            log.debug("No education dto to update");
-            return;
-        }
-        for (EducationDto edu : educationDto){
-            educationDao.updateEducationInfo(checkedEducation(edu), edu.getId());
-            log.info("Server Successfully updated Education Info(ID: {})", edu.getId());
         }
     }
 
     @Override
+    @Transactional
+    public void updateResumesEducationInfo(List<EducationDto> educationDtos) {
+        if (educationDtos == null || educationDtos.isEmpty()) return;
+
+        for (EducationDto dto : educationDtos) {
+            EducationInfo entity = educationRepository.findById(dto.getId())
+                    .orElseThrow(() -> new EducationInfoNotFoundException("Education ID " + dto.getId() + " not found"));
+
+            mapDtoToEntity(dto, entity);
+            log.info("Successfully updated Education Info ID: {}", dto.getId());
+        }
+    }
+
+    @Override
+    @Transactional
     public void deleteEducationInfo(Integer resumeId) {
-        if (educationDao.getResumesEducationInfo(resumeId) == null){
-            throw new EducationInfoNotFoundException("Education info for Resume " + resumeId + " not found");
+        if (educationRepository.findByResumeId(resumeId).isEmpty()) {
+            throw new EducationInfoNotFoundException("No education info for Resume ID " + resumeId);
         }
-        educationDao.deleteEducationInfo(resumeId);
-        log.info("Server Successfully deleted Education Info of Resume(ID: {})", resumeId);
+        educationRepository.deleteByResumeId(resumeId);
+        log.info("Deleted all Education Info for Resume ID: {}", resumeId);
     }
 
     @Override
     public List<EducationDto> getResumesEducationInfo(Integer resumeId) {
-        return educationDao.getResumesEducationInfo(resumeId);
+        return educationRepository.findByResumeId(resumeId).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    private EducationDto checkedEducation(EducationDto newEducation) {
-        // 1. Проверка на null самого объекта и его ID
-        if (newEducation == null || newEducation.getId() == null) {
-            throw new IllegalArgumentException("Education ID must not be null for update");
-        }
-
-        // 2. Получаем старые данные ОДИН раз (не вызывайте метод дважды для производительности)
-        EducationDto oldEducation = educationDao.findInfoById(newEducation.getId());
-
-        if (oldEducation == null) {
-            throw new EducationInfoNotFoundException("Education info with id: " + newEducation.getId() + " not found");
-        }
-
-        EducationDto result = new EducationDto();
-        // Сохраняем ID в новом объекте
-        result.setId(newEducation.getId());
-
-        // Используем тернарные операторы для краткости
-        result.setInstitution(isBlank(newEducation.getInstitution()) ? oldEducation.getInstitution() : newEducation.getInstitution());
-        result.setProgram(isBlank(newEducation.getProgram()) ? oldEducation.getProgram() : newEducation.getProgram());
-        result.setStartDate(newEducation.getStartDate() == null ? oldEducation.getStartDate() : newEducation.getStartDate());
-        result.setEndDate(newEducation.getEndDate() == null ? oldEducation.getEndDate() : newEducation.getEndDate());
-        result.setDegree(isBlank(newEducation.getDegree()) ? oldEducation.getDegree() : newEducation.getDegree());
-
-        return result;
+    private void addSingleEducation(Integer resumeId, EducationDto dto) {
+        Resume resume = resumeRepository.findById(resumeId).orElseThrow();
+        EducationInfo edu = new EducationInfo();
+        edu.setResume(resume);
+        mapDtoToEntity(dto, edu);
+        educationRepository.save(edu);
     }
 
-    // Вспомогательный метод (или используйте StringUtils)
-    private boolean isBlank(String s) {
-        return s == null || s.trim().isEmpty();
+    private void mapDtoToEntity(EducationDto dto, EducationInfo entity) {
+        if (dto.getInstitution() != null) entity.setInstitution(dto.getInstitution());
+        if (dto.getProgram() != null) entity.setProgram(dto.getProgram());
+        if (dto.getStartDate() != null) entity.setStartDate(dto.getStartDate());
+        if (dto.getEndDate() != null) entity.setEndDate(dto.getEndDate());
+        if (dto.getDegree() != null) entity.setDegree(dto.getDegree());
     }
 
-
-
+    private EducationDto convertToDto(EducationInfo entity) {
+        EducationDto dto = new EducationDto();
+        dto.setId(entity.getId());
+        dto.setInstitution(entity.getInstitution());
+        dto.setProgram(entity.getProgram());
+        dto.setStartDate(entity.getStartDate());
+        dto.setEndDate(entity.getEndDate());
+        dto.setDegree(entity.getDegree());
+        return dto;
+    }
 }

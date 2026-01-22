@@ -15,6 +15,6 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: type
-                  type: TEXT
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false

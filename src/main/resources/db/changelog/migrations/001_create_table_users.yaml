@@ -15,23 +15,23 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: name
-                  type: TEXT
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
               - column:
                   name: surname
-                  type: TEXT
+                  type: VARCHAR(255)
               - column:
                   name: age
                   type: INTEGER
               - column:
                   name: email
-                  type: TEXT
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
               - column:
                   name: password
-                  type: TEXT
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
               - column:
@@ -39,7 +39,7 @@ databaseChangeLog:
                   type: VARCHAR(55)
               - column:
                   name: avatar
-                  type: TEXT
+                  type: VARCHAR
               - column:
                   name: account_type
                   type: VARCHAR(50)

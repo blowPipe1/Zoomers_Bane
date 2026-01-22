@@ -4,271 +4,149 @@ package springboot.get_a_job.serviceImplementations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import springboot.get_a_job.dao.*;
-import springboot.get_a_job.dto.ContactInfoDto;
-import springboot.get_a_job.dto.EducationDto;
+import org.springframework.transaction.annotation.Transactional;
 import springboot.get_a_job.dto.ResumeDto;
-import springboot.get_a_job.dto.WorkExperienceDto;
 import springboot.get_a_job.exceptions.CategoryNotFoundException;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.exceptions.UserNotFoundException;
+import springboot.get_a_job.models.Category;
 import springboot.get_a_job.models.Resume;
+import springboot.get_a_job.models.User;
+import springboot.get_a_job.repositories.CategoryRepository;
+import springboot.get_a_job.repositories.ResumeRepository;
+import springboot.get_a_job.repositories.UserRepository;
 import springboot.get_a_job.services.*;
 
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ResumeServiceImpl implements ResumeService {
-    private final ResumeDao resumeDao;
-    private final CategoryService categoryService;
-    private final UserAccountService userAccountService;
+    private final ResumeRepository resumeRepository;
+    private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
     private final EducationInfoService educationInfoService;
     private final WorkExperienceService workExperienceService;
     private final ContactInfoService contactInfoService;
 
     @Override
+    @Transactional
     public void createResume(ResumeDto resumeDto) {
         if (resumeDto == null) {
-            throw new ResumeNotFoundException("Category not found");
+            throw new ResumeNotFoundException("Resume data is null");
         }
 
-        Integer resumeId = resumeDao.saveResume(convertIntoModel(resumeDto));
-        log.info("Server Successfully created Resume with ID {} ", resumeId);
+        Resume resume = convertIntoModel(resumeDto);
 
-        if (resumeDto.getEducation() != null && !resumeDto.getEducation().isEmpty()) {
+        Resume savedResume = resumeRepository.save(resume);
+        Integer resumeId = savedResume.getId();
+        log.info("Server Successfully created Resume with ID {}", resumeId);
+
+        if (resumeDto.getEducation() != null) {
             educationInfoService.addEducationInfo(resumeId, resumeDto.getEducation());
         }
-
-        if (resumeDto.getWorkExperience() != null && !resumeDto.getWorkExperience().isEmpty()) {
+        if (resumeDto.getWorkExperience() != null) {
             workExperienceService.addWorkExperienceInfo(resumeId, resumeDto.getWorkExperience());
         }
-
-        if (resumeDto.getContactInfo() != null && !resumeDto.getContactInfo().isEmpty()) {
+        if (resumeDto.getContactInfo() != null) {
             contactInfoService.addContactInfo(resumeId, resumeDto.getContactInfo());
         }
     }
 
     @Override
+    @Transactional
     public void updateResume(Integer id, ResumeDto resumeDto) {
-        if (resumeDao.findResumeById(id) == null) {
-            throw new ResumeNotFoundException("Resume with id: " + id + " not found");
+        Resume resume = resumeRepository.findById(id)
+                .orElseThrow(() -> new ResumeNotFoundException("Resume with id: " + id + " not found"));
+
+        resume.setName(resumeDto.getName());
+        resume.setSalary(resumeDto.getSalary());
+        resume.setIsActive(resumeDto.getIsActive());
+        resume.setUpdateTime(LocalDateTime.now());
+
+        if (resumeDto.getCategory() != null) {
+            Category category = categoryRepository.findByNameIgnoreCase(resumeDto.getCategory())
+                    .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
+            resume.setCategory(category);
         }
-        ResumeDto checkedResume = checkFieldsForNullOrEmpty(id, resumeDto);
 
-        Integer resumeId = resumeDao.updateResume(id, convertIntoModel(checkedResume));
+        educationInfoService.updateOrAddEducationInfo(id, resumeDto.getEducation());
+        workExperienceService.updateOrAddWorkExp(id, resumeDto.getWorkExperience());
+        contactInfoService.updateOrAddContactInfo(id, resumeDto.getContactInfo());
 
-        educationInfoService.updateOrAddEducationInfo(resumeId, checkedResume.getEducation());
-
-        workExperienceService.updateOrAddWorkExp(resumeId, checkedResume.getWorkExperience());
-
-        contactInfoService.updateOrAddContactInfo(resumeId, checkedResume.getContactInfo());
+        log.info("Server Successfully updated Resume(ID: {})", id);
     }
 
     @Override
+    @Transactional
     public void deleteResume(Integer id) {
-        if (resumeDao.findResumeById(id) == null) {
-            throw new ResumeNotFoundException("Resume with id: " + id + " not found");
-        }
+        Resume resume = resumeRepository.findById(id)
+                .orElseThrow(() -> new ResumeNotFoundException("Resume with id: " + id + " not found"));
 
-        if (educationInfoService.getResumesEducationInfo(id) != null) {
-            for (EducationDto edu : educationInfoService.getResumesEducationInfo(id)) {
-                educationInfoService.deleteEducationInfo(id);
-            }
-        }
-        if (workExperienceService.getResumesWorkExperience(id) != null) {
-            for (WorkExperienceDto we : workExperienceService.getResumesWorkExperience(id)) {
-                workExperienceService.deleteWorkExperienceInfo(id);
-            }
-        }
-        if (contactInfoService.getResumesContacts(id) != null) {
-            for (ContactInfoDto contact : contactInfoService.getResumesContacts(id)) {
-                contactInfoService.deleteContactInfo(id);
-            }
-        }
-        resumeDao.deleteResume(id);
+        educationInfoService.deleteEducationInfo(id);
+        workExperienceService.deleteWorkExperienceInfo(id);
+        contactInfoService.deleteContactInfo(id);
+
+        resumeRepository.delete(resume);
         log.info("Server Successfully deleted Resume(ID: {})", id);
-
     }
 
     @Override
     public Optional<List<ResumeDto>> getAllActiveResumes() {
-        return convertIntoDto(resumeDao.getAllActiveResumes());
+        List<Resume> resumes = resumeRepository.findAllByIsActiveTrue();
+        return resumes.isEmpty() ? Optional.empty() : Optional.of(convertList(resumes));
     }
 
     @Override
     public Optional<ResumeDto> findResumeById(Integer id) {
-        return convertIntoDto(resumeDao.findResumeById(id));
+        return resumeRepository.findById(id).map(this::convertIntoDto);
     }
 
     @Override
-    public Optional<List<ResumeDto>> findResumeByCategory(Integer category_id) {
-        return convertIntoDto(resumeDao.findResumeByCategory(category_id));
+    public Optional<List<ResumeDto>> findResumeByCreator(Integer applicantId) {
+        List<Resume> resumes = resumeRepository.findAllByApplicantId(applicantId);
+        return resumes.isEmpty() ? Optional.empty() : Optional.of(convertList(resumes));
     }
 
-    @Override
-    public Optional<List<ResumeDto>> findResumeByCategory(String category1) {
-        return convertIntoDto(resumeDao.findResumeByCategory(category1));
+    private List<ResumeDto> convertList(List<Resume> resumes) {
+        return resumes.stream().map(this::convertIntoDto).collect(Collectors.toList());
     }
 
-    @Override
-    public Optional<List<ResumeDto>> findResumeByCreator(Integer applicant_id) {
-        if (resumeDao.findResumeByCreator(applicant_id).isEmpty()) {
-            log.info("empty list");
-            return Optional.empty();
-        }
-        return convertIntoDto(resumeDao.findResumeByCreator(applicant_id));
-    }
-
-    @Override
-    public Optional<List<ResumeDto>> findResumeByCreator(String creatorName) {
-        if (resumeDao.findResumeByCreator(creatorName).isEmpty()) {
-            log.info("empty list");
-            return Optional.empty();
-        }
-        return convertIntoDto(resumeDao.findResumeByCreator(creatorName));
-    }
-
-    @Override
-    public String findResumeNameById(Integer resumeId){
-        if (resumeDao.findResumeNameById(resumeId).isEmpty()) {
-            log.info("empty");
-            return null;
-        }
-        return resumeDao.findResumeNameById(resumeId);
-    }
-
-    @Override
-    public Integer findResumeIdByName(String name){
-        return resumeDao.findResumeIdByName(name);
-    }
-
-
-    private Optional<List<ResumeDto>> convertIntoDto(List<Resume>resumes){
-        if (resumes == null || resumes.isEmpty()) {
-            throw new ResumeNotFoundException("Resumes not Found");
-        }
-        List<ResumeDto>resumeDtos = new ArrayList<>();
-        for (Resume resume : resumes) {
-            List<EducationDto>educationInfo = educationInfoService.getResumesEducationInfo(resume.getId());
-            List<WorkExperienceDto>workExperienceInfo = workExperienceService.getResumesWorkExperience(resume.getId());
-            List<ContactInfoDto>contacts = contactInfoService.getResumesContacts(resume.getId());
-            log.info("Mapping (ID: {})Resume into Resume DTO, stored in list", resume.getId());
-
-            resumeDtos.add(new ResumeDto(
-                    resume.getId(),
-                    userAccountService.findNameById(resume.getApplicantId()),
-                    resume.getName(),
-                    categoryService.findNameById(resume.getCategoryId()),
-                    resume.getSalary(),
-                    resume.getIsActive(),
-                    educationInfo,
-                    workExperienceInfo,
-                    contacts
-            ));
-        }
-        return Optional.of(resumeDtos);
-    }
-
-    private Optional<ResumeDto> convertIntoDto(Resume resume){
-        if (resume == null) {
-            throw new ResumeNotFoundException("Resume not Found");
-        }
-        List<EducationDto>educationInfo = educationInfoService.getResumesEducationInfo(resume.getId());
-        List<WorkExperienceDto>workExperienceInfo = workExperienceService.getResumesWorkExperience(resume.getId());
-        List<ContactInfoDto>contacts = contactInfoService.getResumesContacts(resume.getId());
-        log.info("Mapping (ID: {})Resume into Resume DTO", resume.getId());
-
-        return Optional.of(new ResumeDto(
+    private ResumeDto convertIntoDto(Resume resume) {
+        return new ResumeDto(
                 resume.getId(),
-                userAccountService.findNameById(resume.getApplicantId()),
+                resume.getApplicant() != null ? resume.getApplicant().getEmail() : null,
                 resume.getName(),
-                categoryService.findNameById(resume.getCategoryId()),
+                resume.getCategory() != null ? resume.getCategory().getName() : null,
                 resume.getSalary(),
                 resume.getIsActive(),
-                educationInfo,
-                workExperienceInfo,
-                contacts
-        ));
-    }
-
-    private ResumeDto checkFieldsForNullOrEmpty(Integer id, ResumeDto newResume) {
-        Optional<ResumeDto> oldResume = convertIntoDto(resumeDao.findResumeById(id));
-        if (oldResume.isEmpty()){
-            throw new ResumeNotFoundException("Resume with id: " + id + " not found");
-        }
-        ResumeDto result = new ResumeDto();
-
-        if (ifNull(newResume.getApplicantEmail()) || newResume.getApplicantEmail().isEmpty()) {
-            result.setApplicantEmail(oldResume.get().getApplicantEmail());
-        } else {
-            result.setApplicantEmail(newResume.getApplicantEmail());
-        }
-        if (ifNull(newResume.getName()) || newResume.getName().isEmpty()) {
-            result.setName(oldResume.get().getName());
-        } else {
-            result.setName(newResume.getName());
-        }
-        if (ifNull(newResume.getCategory()) || newResume.getCategory().isEmpty()) {
-            result.setCategory(oldResume.get().getCategory());
-        } else {
-            result.setCategory(newResume.getCategory());
-        }
-        if (ifNull(newResume.getSalary()) || newResume.getSalary() <= 0){
-            result.setSalary(oldResume.get().getSalary());
-        } else {
-            result.setSalary(newResume.getSalary());
-        }
-        if (newResume.getIsActive() == oldResume.get().getIsActive() || ifNull(newResume.getIsActive())) {
-            result.setIsActive(oldResume.get().getIsActive());
-        } else {
-            result.setIsActive(newResume.getIsActive());
-        }
-        if (ifNull(newResume.getEducation()) || newResume.getEducation().isEmpty()) {
-            result.setEducation(oldResume.get().getEducation());
-        } else {
-            result.setEducation(newResume.getEducation());
-        }
-        if (ifNull(newResume.getWorkExperience()) || newResume.getWorkExperience().isEmpty()) {
-            result.setWorkExperience(oldResume.get().getWorkExperience());
-        } else {
-            result.setWorkExperience(newResume.getWorkExperience());
-        }
-        if (ifNull(newResume.getContactInfo()) || newResume.getContactInfo().isEmpty()){
-            result.setContactInfo(oldResume.get().getContactInfo());
-        } else {
-            result.setContactInfo(newResume.getContactInfo());
-        }
-        return result;
-    }
-
-    private boolean ifNull(Object object){
-        return object == null;
-    }
-
-    private Resume convertIntoModel(ResumeDto resumeDto) {
-        Integer categoryId = categoryService.findIdByName(resumeDto.getCategory())
-                .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + resumeDto.getCategory()));
-
-        Integer applicantId = userAccountService.findIdByEmail(resumeDto.getApplicantEmail())
-                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + resumeDto.getApplicantEmail()));
-
-        log.info("Mapping Resume DTO into Resume for User ID: {}, Email: {}", applicantId, resumeDto.getApplicantEmail());
-
-        return new Resume(
-                0,
-                applicantId,
-                resumeDto.getName(),
-                categoryId,
-                resumeDto.getSalary(),
-                resumeDto.getIsActive(),
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                educationInfoService.getResumesEducationInfo(resume.getId()),
+                workExperienceService.getResumesWorkExperience(resume.getId()),
+                contactInfoService.getResumesContacts(resume.getId())
         );
+    }
+
+    private Resume convertIntoModel(ResumeDto dto) {
+        Category category = categoryRepository.findByNameIgnoreCase(dto.getCategory())
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + dto.getCategory()));
+
+        User applicant = userRepository.findByEmail(dto.getApplicantEmail())
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + dto.getApplicantEmail()));
+
+        Resume resume = new Resume();
+        resume.setApplicant(applicant);
+        resume.setName(dto.getName());
+        resume.setCategory(category);
+        resume.setSalary(dto.getSalary());
+        resume.setIsActive(dto.getIsActive());
+        resume.setCreatedDate(LocalDateTime.now());
+        resume.setUpdateTime(LocalDateTime.now());
+        return resume;
     }
 }

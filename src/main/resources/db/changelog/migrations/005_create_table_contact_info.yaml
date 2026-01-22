@@ -31,6 +31,6 @@ databaseChangeLog:
                     referencedColumnNames: id
               - column:
                   name: value
-                  type: TEXT
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false

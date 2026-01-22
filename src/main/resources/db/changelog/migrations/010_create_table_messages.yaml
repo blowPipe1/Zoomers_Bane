@@ -23,7 +23,7 @@ databaseChangeLog:
                     referencedColumnNames: id
               - column:
                   name: content
-                  type: TEXT
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
               - column:

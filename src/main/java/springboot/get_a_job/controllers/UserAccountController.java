@@ -123,45 +123,45 @@ public class UserAccountController {
     }
 
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDto> findUserById(@PathVariable Integer id) {
-        return userAccountService.findUserById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/all")
-    public ResponseEntity<List<UserDto>> findAllUsers() {
-        return userAccountService.findAllUsers()
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("phone/{phone_number}")
-    public ResponseEntity<List<UserDto>> findUserByPhone(@PathVariable String phone_number ) {
-        return userAccountService.findUserByPhone(phone_number)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("email/{email}")
-    public ResponseEntity<List<UserDto>> findUserByEmail(@PathVariable String email) {
-        return userAccountService.findUserByEmail(email)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-    @GetMapping("username/{name}")
-    public ResponseEntity<List<UserDto>> findUserByName(@PathVariable String name) {
-        return userAccountService.findUserByName(name)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/responded/{vacancy_id}")
-    public ResponseEntity<List<UserDto>> findRespondedUsers(@PathVariable Integer vacancy_id) {
-        return userAccountService.findRespondedUsers(vacancy_id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<UserDto> findUserById(@PathVariable Integer id) {
+//        return userAccountService.findUserById(id)
+//                .map(ResponseEntity::ok)
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+//    }
+//
+//    @GetMapping("/all")
+//    public ResponseEntity<List<UserDto>> findAllUsers() {
+//        return userAccountService.findAllUsers()
+//                .map(ResponseEntity::ok)
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+//    }
+//
+//    @GetMapping("phone/{phone_number}")
+//    public ResponseEntity<List<UserDto>> findUserByPhone(@PathVariable String phone_number ) {
+//        return userAccountService.findUserByPhone(phone_number)
+//                .map(ResponseEntity::ok)
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+//    }
+//
+//    @GetMapping("email/{email}")
+//    public ResponseEntity<List<UserDto>> findUserByEmail(@PathVariable String email) {
+//        return userAccountService.findUserByEmail(email)
+//                .map(ResponseEntity::ok)
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+//    }
+//    @GetMapping("username/{name}")
+//    public ResponseEntity<List<UserDto>> findUserByName(@PathVariable String name) {
+//        return userAccountService.findUserByName(name)
+//                .map(ResponseEntity::ok)
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+//    }
+//
+//    @GetMapping("/responded/{vacancy_id}")
+//    public ResponseEntity<List<UserDto>> findRespondedUsers(@PathVariable Integer vacancy_id) {
+//        return userAccountService.findRespondedUsers(vacancy_id)
+//                .map(ResponseEntity::ok)
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+//    }
 }
 

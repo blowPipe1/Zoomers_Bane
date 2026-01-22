@@ -1,5 +1,6 @@
 package springboot.get_a_job.models;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +12,19 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "messages")
 public class Message {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer respondedApplicantsId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "responded_applicants_id")
+    private RespondedApplicant application;
+
+    @Column(columnDefinition = "TEXT")
     private String content;
+
     private LocalDateTime timestamp;
 }
