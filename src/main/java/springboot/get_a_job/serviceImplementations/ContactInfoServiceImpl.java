@@ -3,6 +3,8 @@ package springboot.get_a_job.serviceImplementations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springboot.get_a_job.dto.ContactInfoDto;
@@ -12,9 +14,9 @@ import springboot.get_a_job.models.ContactInfo;
 import springboot.get_a_job.models.ContactType;
 import springboot.get_a_job.models.Resume;
 import springboot.get_a_job.repositories.ContactInfoRepository;
-import springboot.get_a_job.repositories.ContactTypeRepository;
-import springboot.get_a_job.repositories.ResumeRepository;
 import springboot.get_a_job.services.ContactInfoService;
+import springboot.get_a_job.services.ContactTypeService;
+import springboot.get_a_job.services.ResumeService;
 
 
 import java.util.List;
@@ -24,21 +26,24 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class ContactInfoServiceImpl implements ContactInfoService {
-
     private final ContactInfoRepository contactInfoRepository;
-    private final ContactTypeRepository typeRepository;
-    private final ResumeRepository resumeRepository;
+    @Autowired
+    @Lazy
+    private ContactTypeService contactTypeService;
+    @Autowired
+    @Lazy
+    private ResumeService resumeService;
 
     @Override
     @Transactional
     public void addContactInfo(Integer resumeId, List<ContactInfoDto> contacts) {
         if (contacts == null || contacts.isEmpty()) return;
 
-        Resume resume = resumeRepository.findById(resumeId)
+        Resume resume = resumeService.findById(resumeId)
                 .orElseThrow(() -> new ResumeNotFoundException("Resume with id: " + resumeId + " not found"));
 
         for (ContactInfoDto dto : contacts) {
-            ContactType type = typeRepository.findByTypeIgnoreCase(dto.getType())
+            ContactType type = contactTypeService.findByTypeIgnoreCase(dto.getType())
                     .orElseThrow(() -> new ContactInfoNotFoundException("Type " + dto.getType() + " not found"));
 
             ContactInfo entity = new ContactInfo();
@@ -60,7 +65,7 @@ public class ContactInfoServiceImpl implements ContactInfoService {
                 if (dto.getValue() != null) entity.setValue(dto.getValue());
 
                 if (dto.getType() != null) {
-                    ContactType type = typeRepository.findByTypeIgnoreCase(dto.getType())
+                    ContactType type = contactTypeService.findByTypeIgnoreCase(dto.getType())
                             .orElseThrow(() -> new ContactInfoNotFoundException("Type not found"));
                     entity.setType(type);
                 }
@@ -85,7 +90,7 @@ public class ContactInfoServiceImpl implements ContactInfoService {
 
     @Override
     public List<String> findAll() {
-        return typeRepository.findAll().stream()
+        return contactTypeService.findAll().stream()
                 .map(ContactType::getType)
                 .collect(Collectors.toList());
     }
@@ -98,7 +103,7 @@ public class ContactInfoServiceImpl implements ContactInfoService {
             return;
         }
 
-        Resume resume = resumeRepository.findById(resumeId)
+        Resume resume = resumeService.findById(resumeId)
                 .orElseThrow(() -> new ResumeNotFoundException("Resume not found: " + resumeId));
 
         for (ContactInfoDto dto : contacts) {
@@ -109,7 +114,7 @@ public class ContactInfoServiceImpl implements ContactInfoService {
             entity.setResume(resume);
             entity.setValue(dto.getValue());
 
-            ContactType type = typeRepository.findByTypeIgnoreCase(dto.getType())
+            ContactType type = contactTypeService.findByTypeIgnoreCase(dto.getType())
                     .orElseThrow(() -> new ContactInfoNotFoundException("Type " + dto.getType() + " not found"));
             entity.setType(type);
 

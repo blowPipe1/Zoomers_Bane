@@ -12,5 +12,5 @@ public interface VacancyService {
     Optional<List<VacancyDto>>getAllActiveVacancies();
     Optional<VacancyDto>findVacancyById(Integer id);
     Optional<List<VacancyDto>> findVacancyByCreator(Integer applicant_id);
-
+    List<VacancyDto> findAllByAuthorId(Integer authorId);
 }

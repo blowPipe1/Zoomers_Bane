@@ -2,6 +2,8 @@ package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,8 +14,6 @@ import springboot.get_a_job.exceptions.VacancyNotFoundException;
 import springboot.get_a_job.models.Category;
 import springboot.get_a_job.models.User;
 import springboot.get_a_job.models.Vacancy;
-import springboot.get_a_job.repositories.CategoryRepository;
-import springboot.get_a_job.repositories.UserRepository;
 import springboot.get_a_job.repositories.VacancyRepository;
 import springboot.get_a_job.services.CategoryService;
 import springboot.get_a_job.services.UserAccountService;
@@ -29,8 +29,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class VacancyServiceImpl implements VacancyService {
     private final VacancyRepository vacancyRepository;
-    private final CategoryRepository categoryRepository;
-    private final UserRepository userRepository;
+    @Autowired
+    @Lazy
+    private CategoryService categoryService;
+    @Autowired
+    @Lazy
+    private UserAccountService userAccountService;
 
     @Override
     @Transactional
@@ -59,7 +63,7 @@ public class VacancyServiceImpl implements VacancyService {
 
 
         if (vacancyDto.getCategory() != null) {
-            Category category = categoryRepository.findByNameIgnoreCase(vacancyDto.getCategory())
+            Category category = categoryService.findByNameIgnoreCase(vacancyDto.getCategory())
                     .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
             vacancy.setCategory(category);
         }
@@ -84,6 +88,14 @@ public class VacancyServiceImpl implements VacancyService {
         return vacancies.isEmpty() ? Optional.empty() : Optional.of(convertList(vacancies));
     }
 
+    @Override
+    public List<VacancyDto> findAllByAuthorId(Integer authorId){
+        return vacancyRepository.findAllByAuthorId(authorId)
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
     private List<VacancyDto> convertList(List<Vacancy> vacancies) {
         return vacancies.stream()
                 .map(this::convertToDto)
@@ -105,10 +117,10 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     private Vacancy convertIntoModel(VacancyDto dto) {
-        Category category = categoryRepository.findByNameIgnoreCase(dto.getCategory())
+        Category category = categoryService.findByNameIgnoreCase(dto.getCategory())
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + dto.getCategory()));
 
-        User author = userRepository.findByEmail(dto.getAuthor())
+        User author = userAccountService.findByEmail(dto.getAuthor())
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + dto.getAuthor()));
 
         Vacancy vacancy = new Vacancy();

@@ -3,6 +3,7 @@ package springboot.get_a_job.serviceImplementations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,10 +13,10 @@ import springboot.get_a_job.dto.UserDto;
 import springboot.get_a_job.exceptions.InvalidAccountTypeException;
 import springboot.get_a_job.exceptions.UserNotFoundException;
 import springboot.get_a_job.models.User;
-import springboot.get_a_job.repositories.ResumeRepository;
 import springboot.get_a_job.repositories.UserRepository;
-import springboot.get_a_job.repositories.VacancyRepository;
+import springboot.get_a_job.services.ResumeService;
 import springboot.get_a_job.services.UserAccountService;
+import springboot.get_a_job.services.VacancyService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,9 +32,15 @@ import java.util.Optional;
 @Slf4j
 public class UserAccountServiceImpl implements UserAccountService {
     private final String subDir = "src/main/resources/static/images/";
-    private final UserRepository userRepository;
-    private final ResumeRepository resumeRepository;
-    private final VacancyRepository vacancyRepository;
+    @Autowired
+    @Lazy
+    private UserRepository userRepository;
+    @Autowired
+    @Lazy
+    private  ResumeService resumeService;
+    @Autowired
+    @Lazy
+    private  VacancyService vacancyService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -67,10 +74,10 @@ public class UserAccountServiceImpl implements UserAccountService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (!resumeRepository.findAllByApplicantId(userId).isEmpty()) {
+        if (!resumeService.findAllByApplicantId(userId).isEmpty()) {
             throw new RuntimeException("User has Resumes attached to their id");
         }
-        if (!vacancyRepository.findAllByAuthorId(userId).isEmpty()) {
+        if (!vacancyService.findAllByAuthorId(userId).isEmpty()) {
             throw new RuntimeException("User has Vacancies attached to their id");
         }
 
@@ -115,6 +122,11 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public Optional<List<UserDto>>findAllUsers(){
         return Optional.of(userRepository.findAll().stream().map(this::convert).toList());
+    }
+
+    @Override
+    public Optional<User>findByEmail(String email){
+        return userRepository.findByEmail(email);
     }
 
     private User convertIntoModel(UserDto dto) {

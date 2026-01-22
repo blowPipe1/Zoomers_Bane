@@ -13,6 +13,7 @@ import springboot.get_a_job.models.WorkExperienceInfo;
 import springboot.get_a_job.repositories.ResumeRepository;
 import springboot.get_a_job.repositories.WorkExperienceInfoRepository;
 
+import springboot.get_a_job.services.ResumeService;
 import springboot.get_a_job.services.WorkExperienceService;
 
 import java.util.List;
@@ -24,14 +25,14 @@ import java.util.stream.Collectors;
 public class WorkExperienceServiceImpl implements WorkExperienceService {
 
     private final WorkExperienceInfoRepository workExperienceRepository;
-    private final ResumeRepository resumeRepository;
+    private final ResumeService resumeService;
 
     @Override
     @Transactional
     public void addWorkExperienceInfo(Integer resumeId, List<WorkExperienceDto> dtos) {
         if (dtos == null || dtos.isEmpty()) return;
 
-        Resume resume = resumeRepository.findById(resumeId)
+        Resume resume = resumeService.findById(resumeId)
                 .orElseThrow(() -> new ResumeNotFoundException("Resume with id: " + resumeId + " not found"));
 
         for (WorkExperienceDto dto : dtos) {
@@ -97,7 +98,7 @@ public class WorkExperienceServiceImpl implements WorkExperienceService {
 
 
     private void addSingleWorkExp(Integer resumeId, WorkExperienceDto dto) {
-        Resume resume = resumeRepository.findById(resumeId)
+        Resume resume = resumeService.findById(resumeId)
                 .orElseThrow(() -> new ResumeNotFoundException("Resume ID " + resumeId + " not found"));
         WorkExperienceInfo info = new WorkExperienceInfo();
         info.setResume(resume);

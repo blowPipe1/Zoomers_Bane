@@ -18,4 +18,5 @@ public interface UserAccountService {
     String findNameById(Integer id);
     Optional<Integer> findIdByEmail(String email);
     Optional<List<UserDto>>findAllUsers();
+    Optional<User>findByEmail(String email);
 }

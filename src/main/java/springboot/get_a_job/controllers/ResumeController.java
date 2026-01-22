@@ -95,9 +95,12 @@ public class ResumeController {
                         Category::getName,
                         (existing, replacement) -> existing
                 ));
+        Map<String, String> contactTypesMap = contactInfoService.findAll().stream()
+                .collect(Collectors.toMap(type -> type, type -> type, (existing, replacement) -> existing));
 
         model.addAttribute("categories", categories);
         model.addAttribute("resumeDto", resumeDto);
+        model.addAttribute("contactTypesMap", contactTypesMap);
 
         return "edit-resume";
     }

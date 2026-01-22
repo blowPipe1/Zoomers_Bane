@@ -2,6 +2,8 @@ package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springboot.get_a_job.dto.EducationDto;
@@ -10,8 +12,8 @@ import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.models.EducationInfo;
 import springboot.get_a_job.models.Resume;
 import springboot.get_a_job.repositories.EducationInfoRepository;
-import springboot.get_a_job.repositories.ResumeRepository;
 import springboot.get_a_job.services.EducationInfoService;
+import springboot.get_a_job.services.ResumeService;
 
 
 import java.util.List;
@@ -21,16 +23,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class EducationInfoServiceImpl implements EducationInfoService {
-
     private final EducationInfoRepository educationRepository;
-    private final ResumeRepository resumeRepository;
+    @Autowired
+    @Lazy
+    private ResumeService resumeService;
 
     @Override
     @Transactional
     public void addEducationInfo(Integer resumeId, List<EducationDto> educationDtos) {
         if (educationDtos == null || educationDtos.isEmpty()) return;
 
-        Resume resume = resumeRepository.findById(resumeId)
+        Resume resume = resumeService.findById(resumeId)
                 .orElseThrow(() -> new ResumeNotFoundException("Resume with id: " + resumeId + " not found"));
 
         for (EducationDto dto : educationDtos) {
@@ -93,7 +96,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
     }
 
     private void addSingleEducation(Integer resumeId, EducationDto dto) {
-        Resume resume = resumeRepository.findById(resumeId).orElseThrow();
+        Resume resume = resumeService.findById(resumeId).orElseThrow();
         EducationInfo edu = new EducationInfo();
         edu.setResume(resume);
         mapDtoToEntity(dto, edu);

@@ -183,14 +183,18 @@
         <h3>Contacts</h3>
         <#list resumeDto.contactInfo as contact>
             <div class="section-block">
-                <input type="hidden" name="contactInfo[${contact?index}].id" value="${(contact.id)!''}">
+                <@spring.formHiddenInput "resumeDto.contactInfo[${contact?index}].id" "" />
+
                 <div class="form-group">
-                    <label>Type (Phone, Telegram, etc)</label>
-                    <@spring.formInput "resumeDto.contactInfo[${contact?index}].type" />
+                    <label>Type (Phone, Telegram, Email, etc)</label>
+                    <@spring.formSingleSelect "resumeDto.contactInfo[${contact?index}].type", contactTypesMap, "class='form-control'" />
+                    <@spring.showErrors "<br>" "error-message" />
                 </div>
+
                 <div class="form-group">
                     <label>Value</label>
-                    <@spring.formInput "resumeDto.contactInfo[${contact?index}].value" />
+                    <@spring.formInput "resumeDto.contactInfo[${contact?index}].value" "class='form-control' placeholder='Enter value...'" />
+                    <@spring.showErrors "<br>" "error-message" />
                 </div>
             </div>
         </#list>
@@ -198,7 +202,7 @@
         <button type="submit" class="btn-submit">Save Changes</button>
     </form>
 
-    <a href="/api/users/dashboard" class="back-link">← Back to Dashboard</a>
+    <a href="/api/users/dashboard" class="back-link">♂ Back to Profile ♂</a>
 </div>
 
 </body>

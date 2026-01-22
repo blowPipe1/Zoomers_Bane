@@ -3,6 +3,8 @@ package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springboot.get_a_job.dto.ResumeDto;
@@ -12,9 +14,7 @@ import springboot.get_a_job.exceptions.UserNotFoundException;
 import springboot.get_a_job.models.Category;
 import springboot.get_a_job.models.Resume;
 import springboot.get_a_job.models.User;
-import springboot.get_a_job.repositories.CategoryRepository;
 import springboot.get_a_job.repositories.ResumeRepository;
-import springboot.get_a_job.repositories.UserRepository;
 import springboot.get_a_job.services.*;
 
 
@@ -29,11 +29,21 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ResumeServiceImpl implements ResumeService {
     private final ResumeRepository resumeRepository;
-    private final CategoryRepository categoryRepository;
-    private final UserRepository userRepository;
-    private final EducationInfoService educationInfoService;
-    private final WorkExperienceService workExperienceService;
-    private final ContactInfoService contactInfoService;
+    @Autowired
+    @Lazy
+    private CategoryService categoryService;
+    @Autowired
+    @Lazy
+    private UserAccountService userAccountService;
+    @Autowired
+    @Lazy
+    private EducationInfoService educationInfoService;
+    @Autowired
+    @Lazy
+    private WorkExperienceService workExperienceService;
+    @Autowired
+    @Lazy
+    private ContactInfoService contactInfoService;
 
     @Override
     @Transactional
@@ -71,7 +81,7 @@ public class ResumeServiceImpl implements ResumeService {
         resume.setUpdateTime(LocalDateTime.now());
 
         if (resumeDto.getCategory() != null) {
-            Category category = categoryRepository.findByNameIgnoreCase(resumeDto.getCategory())
+            Category category = categoryService.findByNameIgnoreCase(resumeDto.getCategory())
                     .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
             resume.setCategory(category);
         }
@@ -114,6 +124,18 @@ public class ResumeServiceImpl implements ResumeService {
         return resumes.isEmpty() ? Optional.empty() : Optional.of(convertList(resumes));
     }
 
+    @Override
+    public Optional<Resume>findById(Integer id){
+        return resumeRepository.findById(id);
+    }
+
+    @Override
+    public List<ResumeDto> findAllByApplicantId(Integer applicantId){
+        return resumeRepository.findAllByApplicantId(applicantId)
+                .stream()
+                .map(this::convertIntoDto).collect(Collectors.toList());
+    }
+
     private List<ResumeDto> convertList(List<Resume> resumes) {
         return resumes.stream().map(this::convertIntoDto).collect(Collectors.toList());
     }
@@ -133,10 +155,10 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     private Resume convertIntoModel(ResumeDto dto) {
-        Category category = categoryRepository.findByNameIgnoreCase(dto.getCategory())
+        Category category = categoryService.findByNameIgnoreCase(dto.getCategory())
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + dto.getCategory()));
 
-        User applicant = userRepository.findByEmail(dto.getApplicantEmail())
+        User applicant = userAccountService.findByEmail(dto.getApplicantEmail())
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + dto.getApplicantEmail()));
 
         Resume resume = new Resume();

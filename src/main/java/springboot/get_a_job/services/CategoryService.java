@@ -9,4 +9,5 @@ public interface CategoryService {
     Optional<Integer> findIdByName(String name);
     String findNameById(Integer id);
     List<Category> findAll();
+    Optional<Category>findByNameIgnoreCase(String name);
 }
