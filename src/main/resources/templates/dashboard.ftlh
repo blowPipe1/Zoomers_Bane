@@ -157,7 +157,6 @@
                 <#else>
                     <div class="empty-state">
                         <p>You haven't created any resumes yet.</p>
-                        <a href="/api/resumes/form">Create your first resume</a>
                     </div>
                 </#list>
             </div>

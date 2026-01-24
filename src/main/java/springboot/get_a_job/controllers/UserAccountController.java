@@ -35,21 +35,6 @@ public class UserAccountController {
     private final ResumeService resumeService;
     private final VacancyService vacancyService;
 
-    @GetMapping("/register-form")
-    public String showForm(Model model) {
-        model.addAttribute("userDto", new UserDto());
-        return "registration";
-    }
-
-    @PostMapping("/register")
-    public String registerUser(@Validated(OnCreate.class) @ModelAttribute("userDto") UserDto userDto,
-                               BindingResult result) {
-        if (result.hasErrors()) {
-            return "registration";
-        }
-        userAccountService.registerUser(userDto);
-        return "redirect:/api/users/dashboard";
-    }
 
     @GetMapping("/dashboard")
     public String dashboard(

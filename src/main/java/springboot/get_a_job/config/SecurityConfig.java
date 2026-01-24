@@ -1,9 +1,13 @@
 package springboot.get_a_job.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -22,7 +26,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/register-form/**", "/api/users/register/**", "/api/vacancies/all").permitAll()
+                        .requestMatchers("/register-form/**", "/register/**", "/api/vacancies/all").permitAll()
                         .requestMatchers("/images/**", "/css/**", "/js/**", "/static/**").permitAll()
 
                         .requestMatchers("/api/vacancies/create").hasRole("EMPLOYER")
@@ -37,14 +41,25 @@ public class SecurityConfig {
 
                         .anyRequest().authenticated()
                 )
-
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/process_login")
+                        .defaultSuccessUrl("/api/users/dashboard", true)
+                        .permitAll()
+                )
                 .httpBasic(Customizer.withDefaults())
-
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
                 );
 
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager (UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder);
+        return new ProviderManager(authProvider);
     }
 }

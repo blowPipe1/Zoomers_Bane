@@ -119,7 +119,7 @@
 
 <div class="container">
         <h2>Create account</h2>
-        <form action="/api/users/register" method="post">
+        <form action="/register" method="post">
             <div class="form-group">
                 <label for="name">Name</label>
                 <@spring.formInput "userDto.name" "class='form-control' placeholder='Enter your Name'" />
@@ -171,7 +171,7 @@
 
             <button type="submit" class="btn-submit">Register</button>
         </form>
-    <a href="#" class="login-link">♂ Log In ♂</a>
+    <a href="login" class="login-link">♂ Log In ♂</a>
 </div>
 
 </body>
