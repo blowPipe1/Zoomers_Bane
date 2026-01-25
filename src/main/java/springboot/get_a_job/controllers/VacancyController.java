@@ -1,9 +1,10 @@
 package springboot.get_a_job.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.h2.engine.Mode;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,16 +12,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springboot.get_a_job.dto.*;
-import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
-import springboot.get_a_job.exceptions.UserNotFoundException;
-import springboot.get_a_job.exceptions.VacancyNotFoundException;
 import springboot.get_a_job.models.Category;
 import springboot.get_a_job.models.CustomUserDetails;
 import springboot.get_a_job.services.CategoryService;
 import springboot.get_a_job.services.VacancyService;
-
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -116,9 +112,15 @@ public class VacancyController {
     }
 
     @GetMapping("/all")
-    public String getAllActiveVacancies(Model model) {
-        List<VacancyDto> vacancies = vacancyService.getAllActiveVacancies().orElseGet(null);
-        model.addAttribute("vacancies", vacancies);
+    public String getAllActiveVacancies(
+            Model model,
+            @PageableDefault(size = 9, sort = "salary") Pageable pageable) {
+        Page<VacancyDto> vacancyPage = vacancyService.getAllActiveVacancies(pageable);
+
+        model.addAttribute("vacancies", vacancyPage.getContent());
+        model.addAttribute("currentPage", vacancyPage.getNumber());
+        model.addAttribute("totalPages", vacancyPage.getTotalPages());
+        model.addAttribute("totalItems", vacancyPage.getTotalElements());
         return "vacancy-list";
     }
 

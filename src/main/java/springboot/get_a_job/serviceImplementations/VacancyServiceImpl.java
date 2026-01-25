@@ -2,6 +2,8 @@ package springboot.get_a_job.serviceImplementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -72,9 +74,9 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public Optional<List<VacancyDto>> getAllActiveVacancies() {
-        List<Vacancy> vacancies = vacancyRepository.findAllByIsActiveTrue();
-        return vacancies.isEmpty() ? Optional.empty() : Optional.of(convertList(vacancies));
+    public Page<VacancyDto>getAllActiveVacancies(Pageable pageable) {
+        Page<Vacancy>vacancyPage = vacancyRepository.findAllByIsActiveTrue(pageable);
+        return vacancyPage.map(this::convertToDto);
     }
 
     @Override
@@ -83,9 +85,9 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public Optional<List<VacancyDto>> findVacancyByCreator(Integer authorId) {
-        List<Vacancy> vacancies = vacancyRepository.findAllByAuthorId(authorId);
-        return vacancies.isEmpty() ? Optional.empty() : Optional.of(convertList(vacancies));
+    public Page<VacancyDto> findVacancyByCreator(Integer authorId, Pageable pageable) {
+        Page<Vacancy> vacancies = vacancyRepository.findAllByAuthorId(authorId, pageable);
+        return vacancies.map(this::convertToDto);
     }
 
     @Override

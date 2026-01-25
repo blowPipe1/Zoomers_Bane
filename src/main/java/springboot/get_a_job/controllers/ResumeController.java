@@ -2,6 +2,9 @@ package springboot.get_a_job.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springboot.get_a_job.dto.*;
-import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
 import springboot.get_a_job.models.Category;
 import springboot.get_a_job.models.CustomUserDetails;
@@ -129,9 +131,17 @@ public class ResumeController {
 
 
     @GetMapping("/all")
-    public String getAllActiveResumes(Model model) {
-        List<ResumeDto> resumes = resumeService.getAllActiveResumes().orElseGet(null);
-        model.addAttribute("resumes", resumes);
+    public String getAllActiveResumes(
+            Model model,
+            @PageableDefault(size = 9, sort = "salary") Pageable pageable) {
+
+        Page<ResumeDto> resumePage = resumeService.getAllActiveResumes(pageable);
+
+        model.addAttribute("resumes", resumePage.getContent());
+        model.addAttribute("currentPage", resumePage.getNumber());
+        model.addAttribute("totalPages", resumePage.getTotalPages());
+        model.addAttribute("totalItems", resumePage.getTotalElements());
+
         return "resume-list";
     }
 

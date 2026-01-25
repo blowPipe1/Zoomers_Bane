@@ -1,5 +1,7 @@
 package springboot.get_a_job.repositories;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface VacancyRepository extends JpaRepository<Vacancy, Integer> {
-    List<Vacancy> findAllByIsActiveTrue();
+    Page<Vacancy> findAllByIsActiveTrue(Pageable pageable);
 
     List<Vacancy> findAllByCategoryNameContainingIgnoreCase(String categoryName);
 
@@ -21,6 +23,8 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Integer> {
             "JOIN Resume r ON ra.resume.id = r.id " +
             "WHERE r.applicant.id = :applicantId")
     List<Vacancy> findRespondedVacanciesByApplicantId(@Param("applicantId") Integer applicantId);
+
+    Page<Vacancy> findAllByAuthorId(Integer authorId, Pageable pageable);
 
     List<Vacancy> findAllByAuthorId(Integer authorId);
 
