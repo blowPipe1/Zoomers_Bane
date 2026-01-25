@@ -135,6 +135,13 @@ public class ResumeController {
         return "resume-list";
     }
 
+    @GetMapping("/{resumeId}")
+    public String getRusumeById(@PathVariable Integer resumeId, Model model) {
+        ResumeDto resume = resumeService.findResumeById(resumeId).orElseGet(null);
+        model.addAttribute("resume", resume);
+        return "resume";
+    }
+
 
 
     //    @PutMapping("/update/{id}")

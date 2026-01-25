@@ -79,6 +79,16 @@
         .vacancy-card span{
             font-weight: lighter;
         }
+        .action{
+            background: #fff;
+            border-radius: 12px;
+            padding: 7px 70px;
+            display: flex;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #eef0f2;
+            justify-content: center;
+        }
 
     </style>
 </head>
@@ -100,7 +110,7 @@
                     <p><span>Experience: </span>from ${vacancy.expFrom! 0} to ${vacancy.expTo! 0}</p>
                     <p><span>Status: </span> ${vacancy.isActive?string('Active', 'Inactive')}</p>
                 </div>
-                <button type="submit" class="btn-view">Open</button>
+                <div class="action"> <a href="/api/vacancies/${vacancy.id}" style="text-decoration: none;">Open</a></div>
             </div>
         </#list>
     </div>

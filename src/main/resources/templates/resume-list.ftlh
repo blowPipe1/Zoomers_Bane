@@ -80,6 +80,17 @@
             margin-top: auto;
         }
 
+        .action{
+            background: #fff;
+            border-radius: 12px;
+            padding: 7px 70px;
+            display: flex;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #eef0f2;
+            justify-content: center;
+        }
+
     </style>
 </head>
 <body>
@@ -118,8 +129,6 @@
                         <p>N/A</p>
                     </#if>
                 </div>
-
-
                 <div class="contacts"  style="margin-bottom: 10px">
                     <#if resume.contactInfo?has_content>
                         <#list resume.contactInfo as contact>
@@ -130,7 +139,7 @@
                         <p>Contacts Not Provided</p>
                     </#if>
                     </div>
-                <button type="submit" class="btn-view">Open</button>
+                <div class="action"> <a href="/api/resumes/${resume.id}" style="text-decoration: none;">Open</a></div>
             </div>
         </#list>
 

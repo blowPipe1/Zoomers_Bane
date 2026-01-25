@@ -133,8 +133,10 @@
                 <div class="action"> <a href="#" style="text-decoration: none;">Responses</a></div>
                 <#if (user.accountType! "")?lower_case == "applicant">
                     <div class="action"> <a href="/api/resumes/form" style="text-decoration: none;">Create Resume</a></div>
+                    <div class="action"> <a href="/api/vacancies/all" style="text-decoration: none;">Vacancies</a></div>
                 <#elseif (user.accountType! "")?lower_case == "employer">
                     <div class="action"> <a href="/api/vacancies/form" style="text-decoration: none;">Create Vacancy</a></div>
+                    <div class="action"> <a href="/api/resumes/all" style="text-decoration: none;">Resumes</a></div>
                 <#else>
                     <p>Cannot identify Account Type</p>
                 </#if>

@@ -1,6 +1,7 @@
 package springboot.get_a_job.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.h2.engine.Mode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -107,6 +108,20 @@ public class VacancyController {
         return "redirect:/api/users/dashboard";
     }
 
+    @GetMapping("/{vacancyId}")
+    public String getById(@PathVariable Integer vacancyId, Model model){
+        VacancyDto vacancy = vacancyService.findVacancyById(vacancyId).orElseGet(null);
+        model.addAttribute("vacancy", vacancy);
+        return "vacancy";
+    }
+
+    @GetMapping("/all")
+    public String getAllActiveVacancies(Model model) {
+        List<VacancyDto> vacancies = vacancyService.getAllActiveVacancies().orElseGet(null);
+        model.addAttribute("vacancies", vacancies);
+        return "vacancy-list";
+    }
+
 //    @PutMapping("/update/{id}")
 //    public ResponseEntity<String> updateVacancy(@Validated(OnUpdate.class) @PathVariable Integer id, @RequestBody VacancyDto vacancyDto) {
 //        vacancyService.updateVacancy(id, vacancyDto);
@@ -127,21 +142,6 @@ public class VacancyController {
 //    public ResponseEntity<String> respondToVacancy(@PathVariable Integer vacancyId, @RequestParam Integer resumeId) {
 //        vacancyService.respondToVacancy(vacancyId, resumeId);
 //        return ResponseEntity.ok("Successfully registered a response");
-//    }
-
-    @GetMapping("/all")
-    public String getAllActiveVacancies(Model model) {
-        List<VacancyDto> vacancies = vacancyService.getAllActiveVacancies().orElseGet(null);
-        model.addAttribute("vacancies", vacancies);
-        return "vacancy-list";
-    }
-
-
-//    @GetMapping("/{id}")
-//    public ResponseEntity<VacancyDto> findVacancyById(@PathVariable Integer id) {
-//        return vacancyService.findVacancyById(id)
-//                .map(ResponseEntity::ok)
-//                .orElseGet(() -> ResponseEntity.notFound().build());
 //    }
 //
 //    @GetMapping("/categoryId/{category_id}")
