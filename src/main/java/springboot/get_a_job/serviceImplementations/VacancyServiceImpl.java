@@ -118,7 +118,8 @@ public class VacancyServiceImpl implements VacancyService {
         );
     }
 
-    private Vacancy convertIntoModel(VacancyDto dto) {
+    @Override
+    public Vacancy convertIntoModel(VacancyDto dto) {
         Category category = categoryService.findByNameIgnoreCase(dto.getCategory())
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + dto.getCategory()));
 

@@ -155,7 +155,8 @@ public class ResumeServiceImpl implements ResumeService {
         );
     }
 
-    private Resume convertIntoModel(ResumeDto dto) {
+    @Override
+    public Resume convertIntoModel(ResumeDto dto) {
         Category category = categoryService.findByNameIgnoreCase(dto.getCategory())
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + dto.getCategory()));
 

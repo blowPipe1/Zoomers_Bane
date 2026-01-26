@@ -17,4 +17,5 @@ public interface ResumeService {
     void createResume(ResumeDto resumeDto);
     Optional<Resume>findById(Integer id);
     List<ResumeDto> findAllByApplicantId(Integer applicantId);
+    Resume convertIntoModel(ResumeDto dto);
 }
