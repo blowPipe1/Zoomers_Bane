@@ -16,9 +16,9 @@ import springboot.get_a_job.services.RespondedApplicantService;
 public class ApplicantResponseController {
     private final RespondedApplicantService applicantService;
 
-    @PostMapping
+    @PostMapping("/apply")
     public String submitApplication(@ModelAttribute ApplicantResponseDto applyRequestDTO) {
         applicantService.applyToVacancy(applyRequestDTO);
-        return "redirect:/vacancies/" + applyRequestDTO.getVacancyId() + "?success=true";
+        return "redirect:/api/vacancies/" + applyRequestDTO.getVacancyId() + "?success=true";
     }
 }

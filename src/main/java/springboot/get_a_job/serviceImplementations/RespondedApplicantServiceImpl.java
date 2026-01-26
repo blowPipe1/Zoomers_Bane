@@ -6,9 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import springboot.get_a_job.dto.ApplicantResponseDto;
 import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.VacancyDto;
+import springboot.get_a_job.exceptions.ResumeNotFoundException;
+import springboot.get_a_job.exceptions.VacancyNotFoundException;
 import springboot.get_a_job.models.Message;
 import springboot.get_a_job.models.RespondedApplicant;
-import springboot.get_a_job.models.Vacancy;
 import springboot.get_a_job.repositories.MessageRepository;
 import springboot.get_a_job.repositories.RespondedApplicantRepository;
 import springboot.get_a_job.services.RespondedApplicantService;
@@ -29,12 +30,13 @@ public class RespondedApplicantServiceImpl implements RespondedApplicantService 
     @Override
     @Transactional
     public void applyToVacancy(ApplicantResponseDto dto) {
+        VacancyDto vacancyDto = vacancyService.findVacancyById(dto.getVacancyId())
+                .orElseThrow(() -> new VacancyNotFoundException("Vacancy not found"));
+
+        ResumeDto resumeDto = resumeService.findResumeById(dto.getResumeId())
+                .orElseThrow(() -> new ResumeNotFoundException("Resume not found"));
+
         RespondedApplicant application = new RespondedApplicant();
-
-
-        VacancyDto vacancyDto = vacancyService.findVacancyById(dto.getVacancyId()).orElseGet(null);
-        ResumeDto resumeDto = resumeService.findResumeById(dto.getResumeId()).orElseGet(null);
-
         application.setVacancy(vacancyService.convertIntoModel(vacancyDto));
         application.setResume(resumeService.convertIntoModel(resumeDto));
         application.setConfirmation(false);

@@ -164,6 +164,7 @@ public class ResumeServiceImpl implements ResumeService {
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + dto.getApplicantEmail()));
 
         Resume resume = new Resume();
+        resume.setId(dto.getId());
         resume.setApplicant(applicant);
         resume.setName(dto.getName());
         resume.setCategory(category);

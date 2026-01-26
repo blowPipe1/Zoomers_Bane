@@ -14,7 +14,7 @@
 
         .container {
             background: white;
-            max-width: 1100px;
+            max-width: 900px;
             width: 100%;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -119,6 +119,57 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
+
+        .respond-form {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f1f4f9;
+            border-radius: 12px;
+            border: 1px solid #e0e6ed;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #444;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: inherit;
+            box-sizing: border-box; /* Важно для правильной ширины */
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 6px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: opacity 0.3s;
+            background-color: #007bff;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -162,12 +213,42 @@
         <a href="/api/vacancies/all" class="action">
             Back to list
         </a>
-        <#if vacancy.isActive>
-            <a href="#" class="action" style="border: none;">
-                Respond
-            </a>
-        </#if>
     </div>
+
+    <#if vacancy.isActive>
+        <div class="section" style="margin-top: 40px;">
+            <div class="section-title">Apply for this position</div>
+
+            <#if userResumes?? && (userResumes?size > 0)>
+                <div class="respond-form">
+                    <form action="/api/responses/apply" method="post">
+                        <input type="hidden" name="vacancyId" value="${vacancy.id}">
+
+                        <div class="form-group">
+                            <label for="resumeId">Select your resume:</label>
+                            <select name="resumeId" id="resumeId" class="form-control" required>
+                                <#list userResumes as resume>
+                                    <option value="${resume.id}">${resume.id} ${resume.name}</option>
+                                </#list>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Cover letter (optional):</label>
+                            <textarea name="message" id="message" class="form-control"
+                                      placeholder="Tell the employer why you are a good fit..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-submit">Send Application</button>
+                    </form>
+                </div>
+            <#else>
+                <div class="description-box" style="background: #fff3cd; border-color: #ffeeba;">
+                    You need to <a href="api/resumes/form">create a resume</a> before you can apply.
+                </div>
+            </#if>
+        </div>
+    </#if>
 </div>
 
 </body>

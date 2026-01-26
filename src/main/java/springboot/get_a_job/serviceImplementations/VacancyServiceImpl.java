@@ -127,6 +127,7 @@ public class VacancyServiceImpl implements VacancyService {
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + dto.getAuthor()));
 
         Vacancy vacancy = new Vacancy();
+        vacancy.setId(dto.getId());
         vacancy.setName(dto.getName());
         vacancy.setDescription(dto.getDescription());
         vacancy.setCategory(category);
