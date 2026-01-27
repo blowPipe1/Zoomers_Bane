@@ -9,4 +9,6 @@ public interface RespondedApplicantService {
     List<RespondedApplicant> getApplicantByResumeId(Integer resumeId);
     List<RespondedApplicant> getApplicantByVacancy_Id(Integer vacancyId);
     void applyToVacancy(ApplicantResponseDto dto);
+    List<RespondedApplicant> getApplicationsForUser(Integer userId);
+    List<RespondedApplicant> getApplicationsForEmployer(Integer userId);
 }

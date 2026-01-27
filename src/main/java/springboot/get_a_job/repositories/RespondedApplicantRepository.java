@@ -10,10 +10,6 @@ import java.util.List;
 public interface RespondedApplicantRepository extends JpaRepository<RespondedApplicant, Integer> {
     List<RespondedApplicant> findByResumeId(Integer id);
     List<RespondedApplicant> findByVacancy_Id(Integer id);
+    List<RespondedApplicant> findByResume_Applicant_Id(Integer userId);
+    List<RespondedApplicant> findByVacancy_Author_Id(Integer userId);
 }
-
-//TODO
-// 1 Message & Responses Logic for Vacancies
-// 2 Make resume-list.ftlh, vacancy-list.ftlh, dashboard.ftlh. Page<> & Pageable
-// 3 Add Navigation panel to access: (depending on account type, resume-list.ftlh, vacancy-list.ftlh) in dashboard template
-// 4 Add sorting by published date and responses for resume-list.ftlh, vacancy-list.ftlh templates

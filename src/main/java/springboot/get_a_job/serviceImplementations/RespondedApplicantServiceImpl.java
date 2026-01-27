@@ -61,4 +61,17 @@ public class RespondedApplicantServiceImpl implements RespondedApplicantService 
     public List<RespondedApplicant> getApplicantByVacancy_Id(Integer vacancyId){
         return respondedApplicantRepository.findByVacancy_Id(vacancyId);
     }
+
+    @Override
+    public List<RespondedApplicant> getApplicationsForUser(Integer userId){
+        return respondedApplicantRepository.findByResume_Applicant_Id(userId);
+    }
+
+    @Override
+    public List<RespondedApplicant> getApplicationsForEmployer(Integer employerId){
+        return respondedApplicantRepository.findByVacancy_Author_Id(employerId);
+    }
+
+
+
 }

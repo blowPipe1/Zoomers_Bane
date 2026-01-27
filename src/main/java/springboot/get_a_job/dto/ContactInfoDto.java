@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import springboot.get_a_job.dto.validation.OnCreate;
-import springboot.get_a_job.dto.validation.OnUpdate;
 
 @Getter
 @Setter
