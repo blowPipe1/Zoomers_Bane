@@ -1,5 +1,7 @@
 package springboot.get_a_job.repositories;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,11 +15,13 @@ import java.util.Optional;
 @Repository
 public interface ResumeRepository extends JpaRepository<Resume, Integer> {
 
-    List<Resume> findAllByIsActiveTrue();
+    Page<Resume> findAllByIsActiveTrue(Pageable pageable);
 
     List<Resume> findAllByCategoryNameContainingIgnoreCase(String categoryName);
 
     List<Resume> findAllByCategoryId(Integer categoryId);
+
+    Page<Resume> findAllByApplicantId(Integer applicantId, Pageable pageable);
 
     List<Resume> findAllByApplicantId(Integer applicantId);
 

@@ -1,8 +1,9 @@
 package springboot.get_a_job.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.models.Resume;
-
 
 import java.util.List;
 import java.util.Optional;
@@ -10,10 +11,11 @@ import java.util.Optional;
 public interface ResumeService {
     void updateResume(Integer id, ResumeDto resumeDto);
     void deleteResume(Integer id);
-    Optional<List<ResumeDto>>getAllActiveResumes();
+    Page<ResumeDto> getAllActiveResumes(Pageable pageable);
     Optional<ResumeDto>findResumeById(Integer id);
-    Optional<List<ResumeDto>> findResumeByCreator(Integer applicant_id);
+    Page<ResumeDto>findResumeByCreator(Integer applicant_id, Pageable pageable);
     void createResume(ResumeDto resumeDto);
     Optional<Resume>findById(Integer id);
     List<ResumeDto> findAllByApplicantId(Integer applicantId);
+    Resume convertIntoModel(ResumeDto dto);
 }

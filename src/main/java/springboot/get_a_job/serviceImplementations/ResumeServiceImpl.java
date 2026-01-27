@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springboot.get_a_job.dto.ResumeDto;
@@ -16,7 +18,6 @@ import springboot.get_a_job.models.Resume;
 import springboot.get_a_job.models.User;
 import springboot.get_a_job.repositories.ResumeRepository;
 import springboot.get_a_job.services.*;
-
 
 import java.time.LocalDateTime;
 
@@ -108,9 +109,9 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public Optional<List<ResumeDto>> getAllActiveResumes() {
-        List<Resume> resumes = resumeRepository.findAllByIsActiveTrue();
-        return resumes.isEmpty() ? Optional.empty() : Optional.of(convertList(resumes));
+    public Page<ResumeDto> getAllActiveResumes(Pageable pageable) {
+        Page<Resume> resumePage = resumeRepository.findAllByIsActiveTrue(pageable);
+        return resumePage.map(this::convertIntoDto);
     }
 
     @Override
@@ -119,9 +120,9 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public Optional<List<ResumeDto>> findResumeByCreator(Integer applicantId) {
-        List<Resume> resumes = resumeRepository.findAllByApplicantId(applicantId);
-        return resumes.isEmpty() ? Optional.empty() : Optional.of(convertList(resumes));
+    public Page<ResumeDto> findResumeByCreator(Integer applicantId, Pageable pageable) {
+        Page<Resume> resumes = resumeRepository.findAllByApplicantId(applicantId, pageable);
+        return resumes.map(this::convertIntoDto) ;
     }
 
     @Override
@@ -154,7 +155,8 @@ public class ResumeServiceImpl implements ResumeService {
         );
     }
 
-    private Resume convertIntoModel(ResumeDto dto) {
+    @Override
+    public Resume convertIntoModel(ResumeDto dto) {
         Category category = categoryService.findByNameIgnoreCase(dto.getCategory())
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + dto.getCategory()));
 
@@ -162,6 +164,7 @@ public class ResumeServiceImpl implements ResumeService {
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + dto.getApplicantEmail()));
 
         Resume resume = new Resume();
+        resume.setId(dto.getId());
         resume.setApplicant(applicant);
         resume.setName(dto.getName());
         resume.setCategory(category);

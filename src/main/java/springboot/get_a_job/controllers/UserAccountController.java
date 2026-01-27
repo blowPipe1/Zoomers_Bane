@@ -2,6 +2,9 @@ package springboot.get_a_job.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import springboot.get_a_job.dto.ResumeDto;
 import springboot.get_a_job.dto.UserDto;
 import springboot.get_a_job.dto.VacancyDto;
-import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
 import springboot.get_a_job.exceptions.UserNotFoundException;
 import springboot.get_a_job.models.CustomUserDetails;
@@ -23,8 +25,7 @@ import springboot.get_a_job.services.UserAccountService;
 import springboot.get_a_job.services.VacancyService;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
+
 
 @Slf4j
 @Controller
@@ -39,18 +40,26 @@ public class UserAccountController {
     @GetMapping("/dashboard")
     public String dashboard(
             Model model,
-            @AuthenticationPrincipal CustomUserDetails currentUserA) {
+            @AuthenticationPrincipal CustomUserDetails currentUserA,
+            @PageableDefault(size = 3, sort = "salary") Pageable pageable) {
         UserDto currentUser = userAccountService.findUserById(currentUserA.getId())
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + currentUserA.getId()));
 
         model.addAttribute("user", currentUser);
 
+
         if (currentUser.getAccountType().equalsIgnoreCase("applicant")) {
-            List<ResumeDto> items = resumeService.findResumeByCreator(currentUserA.getId()).orElseGet(Collections::emptyList);
-            model.addAttribute("itemsList", items);
+            Page<ResumeDto> resumePage = resumeService.findResumeByCreator(currentUserA.getId(), pageable);
+            model.addAttribute("itemsList", resumePage.getContent());
+            model.addAttribute("currentPage", resumePage.getNumber());
+            model.addAttribute("totalPages", resumePage.getTotalPages());
+            model.addAttribute("totalItems", resumePage.getTotalElements());
         } else if (currentUser.getAccountType().equalsIgnoreCase("employer")) {
-            List<VacancyDto> items = vacancyService.findVacancyByCreator(currentUserA.getId()).orElseGet(Collections::emptyList);
-            model.addAttribute("itemsList", items);
+            Page<VacancyDto> vacancyPage = vacancyService.findVacancyByCreator(currentUserA.getId(), pageable);
+            model.addAttribute("itemsList", vacancyPage.getContent());
+            model.addAttribute("currentPage", vacancyPage.getNumber());
+            model.addAttribute("totalPages", vacancyPage.getTotalPages());
+            model.addAttribute("totalItems", vacancyPage.getTotalElements());
         }
 
         return "dashboard";
@@ -106,47 +115,5 @@ public class UserAccountController {
             return (e.getMessage());
         }
     }
-
-
-//    @GetMapping("/{id}")
-//    public ResponseEntity<UserDto> findUserById(@PathVariable Integer id) {
-//        return userAccountService.findUserById(id)
-//                .map(ResponseEntity::ok)
-//                .orElseGet(() -> ResponseEntity.notFound().build());
-//    }
-//
-//    @GetMapping("/all")
-//    public ResponseEntity<List<UserDto>> findAllUsers() {
-//        return userAccountService.findAllUsers()
-//                .map(ResponseEntity::ok)
-//                .orElseGet(() -> ResponseEntity.notFound().build());
-//    }
-//
-//    @GetMapping("phone/{phone_number}")
-//    public ResponseEntity<List<UserDto>> findUserByPhone(@PathVariable String phone_number ) {
-//        return userAccountService.findUserByPhone(phone_number)
-//                .map(ResponseEntity::ok)
-//                .orElseGet(() -> ResponseEntity.notFound().build());
-//    }
-//
-//    @GetMapping("email/{email}")
-//    public ResponseEntity<List<UserDto>> findUserByEmail(@PathVariable String email) {
-//        return userAccountService.findUserByEmail(email)
-//                .map(ResponseEntity::ok)
-//                .orElseGet(() -> ResponseEntity.notFound().build());
-//    }
-//    @GetMapping("username/{name}")
-//    public ResponseEntity<List<UserDto>> findUserByName(@PathVariable String name) {
-//        return userAccountService.findUserByName(name)
-//                .map(ResponseEntity::ok)
-//                .orElseGet(() -> ResponseEntity.notFound().build());
-//    }
-//
-//    @GetMapping("/responded/{vacancy_id}")
-//    public ResponseEntity<List<UserDto>> findRespondedUsers(@PathVariable Integer vacancy_id) {
-//        return userAccountService.findRespondedUsers(vacancy_id)
-//                .map(ResponseEntity::ok)
-//                .orElseGet(() -> ResponseEntity.notFound().build());
-//    }
 }
 

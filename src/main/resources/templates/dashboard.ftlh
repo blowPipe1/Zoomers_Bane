@@ -130,7 +130,7 @@
             </div>
 
             <div class="actions">
-                <div class="action"> <a href="#" style="text-decoration: none;">Responses</a></div>
+                <div class="action"> <a href="/api/responses/" style="text-decoration: none;">Responses</a></div>
                 <#if (user.accountType! "")?lower_case == "applicant">
                     <div class="action"> <a href="/api/resumes/form" style="text-decoration: none;">Create Resume</a></div>
                     <div class="action"> <a href="/api/vacancies/all" style="text-decoration: none;">Vacancies</a></div>
