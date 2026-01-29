@@ -89,7 +89,6 @@
     </style>
 </head>
 <body>
-
 <div class = "container">
     <h2>Edit Vacancy</h2>
 

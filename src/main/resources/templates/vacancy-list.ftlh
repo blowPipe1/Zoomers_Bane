@@ -90,9 +90,58 @@
             justify-content: center;
         }
 
+        .navbar {
+            background-color: #ffffff;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            margin-bottom: 30px;
+        }
+
+        .navbar-container {
+            max-width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            font-size: 16px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+
+        .nav-link:hover {
+            background-color: #f0f2f5;
+            color: #007bff;
+        }
+
+        .nav-brand {
+            font-size: 20px;
+            font-weight: bold;
+            color: #007bff;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="#" class="nav-brand">JobPortal</a>
+        <div class="nav-menu">
+            <a href="/api/users/dashboard" class="nav-link">Dashboard</a>
+            <a href="/logout" class="nav-link" style="color: #dc3545;">Logout</a>
+        </div>
+    </div>
+</nav>
 
 <div class="container">
     <h2>Vacancies</h2>
