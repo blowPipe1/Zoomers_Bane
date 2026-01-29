@@ -131,6 +131,25 @@
             color: #007bff;
             text-decoration: none;
         }
+        .sorting-panel {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .sort-form {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .sort-form select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -143,10 +162,22 @@
         </div>
     </div>
 </nav>
-
 <div class="container">
         <h2>Resumes</h2>
-
+    <div class="sorting-panel">
+        <form action="/api/resumes/all" method="get" class="sort-form">
+            <label>Sort</label>
+            <select name="sort" onchange="this.form.submit()">
+                <option value="id" ${(RequestParameters.sort?? && RequestParameters.sort == 'id')?string('selected', '')}>Default</option>
+                <option value="salary" ${(RequestParameters.sort?? && RequestParameters.sort == 'salary')?string('selected', '')}>By Salary</option>
+                <option value="name" ${(RequestParameters.sort?? && RequestParameters.sort == 'name')?string('selected', '')}>By Title</option>
+            </select>
+            <select name="dir" onchange="this.form.submit()">
+                <option value="asc" ${(RequestParameters.dir?? && RequestParameters.dir == 'asc')?string('selected', '')}>Asc</option>
+                <option value="desc" ${(RequestParameters.dir?? && RequestParameters.dir == 'desc')?string('selected', '')}>Desc</option>
+            </select>
+        </form>
+    </div>
     <div class="resume-list">
         <#list resumes as resume>
             <div class="resume-card">
