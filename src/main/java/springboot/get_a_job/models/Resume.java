@@ -33,7 +33,7 @@ public class Resume {
     private Double salary;
     private Boolean isActive;
 
-    private LocalDateTime createdDate;
+    private LocalDateTime createdDate;//TODO add these to DTOs
     private LocalDateTime updateTime;
 
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL)

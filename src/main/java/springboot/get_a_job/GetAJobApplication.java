@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class GetAJobApplication {
     public static void main(String[] args) {
         SpringApplication.run(GetAJobApplication.class, args);
-        System.out.println("Van's password - " + " secure");
-        System.out.println("Billy's password - " + " password123");
-        System.out.println("Nico's password - " + " qwerty");
+//        System.out.println("Van's password - " + " secure");
+//        System.out.println("Billy's password - " + " password123");
+//        System.out.println("Nico's password - " + " qwerty");
     }
 }

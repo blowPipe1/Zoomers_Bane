@@ -37,6 +37,6 @@ public class Vacancy {
     @JoinColumn(name = "author_id")
     private User author;
 
-    private LocalDateTime createdDate;
+    private LocalDateTime createdDate;//TODO add these to DTOs
     private LocalDateTime updateTime;
 }

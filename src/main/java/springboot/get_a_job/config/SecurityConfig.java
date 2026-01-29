@@ -39,8 +39,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/resumes/update/**").hasRole("APPLICANT")
                         .requestMatchers("/api/resumes/delete/*").hasRole("APPLICANT")
                         .requestMatchers("/api/resumes/add/**").hasRole("APPLICANT")
-
-
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -54,7 +52,6 @@ public class SecurityConfig {
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
                 );
-
         return http.build();
     }
 
