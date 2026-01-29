@@ -137,7 +137,7 @@ public class ResumeController {
             @RequestParam(defaultValue = "asc") String dir) {
 
         Sort sortOrder = dir.equalsIgnoreCase("desc") ? Sort.by(sort).descending() : Sort.by(sort).ascending();
-        pageable = PageRequest.of(1, 15, sortOrder);
+        pageable = PageRequest.of(0, 10, sortOrder);
 
         Page<ResumeDto> resumePage = resumeService.getAllActiveResumes(pageable);
 
