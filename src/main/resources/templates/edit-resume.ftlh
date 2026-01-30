@@ -12,6 +12,7 @@
     <h2>Edit Resume</h2>
 
     <form action="/api/resumes/update/${resumeDto.id}" method="post">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <@spring.bind "resumeDto"/>
 
         <div class="form-group">

@@ -9,9 +9,8 @@
 <body>
 <div class="container">
     <h2>Create Resume</h2>
-
-
     <form action="/api/resumes/create-resume" method="post">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <h3>General Information</h3>
         <div class="form-group">
             <label>Resume Title</label>

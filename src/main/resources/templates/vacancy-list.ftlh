@@ -13,7 +13,10 @@
         <a href="#" class="nav-brand">JobPortal</a>
         <div class="nav-menu">
             <a href="/api/users/dashboard" class="nav-link">Dashboard</a>
-            <a href="/logout" class="nav-link" style="color: #dc3545;">Logout</a>
+            <form action="/logout" method="post" class="nav-form">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <button type="submit" class="nav-link nav-logout">Logout</button>
+            </form>
         </div>
     </div>
 </nav>
@@ -22,6 +25,7 @@
     <h2>Vacancies</h2>
     <div class="sorting-panel">
         <form action="/api/vacancies/all" method="get" class="sort-form">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <label>Sort</label>
             <select name="sort" onchange="this.form.submit()">
                 <option value="id" ${(RequestParameters.sort?? && RequestParameters.sort == 'id')?string('selected', '')}>Default</option>

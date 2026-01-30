@@ -22,6 +22,7 @@
                     </#if>
                 </label>
                 <form id="avatarForm" action="/api/users/avatar" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <div style="margin-top: 10px; display: flex; flex-direction: column; width: 120px">
                         <input type="file" id="avatarInput" name="file" accept="image/*">
                         <button type="submit" class="btn-update">Update</button>

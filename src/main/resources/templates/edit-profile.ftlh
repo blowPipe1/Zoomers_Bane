@@ -12,6 +12,7 @@
     <h2>Edit Profile</h2>
 
     <form action="/api/users/update" method="post">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <@spring.bind "userDto"/>
 
         <div class="form-group">
@@ -35,12 +36,6 @@
         <div class="form-group">
             <label>Email</label>
             <@spring.formInput "userDto.email", "type='email'" />
-            <@spring.showErrors "<br/>", "error" />
-        </div>
-
-        <div class="form-group">
-            <label>Password</label>
-            <@spring.formPasswordInput "userDto.password" />
             <@spring.showErrors "<br/>", "error" />
         </div>
 

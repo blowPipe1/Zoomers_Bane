@@ -36,7 +36,6 @@ public class UserDto {
     private String email;
 
     @NotBlank(groups = OnCreate.class, message = "Password is Required")
-    @NotNull(groups = OnUpdate.class, message = "Password cant be null")
     @Size(groups = OnCreate.class, min = 7, max = 30, message = "Password's length must be between 7 and 30 characters")
     private String password;
 

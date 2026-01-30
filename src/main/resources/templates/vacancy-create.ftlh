@@ -11,6 +11,7 @@
     <h2>Create vacancy</h2>
 
     <form action="/api/vacancies/create" method="post">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <div class="form-group">
             <label>Vacancy Title</label>
             <@spring.formInput "vacancyDto.name" "class='form-control'" />

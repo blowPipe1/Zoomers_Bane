@@ -11,6 +11,7 @@
     <h2>Edit Vacancy</h2>
 
     <form action="/api/vacancies/update/${vacancyDto.id}" method="post">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <@spring.bind "vacancyDto"/>
 
         <div class="form-group">
