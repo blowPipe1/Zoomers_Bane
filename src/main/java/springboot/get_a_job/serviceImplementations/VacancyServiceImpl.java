@@ -114,7 +114,9 @@ public class VacancyServiceImpl implements VacancyService {
                 vacancy.getExpFrom(),
                 vacancy.getExpTo(),
                 vacancy.getIsActive(),
-                vacancy.getAuthor() != null ? vacancy.getAuthor().getEmail() : null
+                vacancy.getAuthor() != null ? vacancy.getAuthor().getEmail() : null,
+                vacancy.getCreatedDate(),
+                vacancy.getUpdateTime()
         );
     }
 

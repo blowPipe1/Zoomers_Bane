@@ -30,6 +30,7 @@
                 <option value="id" ${(RequestParameters.sort?? && RequestParameters.sort == 'id')?string('selected', '')}>Default</option>
                 <option value="salary" ${(RequestParameters.sort?? && RequestParameters.sort == 'salary')?string('selected', '')}>By Salary</option>
                 <option value="name" ${(RequestParameters.sort?? && RequestParameters.sort == 'name')?string('selected', '')}>By Title</option>
+                <option value="createdDate" ${(RequestParameters.sort?? && RequestParameters.sort == 'createdDate')?string('selected', '')}>By Date</option>
             </select>
             <select name="dir" onchange="this.form.submit()">
                 <option value="asc" ${(RequestParameters.dir?? && RequestParameters.dir == 'asc')?string('selected', '')}>Asc</option>
@@ -45,6 +46,8 @@
                     <p><span>Category: </span> ${resume.category! "N/A"}</p>
                     <p><span>Salary: </span> ${resume.salary! 0}</p>
                     <p><span>Status: </span> ${resume.isActive?string('Active', 'Inactive')}</p>
+                    <p><span>Created: </span> ${resume.createdDate! "N/A"}</p>
+                    <p><span>Last Update: </span> ${resume.updateTime! "N/A"}</p>
                 </div>
 
                 <div class="experience"  style="margin-bottom: 10px">

@@ -33,6 +33,14 @@
                 <label>Required Experience(Years)</label>
                 <span>from ${vacancy.expFrom!"N/A"} to ${vacancy.expTo!"N/A"}</span>
             </div>
+            <div class="data-item">
+                <label>Created</label>
+                <span>${vacancy.createdDate!'N/A'}</span>
+            </div>
+            <div class="data-item">
+                <label>Last Update</label>
+                <span>${vacancy.updateTime!'N/A'}</span>
+            </div>
         </div>
     </div>
 

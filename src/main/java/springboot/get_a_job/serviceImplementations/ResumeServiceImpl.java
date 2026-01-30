@@ -149,6 +149,8 @@ public class ResumeServiceImpl implements ResumeService {
                 resume.getCategory() != null ? resume.getCategory().getName() : null,
                 resume.getSalary(),
                 resume.getIsActive(),
+                resume.getCreatedDate(),
+                resume.getUpdateTime(),
                 educationInfoService.getResumesEducationInfo(resume.getId()),
                 workExperienceService.getResumesWorkExperience(resume.getId()),
                 contactInfoService.getResumesContacts(resume.getId())

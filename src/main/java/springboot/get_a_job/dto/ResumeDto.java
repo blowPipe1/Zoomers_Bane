@@ -6,6 +6,7 @@ import lombok.*;
 import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -34,6 +35,9 @@ public class ResumeDto {
 
     @NotNull(message = "Resume's status is Required")
     private Boolean isActive;
+
+    private LocalDateTime createdDate;
+    private LocalDateTime updateTime;
 
     @Valid
     private List<EducationDto> education;

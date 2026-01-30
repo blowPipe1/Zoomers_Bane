@@ -8,6 +8,8 @@ import lombok.Setter;
 import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -46,4 +48,7 @@ public class VacancyDto {
     @NotNull(groups = OnUpdate.class, message = "Creator's Name cant be null")
     @Size(min = 3, max = 20, message = "Creator's Name's length must be between 3 and 20 characters")
     private String author;
+
+    private LocalDateTime createdDate;
+    private LocalDateTime updateTime;
 }

@@ -29,6 +29,14 @@
                 <label>Expected Salary</label>
                 <span>${resume.salary?string.currency}</span>
             </div>
+            <div class="data-item">
+                <label>Created</label>
+                <span>${resume.createdDate!'N/A'}</span>
+            </div>
+            <div class="data-item">
+                <label>Last Update</label>
+                <span>${resume.updateTime!'N/A'}</span>
+            </div>
         </div>
     </div>
 
