@@ -3,8 +3,9 @@ package springboot.get_a_job.controllers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -131,7 +132,12 @@ public class ResumeController {
     @GetMapping("/all")
     public String getAllActiveResumes(
             Model model,
-            @PageableDefault(size = 9, sort = "salary") Pageable pageable) {
+            Pageable pageable,
+            @RequestParam(defaultValue = "id") String sort,
+            @RequestParam(defaultValue = "asc") String dir) {
+
+        Sort sortOrder = dir.equalsIgnoreCase("desc") ? Sort.by(sort).descending() : Sort.by(sort).ascending();
+        pageable = PageRequest.of(0, 10, sortOrder);
 
         Page<ResumeDto> resumePage = resumeService.getAllActiveResumes(pageable);
 

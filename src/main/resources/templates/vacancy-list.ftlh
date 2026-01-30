@@ -1,102 +1,43 @@
+<#import "/spring.ftl" as spring />
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vacancies</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        h2 {
-            text-align: center;
-            margin-top: 0;
-            font-size: 24px;
-            margin-bottom: 30px;
-        }
-
-        .vacancy-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .vacancy-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            border: 1px solid #e0e0e0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .btn-view{
-            display: block;
-            width: 100%;
-            padding: 14px;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 6px;
-            border: none;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: auto;
-        }
-
-        .vacancy-info, .meta-info{
-            gap: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f2f5;
-            margin-bottom: 30px;
-        }
-
-        .meta-info{
-            margin-top: auto;
-        }
-
-        .vacancy-card h3{
-            margin-bottom: 4px;
-            margin-top: 4px;
-        }
-        .vacancy-card p{
-            margin-bottom: 4px;
-            margin-top: 4px;
-        }
-
-        .vacancy-card span{
-            font-weight: lighter;
-        }
-        .action{
-            background: #fff;
-            border-radius: 12px;
-            padding: 7px 70px;
-            display: flex;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 1px solid #eef0f2;
-            justify-content: center;
-        }
-
-    </style>
+    <link rel="stylesheet" href="<@spring.url '/css/vacancy-list.css'/>">
 </head>
 <body>
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="#" class="nav-brand">JobPortal</a>
+        <div class="nav-menu">
+            <a href="/api/users/dashboard" class="nav-link">Dashboard</a>
+            <form action="/logout" method="post" class="nav-form">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <button type="submit" class="nav-link nav-logout">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
 
 <div class="container">
     <h2>Vacancies</h2>
-
+    <div class="sorting-panel">
+        <form action="/api/vacancies/all" method="get" class="sort-form">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <label>Sort</label>
+            <select name="sort" onchange="this.form.submit()">
+                <option value="id" ${(RequestParameters.sort?? && RequestParameters.sort == 'id')?string('selected', '')}>Default</option>
+                <option value="salary" ${(RequestParameters.sort?? && RequestParameters.sort == 'salary')?string('selected', '')}>By Salary</option>
+                <option value="name" ${(RequestParameters.sort?? && RequestParameters.sort == 'name')?string('selected', '')}>By Title</option>
+            </select>
+            <select name="dir" onchange="this.form.submit()">
+                <option value="asc" ${(RequestParameters.dir?? && RequestParameters.dir == 'asc')?string('selected', '')}>Asc</option>
+                <option value="desc" ${(RequestParameters.dir?? && RequestParameters.dir == 'desc')?string('selected', '')}>Desc</option>
+            </select>
+        </form>
+    </div>
     <div class="vacancy-list">
         <#list vacancies as vacancy>
             <div class="vacancy-card">

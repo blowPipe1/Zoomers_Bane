@@ -7,10 +7,12 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -24,7 +26,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
-                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/register-form/**", "/register/**", "/api/vacancies/all").permitAll()
                         .requestMatchers("/images/**", "/css/**", "/js/**", "/static/**").permitAll()
@@ -37,14 +38,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/resumes/update/**").hasRole("APPLICANT")
                         .requestMatchers("/api/resumes/delete/*").hasRole("APPLICANT")
                         .requestMatchers("/api/resumes/add/**").hasRole("APPLICANT")
-
-
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/process_login")
-                        .defaultSuccessUrl("/api/users/dashboard", true)
+                        .successHandler(successHandler())
                         .permitAll()
                 )
                 .httpBasic(Customizer.withDefaults())
@@ -52,7 +51,6 @@ public class SecurityConfig {
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
                 );
-
         return http.build();
     }
 
@@ -61,5 +59,22 @@ public class SecurityConfig {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
         return new ProviderManager(authProvider);
+    }
+
+    private AuthenticationSuccessHandler successHandler() {
+        return (request, response, authentication) -> {
+            String redirectUrl = "/api/users/dashboard";
+
+            for (GrantedAuthority auth : authentication.getAuthorities()) {
+                if (auth.getAuthority().equals("ROLE_EMPLOYER")) {
+                    redirectUrl = "/api/resumes/all";
+                    break;
+                } else if (auth.getAuthority().equals("ROLE_APPLICANT")) {
+                    redirectUrl = "/api/vacancies/all";
+                    break;
+                }
+            }
+            response.sendRedirect(request.getContextPath() + redirectUrl);
+        };
     }
 }

@@ -48,7 +48,11 @@ public class AuthController {
             return "redirect:/login?error";
         }
 
-        return "redirect:/api/users/dashboard";
+        if (userDto.getAccountType().equalsIgnoreCase("applicant")){
+            return "redirect:/api/vacancies/all";
+        } else{
+            return "redirect:/api/resumes/all";
+        }
     }
 
 }

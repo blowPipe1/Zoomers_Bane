@@ -1,10 +1,10 @@
 package springboot.get_a_job.controllers;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -123,7 +123,13 @@ public class VacancyController {
     @GetMapping("/all")
     public String getAllActiveVacancies(
             Model model,
-            @PageableDefault(size = 9, sort = "salary") Pageable pageable) {
+            Pageable pageable,
+            @RequestParam(defaultValue = "id") String sort,
+            @RequestParam(defaultValue = "asc") String dir) {
+
+        Sort sortOrder = dir.equalsIgnoreCase("desc") ? Sort.by(sort).descending() : Sort.by(sort).ascending();
+        pageable = PageRequest.of(0, 10, sortOrder);
+
         Page<VacancyDto> vacancyPage = vacancyService.getAllActiveVacancies(pageable);
 
         model.addAttribute("vacancies", vacancyPage.getContent());

@@ -150,8 +150,11 @@ public class UserAccountServiceImpl implements UserAccountService {
         if (dto.getSurname() != null) user.setSurname(dto.getSurname());
         if (dto.getAge() != null) user.setAge(dto.getAge());
         if (dto.getPhoneNumber() != null) user.setPhoneNumber(dto.getPhoneNumber());
-        if (dto.getPassword() != null) user.setPassword(passwordEncoder.encode(dto.getPassword()));
         if (dto.getEmail() != null) user.setEmail(dto.getEmail());
+
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
     }
 
     private UserDto convert(User user) {
