@@ -30,7 +30,7 @@ public class EmailServiceImpl implements EmailService {
                 freemarkerConfig.getTemplate("email-reset.ftlh"), model);
 
         helper.setTo(user.getEmail());
-        helper.setSubject("Сброс пароля");
+        helper.setSubject("Password Reset");
         helper.setText(html, true);
 
         mailSender.send(message);

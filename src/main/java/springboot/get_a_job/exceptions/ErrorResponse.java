@@ -1,24 +1,19 @@
 package springboot.get_a_job.exceptions;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.security.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class ErrorResponse {
-
-    private LocalDateTime timestamp;
-    private int statusCode;
-    private String message;
-
-    public ErrorResponse(String message)
-    {
-        super();
-        this.message = message;
+public record ErrorResponse(
+        LocalDateTime timestamp,
+        int status,
+        String error,
+        String message,
+        String path,
+        List<String> details
+) {
+    public ErrorResponse(int status, String error, String message, String path) {
+        this(LocalDateTime.now(), status, error, message, path, Collections.emptyList());
     }
 }
