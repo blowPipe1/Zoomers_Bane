@@ -40,51 +40,46 @@
     </div>
     <div class="resume-list">
         <#list resumes as resume>
-            <div class="resume-card">
-                <div class="resume-info" style="margin-bottom: 10px">
-                    <h3>${resume.name! "N/A"}</h3>
-                    <p><span>Category: </span> ${resume.category! "N/A"}</p>
-                    <p><span>Salary: </span> ${resume.salary! 0}</p>
-                    <p><span>Status: </span> ${resume.isActive?string('Active', 'Inactive')}</p>
-                    <p><span>Created: </span> ${resume.createdDate! "N/A"}</p>
-                    <p><span>Last Update: </span> ${resume.updateTime! "N/A"}</p>
-                </div>
-
-                <div class="experience"  style="margin-bottom: 10px">
-                    <h3>Experience:</h3>
-                    <#if resume.workExperience?has_content>
-                        <p><span>Company: </span> ${resume.workExperience[0].companyName! "N/A"}</p>
-                        <p><span>Position: </span> ${resume.workExperience[0].position! "N/A"} • ${resume.workExperience[0].years! 0} year(s)</p>
-                    <#else>
-                        <p>N/A</p>
-                    </#if>
-                </div>
-
-                <div class="education"  style="margin-bottom: 10px">
-                    <h3>Education:</h3>
-                    <#if resume.education?has_content>
-                        <p><span>Institution: </span> ${resume.education[0].institution! "N/A"}</p>
-                        <p><span>Program: </span> ${resume.education[0].program! "N/A"}</p>
-                        <p><span>Degree: </span> ${resume.education[0].degree! "N/A"}</p>
-                        <p><span>Period: </span> ${resume.education[0].startDate! 'N/A'} to ${resume.education[0].endDate! 'N/A'}</p>
-                    <#else>
-                        <p>N/A</p>
-                    </#if>
-                </div>
-                <div class="contacts"  style="margin-bottom: 10px">
-                    <#if resume.contactInfo?has_content>
-                        <#list resume.contactInfo as contact>
-                            <p><span>${contact.type!"Contact"}: </span>${contact.value!"N/A"}</p>
-                            <#if contact_index == 1><#break></#if>
-                        </#list>
-                    <#else>
-                        <p>Contacts Not Provided</p>
-                    </#if>
+            <a href="/api/users/resumes/${resume.id}" class="resume-card-link">
+                <div class="resume-card">
+                    <div class="resume-info">
+                        <h3>${resume.name! "N/A"}</h3>
+                        <p><span>Category: </span> ${resume.category! "N/A"}</p>
+                        <p><span>Salary: </span> ${resume.salary! 0}</p>
+                        <p><span>Status: </span> ${resume.isActive?string('Active', 'Inactive')}</p>
+                        <p><span>Created: </span> ${resume.createdDate! "N/A"}</p>
                     </div>
-                <div class="action"> <a href="/api/resumes/${resume.id}" style="text-decoration: none;">Open</a></div>
-            </div>
-        </#list>
 
+                    <div class="experience">
+                        <h3>Experience:</h3>
+                        <#if resume.workExperience?has_content>
+                            <p><span>Company: </span> ${resume.workExperience[0].companyName! "N/A"}</p>
+                            <p><span>Position: </span> ${resume.workExperience[0].position! "N/A"}</p>
+                        <#else>
+                            <p>N/A</p>
+                        </#if>
+                    </div>
+
+                    <div class="education">
+                        <h3>Education:</h3>
+                        <#if resume.education?has_content>
+                            <p><span>Institution: </span> ${resume.education[0].institution! "N/A"}</p>
+                            <p><span>Degree: </span> ${resume.education[0].degree! "N/A"}</p>
+                        <#else>
+                            <p>N/A</p>
+                        </#if>
+                    </div>
+
+                    <div class="contacts">
+                        <#if resume.contactInfo?has_content>
+                            <p><span>${resume.contactInfo[0].type!"Contact"}: </span>${resume.contactInfo[0].value!"N/A"}</p>
+                        <#else>
+                            <p>Contacts Not Provided</p>
+                        </#if>
+                    </div>
+                </div>
+            </a>
+        </#list>
     </div>
 </div>
 
