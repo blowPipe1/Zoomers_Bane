@@ -44,19 +44,6 @@ h2 {
     box-sizing: border-box;
 }
 
-.btn-view{
-    display: block;
-    width: 100%;
-    padding: 14px;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 6px;
-    border: none;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: auto;
-}
 
 .vacancy-info, .meta-info{
     padding-bottom: 15px;
@@ -80,15 +67,10 @@ h2 {
 .vacancy-card span{
     font-weight: lighter;
 }
-.action{
-    background: #fff;
-    border-radius: 12px;
-    padding: 7px 70px;
-    display: flex;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    transition: transform 0.2s, box-shadow 0.2s;
-    border: 1px solid #eef0f2;
-    justify-content: center;
+
+.vacancy-card-wrapper:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
 
 .navbar {

@@ -40,7 +40,7 @@
     </div>
     <div class="resume-list">
         <#list resumes as resume>
-            <a href="/api/users/resumes/${resume.id}" class="resume-card-link">
+            <a href="/api/resumes/${resume.id}" class="resume-card-link">
                 <div class="resume-card">
                     <div class="resume-info">
                         <h3>${resume.name! "N/A"}</h3>

@@ -29,7 +29,7 @@ h2 {
     text-decoration: none;
     color: inherit;
     display: block;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .resume-card {
@@ -66,17 +66,6 @@ h2 {
 
 .experience, .education, .contacts{
     margin-top: auto;
-}
-
-.action{
-    background: #fff;
-    border-radius: 12px;
-    padding: 7px 70px;
-    display: flex;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    transition: transform 0.2s, box-shadow 0.2s;
-    border: 1px solid #eef0f2;
-    justify-content: center;
 }
 
 .navbar {
@@ -163,4 +152,9 @@ h2 {
 .contacts {
     border-bottom: none;
     margin-bottom: 0;
+}
+
+.resume-card-link:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
