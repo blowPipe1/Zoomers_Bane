@@ -45,7 +45,6 @@ public class VacancyDto {
     private Boolean isActive;
 
     @NotBlank(groups = OnCreate.class, message = "Creator's Name is Required")
-    @NotNull(groups = OnUpdate.class, message = "Creator's Name cant be null")
     @Size(min = 3, max = 20, message = "Creator's Name's length must be between 3 and 20 characters")
     private String author;
 
