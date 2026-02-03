@@ -41,21 +41,22 @@
     </div>
     <div class="vacancy-list">
         <#list vacancies as vacancy>
-            <div class="vacancy-card">
-                <div class="vacancy-info">
-                    <h3>${vacancy.name! "N/A"}</h3>
-                    <p><span>Category: </span> ${vacancy.category! "N/A"}</p>
-                    <p><span>Salary: </span> ${vacancy.salary! 0}</p>
-                    <p><span>Company(Owner): </span> ${vacancy.author! "N/A"}</p>
-                    <p><span>Created: </span> ${vacancy.createdDate! "N/A"}</p>
-                    <p><span>Last Update: </span> ${vacancy.updateTime! "N/A"}</p>
+            <a href="/api/vacancies/${vacancy.id}" class="vacancy-card-wrapper">
+                <div class="vacancy-card">
+                    <div class="vacancy-info">
+                        <h3>${vacancy.name! "N/A"}</h3>
+                        <p><span>Category: </span> ${vacancy.category! "N/A"}</p>
+                        <p><span>Salary: </span> ${vacancy.salary! 0}</p>
+                        <p><span>Company(Owner): </span> ${vacancy.author! "N/A"}</p>
+                        <p><span>Created: </span> ${vacancy.createdDate! "N/A"}</p>
+                        <p><span>Last Update: </span> ${vacancy.updateTime! "N/A"}</p>
+                    </div>
+                    <div class="meta-info">
+                        <p><span>Experience: </span>from ${vacancy.expFrom! 0} to ${vacancy.expTo! 0}</p>
+                        <p><span>Status: </span> ${vacancy.isActive?string('Active', 'Inactive')}</p>
+                    </div>
                 </div>
-                <div class="meta-info">
-                    <p><span>Experience: </span>from ${vacancy.expFrom! 0} to ${vacancy.expTo! 0}</p>
-                    <p><span>Status: </span> ${vacancy.isActive?string('Active', 'Inactive')}</p>
-                </div>
-                <div class="action"> <a href="/api/vacancies/${vacancy.id}" style="text-decoration: none;">Open</a></div>
-            </div>
+            </a>
         </#list>
     </div>
 </div>
