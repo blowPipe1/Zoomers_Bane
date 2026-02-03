@@ -54,5 +54,4 @@ public class AuthController {
             return "redirect:/api/resumes/all";
         }
     }
-
 }

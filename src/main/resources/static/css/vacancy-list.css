@@ -25,6 +25,13 @@ h2 {
     margin-top: 20px;
 }
 
+.vacancy-card-wrapper {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
 .vacancy-card {
     background: white;
     border-radius: 12px;
@@ -33,6 +40,8 @@ h2 {
     border: 1px solid #e0e0e0;
     display: flex;
     flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 .btn-view{
@@ -50,10 +59,9 @@ h2 {
 }
 
 .vacancy-info, .meta-info{
-    gap: 20px;
     padding-bottom: 15px;
     border-bottom: 2px solid #f0f2f5;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .meta-info{

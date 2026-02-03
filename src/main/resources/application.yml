@@ -22,6 +22,22 @@ spring:
   liquibase:
     change-log: classpath:/db/changelog/master.yaml
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: tzolcubekov@gmail.com
+    password: cddmjjrqjxmchijd
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+#        debug: true
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
 # Logging
 logging:
   level:
@@ -32,6 +48,8 @@ logging:
 
 upload:
   path: ./src/main/java/springboot/get_a_job/data/images/
+
+
 
 
 

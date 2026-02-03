@@ -29,6 +29,7 @@
         <button type="submit" class="btn-submit">Log In</button>
     </form>
     <a href="/register-form" class="register-link">New User? ♂ Register here ♂</a>
+    <a href="/passwords/forgot-password/form" class="register-link">Forgot Password?</a>
 </div>
 </body>
 </html>
