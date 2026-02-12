@@ -9,21 +9,26 @@
 </head>
 <body>
     <div class="container">
+        <div style="text-align: right; margin-bottom: 20px;">
+            <span><@spring.message "dashboard.language.select"/>:</span>
+            <a href="?lang=ru" style="margin-left: 10px; text-decoration: none;">RU</a>
+            <a href="?lang=en" style="margin-left: 10px; text-decoration: none;">EN</a>
+        </div>
         <h2><@spring.message "dashboard.body.header.profile"/></h2>
         <div class="profile-header">
-            <div class="user-avatar">
-                <label for="avatarInput" style="cursor: pointer;" title="<@spring.message"dashboard.profile-header.change-image"/>">
-                    <#if user.avatar?has_content>
-                        <img src="/images/${user.avatar}" alt="Avatar" id="avatarPreview">
-                    <#else>
-                        <img src="/images/gachi.jpg" alt="No Avatar" id="avatarPreview">
-                    </#if>
-                </label>
-                <form id="avatarForm" action="/api/users/avatar" method="post" enctype="multipart/form-data">
+            <div class="user-avatar-container">
+                <form id="avatarForm" action="/api/users/avatar" method="post" enctype="multipart/form-data" class="avatar-form">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    <div style="margin-top: 10px; display: flex; flex-direction: column; width: 120px">
-                        <input type="file" id="avatarInput" name="file" accept="image/*" title="<@spring.message"dashboard.profile-header.change-image-input"/>">
-                        <button type="submit" class="btn-update"><@spring.message "dashboard.profile-header.avatarForm.button"/></button>
+
+                    <div class="avatar-wrapper">
+                        <label for="avatarInput" class="avatar-label" title="<@spring.message 'dashboard.profile-header.change-image'/>">
+                            <#if user.avatar?has_content>
+                                <img src="/images/${user.avatar}" alt="Avatar" id="avatarPreview">
+                            <#else>
+                                <img src="/images/gachi.jpg" alt="No Avatar" id="avatarPreview">
+                            </#if>
+                        </label>
+                        <input type="file" id="avatarInput" name="file" accept="image/*" onchange="this.form.submit()" style="display: none;">
                     </div>
                 </form>
             </div>
@@ -54,7 +59,8 @@
                         <h3>${items.name! ""}</h3>
                         <p><@spring.message "dashboard.item-card.category"/>: ${items.category! ""}</p>
                         <p><@spring.message "dashboard.item-card.salary"/>: ${items.salary! 0}</p>
-                        <p><@spring.message "dashboard.item-card.status"/>: ${items.isActive?string('Active', 'Inactive')}</p>
+                        <p><@spring.message "dashboard.item-card.status"/>:
+                            <@spring.message items.isActive?string('dashboard.item-card.status-value.active', 'dashboard.item-card.status-value.inactive')/> </p>
                         <div class="action"> <a href="/api/resumes/edit/${items.id}" style="text-decoration: none;"><@spring.message "dashboard.item-card.action.edit"/></a></div>
 
                     </div>
@@ -72,7 +78,8 @@
                         <h3>${items.name! "Vacancy's Title"}</h3>
                         <p><@spring.message "dashboard.item-card.category"/>: ${items.category! ""}</p>
                         <p><@spring.message "dashboard.item-card.salary"/>: ${items.salary! 0}</p>
-                        <p><@spring.message "dashboard.item-card.status"/>: ${items.isActive?string('Active', 'Inactive')}</p>
+                        <p><@spring.message "dashboard.item-card.status"/>:
+                            <@spring.message items.isActive?string('dashboard.item-card.status-value.active', 'dashboard.item-card.status-value.inactive')/> </p>
                         <p><@spring.message "dashboard.item-card.experience"/>: ${items.expFrom! 0} - ${items.expTo! 0} <@spring.message "dashboard.years"/></p>
                         <div class="action"> <a href="/api/vacancies/edit/${items.id}" style="text-decoration: none;"><@spring.message "dashboard.item-card.action.edit"/></a></div>
                     </div>
