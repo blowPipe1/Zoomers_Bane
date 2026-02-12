@@ -58,7 +58,6 @@
 
         <button type="submit" class="btn-submit"><@spring.message "common.save-btn"/></button>
     </form>
-
     <a href="/api/users/dashboard" class="back-link">♂ <@spring.message "edit.profile.back-to-profile"/> ♂</a>
 </div>
 

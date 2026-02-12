@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -123,19 +124,23 @@ public class VacancyController {
     @GetMapping("/all")
     public String getAllActiveVacancies(
             Model model,
-            Pageable pageable,
+            @PageableDefault(size = 9, sort = "id") Pageable pageable,
             @RequestParam(defaultValue = "id") String sort,
             @RequestParam(defaultValue = "asc") String dir) {
 
         Sort sortOrder = dir.equalsIgnoreCase("desc") ? Sort.by(sort).descending() : Sort.by(sort).ascending();
-        pageable = PageRequest.of(0, 10, sortOrder);
+        Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortOrder);
 
-        Page<VacancyDto> vacancyPage = vacancyService.getAllActiveVacancies(pageable);
+        Page<VacancyDto> vacancyPage = vacancyService.getAllActiveVacancies(pageRequest);
 
         model.addAttribute("vacancies", vacancyPage.getContent());
         model.addAttribute("currentPage", vacancyPage.getNumber());
         model.addAttribute("totalPages", vacancyPage.getTotalPages());
         model.addAttribute("totalItems", vacancyPage.getTotalElements());
+        // Передаем параметры сортировки обратно, чтобы ссылки пагинации их не теряли
+        model.addAttribute("sort", sort);
+        model.addAttribute("dir", dir);
+
         return "vacancy-list";
     }
 }

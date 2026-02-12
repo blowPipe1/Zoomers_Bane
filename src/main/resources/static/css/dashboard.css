@@ -118,3 +118,19 @@ h2 {
     justify-content: center;
 }
 
+.btn-reset {
+    font-family: inherit;
+    font-size: 16px;
+    color: #4b0082;
+    text-decoration: none;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+

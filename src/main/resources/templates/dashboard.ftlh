@@ -19,7 +19,6 @@
             <div class="user-avatar-container">
                 <form id="avatarForm" action="/api/users/avatar" method="post" enctype="multipart/form-data" class="avatar-form">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-
                     <div class="avatar-wrapper">
                         <label for="avatarInput" class="avatar-label" title="<@spring.message 'dashboard.profile-header.change-image'/>">
                             <#if user.avatar?has_content>
@@ -35,24 +34,28 @@
 
             <div class="user-info">
                 <h3>${user.name! "Not Found"} ${user.surname! "Not Found"}</h3>
-                <h3 style="font-weight: normal"><@spring.message "common.age"/>: ${user.age! 0} <@spring.message "dashboard.years"/></h3>
+                <h3 style="font-weight: normal"><@spring.message "common.age"/>: ${user.age! 0} <@spring.message "common.years"/></h3>
             </div>
 
             <div class="actions">
                 <div class="action"> <a href="/api/responses/" style="text-decoration: none;"><@spring.message "dashboard.actions.responses"/></a></div>
                 <#if (user.accountType! "")?lower_case == "applicant">
                     <div class="action"> <a href="/api/resumes/form" style="text-decoration: none;"><@spring.message "dashboard.actions.create-resume"/></a></div>
-                    <div class="action"> <a href="/api/vacancies/all" style="text-decoration: none;"><@spring.message "dashboard.actions.vacancies"/></a></div>
+                    <div class="action"> <a href="/api/vacancies/all" style="text-decoration: none;"><@spring.message "common.vacancies"/></a></div>
                 <#elseif (user.accountType! "")?lower_case == "employer">
                     <div class="action"> <a href="/api/vacancies/form" style="text-decoration: none;"><@spring.message "dashboard.actions.create-vacancy"/></a></div>
-                    <div class="action"> <a href="/api/resumes/all" style="text-decoration: none;"><@spring.message "dashboard.actions.resumes"/></a></div>
+                    <div class="action"> <a href="/api/resumes/all" style="text-decoration: none;"><@spring.message "common.resumes"/></a></div>
                 </#if>
                 <div class="action"> <a href="/api/users/edit" style="text-decoration: none;"><@spring.message "common.edit-btn"/></a></div>
+                <div class="action"><form action="/logout" method="post" class="nav-form">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <button type="submit" class="btn-reset"><@spring.message "common.logout"/></button>
+                    </form></div>
             </div>
         </div>
 
         <#if (user.accountType! "")?lower_case == "applicant">
-            <h2><@spring.message "dashboard.item-list.header.resumes"/>:</h2>
+            <h2><@spring.message "common.resumes"/>:</h2>
             <div class="resume-list">
                 <#list itemsList![] as items>
                     <div class="resume-card">
@@ -80,7 +83,7 @@
                         <p><@spring.message "common.salary"/>: ${items.salary! 0}</p>
                         <p><@spring.message "common.status"/>:
                             <@spring.message items.isActive?string('common.status-value.active', 'common.status-value.inactive')/> </p>
-                        <p><@spring.message "dashboard.item-card.experience"/>: ${items.expFrom! 0} - ${items.expTo! 0} <@spring.message "dashboard.years"/></p>
+                        <p><@spring.message "common.experience"/>: ${items.expFrom! 0} - ${items.expTo! 0} <@spring.message "common.years"/></p>
                         <div class="action"> <a href="/api/vacancies/edit/${items.id}" style="text-decoration: none;"><@spring.message "common.edit-btn"/></a></div>
                     </div>
                 <#else>
