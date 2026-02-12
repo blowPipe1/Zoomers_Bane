@@ -3,7 +3,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Resume: ${resume.name}</title>
+    <title><@spring.message "resume.header.title"/>: ${resume.name}</title>
     <link rel="stylesheet" href="<@spring.url '/css/resume.css'/>">
 </head>
 <body>
@@ -12,29 +12,28 @@
     <div class="profile-header">
         <div class="user-info">
             <h1>${resume.name}</h1>
-            <p><strong>Category:</strong> ${resume.category}</p>
-            <span class="status-badge ${resume.isActive?string('status-active', 'status-inactive')}">
-                ${resume.isActive?string('Active', 'Inactive')}
-            </span>
+            <p><strong><@spring.message "common.category"/>: </strong> ${resume.category}</p>
+            <p><@spring.message "common.status"/>:
+                <@spring.message resume.isActive?string('common.status-value.active', 'common.status-value.inactive')/> </p>
         </div>
     </div>
 
     <div class="section">
         <div class="info-grid">
             <div class="data-item">
-                <label>Applicant(Email)</label>
+                <label><@spring.message "resume.applicant"/></label>
                 <span>${resume.applicantEmail}</span>
             </div>
             <div class="data-item">
-                <label>Expected Salary</label>
-                <span>${resume.salary?string.currency}</span>
+                <label><@spring.message "resume.salary"/></label>
+                <span>${resume.salary}</span>
             </div>
             <div class="data-item">
-                <label>Created</label>
+                <label><@spring.message "item-list.created"/></label>
                 <span>${resume.createdDate!'N/A'}</span>
             </div>
             <div class="data-item">
-                <label>Last Update</label>
+                <label><@spring.message "item-list.updated"/></label>
                 <span>${resume.updateTime!'N/A'}</span>
             </div>
         </div>
@@ -42,7 +41,7 @@
 
     <#if resume.contactInfo?has_content>
         <div class="section">
-            <div class="section-title">Contact Information</div>
+            <div class="section-title"><@spring.message "resume.contacts"/></div>
             <div class="contact-list">
                 <#list resume.contactInfo as contact>
                     <div class="contact-tag">
@@ -55,12 +54,12 @@
 
     <#if resume.workExperience?has_content>
         <div class="section">
-            <div class="section-title">Work Experience</div>
+            <div class="section-title"><@spring.message "common.experience"/></div>
             <#list resume.workExperience as work>
                 <div class="entry-card">
                     <div class="entry-header">
                         <span>${work.position} — ${work.companyName}</span>
-                        <span>Years: ${work.years}</span>
+                        <span>${work.years} (<@spring.message "common.years"/>)</span>
                     </div>
                     <div style="color: #555; white-space: pre-line;">
                         ${work.responsibilities}
@@ -72,15 +71,15 @@
 
     <#if resume.education?has_content>
         <div class="section">
-            <div class="section-title">Education</div>
+            <div class="section-title"><@spring.message "common.education"/></div>
             <#list resume.education as edu>
                 <div class="entry-card">
                     <div class="entry-header">
-                        <span><strong>Degree:</strong> ${edu.degree}</span>
+                        <span><strong><@spring.message "common.education.degree"/>: </strong> ${edu.degree}</span>
                         <span>${edu.startDate} — ${(edu.endDate)!"Still on it"}</span>
                     </div>
-                    <div><strong>Institution:</strong> ${edu.institution}</div>
-                    <div><strong>Program:</strong> ${edu.program}</div>
+                    <div><strong><@spring.message "common.education.institution"/>: </strong> ${edu.institution}</div>
+                    <div><strong><@spring.message "common.education.program"/>: </strong> ${edu.program}</div>
                 </div>
             </#list>
         </div>
@@ -88,7 +87,7 @@
 
     <div class="actions">
         <a href="/api/resumes/all" class="action" style="text-decoration: none; color: inherit;">
-            Back to list
+            <@spring.message "common.back-to-list"/>
         </a>
     </div>
 </div>

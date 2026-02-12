@@ -15,6 +15,7 @@
         <a href="?lang=ru" style="margin-left: 10px; text-decoration: none;">RU</a>
         <a href="?lang=en" style="margin-left: 10px; text-decoration: none;">EN</a>
     </div>
+
         <h2><@spring.message "registration.body.header"/></h2>
         <form action="/register" method="post">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>

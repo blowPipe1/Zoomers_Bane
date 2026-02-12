@@ -14,6 +14,7 @@
             <a href="?lang=ru" style="margin-left: 10px; text-decoration: none;">RU</a>
             <a href="?lang=en" style="margin-left: 10px; text-decoration: none;">EN</a>
         </div>
+
         <h2><@spring.message "common.profile"/></h2>
         <div class="profile-header">
             <div class="user-avatar-container">

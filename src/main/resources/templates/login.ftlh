@@ -15,6 +15,7 @@
         <a href="?lang=ru" style="margin-left: 10px; text-decoration: none;">RU</a>
         <a href="?lang=en" style="margin-left: 10px; text-decoration: none;">EN</a>
     </div>
+
     <h2><@spring.message "login.body.header"/></h2>
     <#if RequestParameters.error??>
         <span class="error-message"><@spring.message "login.error-message"/></span>
