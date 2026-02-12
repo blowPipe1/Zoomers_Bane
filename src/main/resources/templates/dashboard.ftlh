@@ -1,6 +1,6 @@
 <#import "/spring.ftl" as spring />
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +14,7 @@
 
         <div class="profile-header">
             <div class="user-avatar">
-                <label for="avatarInput" style="cursor: pointer;" title="Change Image">
+                <label for="avatarInput" style="cursor: pointer;" title="<@spring.message"dashboard.profile-header.change-image"/>">
                     <#if user.avatar?has_content>
                         <img src="/images/${user.avatar}" alt="Avatar" id="avatarPreview">
                     <#else>
@@ -25,7 +25,7 @@
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <div style="margin-top: 10px; display: flex; flex-direction: column; width: 120px">
                         <input type="file" id="avatarInput" name="file" accept="image/*">
-                        <button type="submit" class="btn-update">Update</button>
+                        <button type="submit" class="btn-update"> <@spring.message "dashboard.profile-header.avatarForm.button"/> </button>
                     </div>
                 </form>
             </div>
