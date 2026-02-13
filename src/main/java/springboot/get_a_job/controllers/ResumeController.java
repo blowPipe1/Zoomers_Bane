@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springboot.get_a_job.dto.*;
+import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
 import springboot.get_a_job.models.Category;
 import springboot.get_a_job.models.CustomUserDetails;
@@ -64,7 +65,7 @@ public class ResumeController {
 
     @PostMapping("/create-resume")
     public String registerResume(
-            @Validated @ModelAttribute("resumeDto") ResumeDto resumeDto,
+            @Validated(OnCreate.class) @ModelAttribute("resumeDto") ResumeDto resumeDto,
             BindingResult bindingResult,
             Model model,
             @AuthenticationPrincipal CustomUserDetails currentUserA) {

@@ -32,7 +32,7 @@
 
         <div class="form-group">
             <label><@spring.message "common.salary"/></label>
-            <@spring.formInput "vacancyDto.salary" "class='form-control' type='number' step='0.01'" />
+            <@spring.formInput "vacancyDto.salary" "class='form-control' type='number' step='0.01' value='${(vacancyDto.salary)!0.00}'" />
             <@spring.showErrors "<br>" "error-message" />
         </div>
 

@@ -3,13 +3,14 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Password Reset</title>
+    <title><@spring.message "forgot-password.title"/></title>
     <link rel="stylesheet" href="<@spring.url '/css/password-reset.css'/>">
 </head>
 <body>
+
 <div class="container">
-    <h2>Forgot Your Password?</h2>
-    <p>Enter your email to receive reset link</p>
+    <h2><@spring.message "forgot-password.body.header"/>?</h2>
+    <p><@spring.message "forgot-password.instruction"/></p>
 
     <#if error??>
         <div class="error">${error}</div>
@@ -22,15 +23,15 @@
     <form action="/passwords/forgot-password" method="post">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <div class="form-group">
-            <label for="email">Email:</label><br>
+            <label for="email"><@spring.message "common.email"/>:</label><br>
             <input type="email" id="email" name="email" required
-                   placeholder="example@mail.com" value="${email!''}">
+                   placeholder="<@spring.message "common.email.placeholder"/>" value="${email!''}">
         </div>
 
-        <button type="submit" class="btn-submit">Send Link</button>
+        <button type="submit" class="btn-submit"><@spring.message "common.send-btn"/></button>
     </form>
 
-    <p><a href="/login">Back to Login</a></p>
+    <p><a href="/login"><@spring.message "forgot-password.link"/></a></p>
 </div>
 
 </body>

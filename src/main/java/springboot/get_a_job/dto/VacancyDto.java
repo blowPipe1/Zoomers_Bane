@@ -16,36 +16,37 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class VacancyDto {
     private Integer id;
-    @NotBlank(groups = OnCreate.class, message = "Vacancy's title is Required")
-    @NotNull(groups = OnUpdate.class, message = "Vacancy's title cant be null")
-    @Size(min = 3, max = 30, message = "Vacancy's title's length must be between 3 and 30 characters")
+    @NotBlank(groups = OnCreate.class, message = "{validation.vacancy.name.required}")
+    @NotNull(groups = OnUpdate.class, message = "{validation.vacancy.name.null}")
+    @Size(min = 3, max = 30, message = "{validation.vacancy.name.length}")
     private String name;
 
-    @NotNull(message = "Vacancy's description can be empty bu can't be null")
-    @Size(max = 250, message = "Vacancy's description's length must be less than 250 characters")
+    @NotNull(message = "{validation.vacancy.description.null}")
+    @Size(max = 250, message = "{validation.vacancy.description.length}")
     private String description;
 
-    @NotBlank(groups = OnCreate.class, message = "Vacancy's category is Required")
-    @NotNull(groups = OnUpdate.class, message = "Vacancy's category cant be null")
+    @NotBlank(groups = OnCreate.class, message = "{validation.vacancy.category.required}")
+    @NotNull(groups = OnUpdate.class, message = "{validation.vacancy.category.null}")
     private String category;
 
-    @NotNull(groups = OnCreate.class, message = "Vacancy's salary is Required")
-    @Positive(message = "Vacancy's salary can't be 0 or negative value")
+    @NotNull(groups = OnCreate.class, message = "{validation.vacancy.salary.required}")
+    @Positive(groups = OnCreate.class,message = "{validation.vacancy.salary.positive}")
+    @Min(value = 1, groups = OnCreate.class,message = "{validation.vacancy.salary.positive}")
     private Double salary;
 
-    @NotNull(groups = OnCreate.class, message = "Vacancy's experience is Required")
-    @PositiveOrZero(message = "Vacancy's experience can't be negative value")
+    @NotNull(groups = OnCreate.class, message = "{validation.vacancy.exp-from.required}")
+    @PositiveOrZero(message = "{validation.vacancy.exp-from.positive}")
     private Integer expFrom;
 
-    @NotNull(groups = OnCreate.class, message = "Vacancy's experience is Required")
-    @PositiveOrZero(message = "Vacancy's experience can't be negative value")
+    @NotNull(groups = OnCreate.class, message = "{validation.vacancy.exp-to.required}")
+    @PositiveOrZero(message = "{validation.vacancy.exp-to.positive}")
     private Integer expTo;
 
-    @NotNull(message = "Vacancy's status is Required")
+    @NotNull(message = "{validation.vacancy.status.required}")
     private Boolean isActive;
 
-    @NotBlank(groups = OnCreate.class, message = "Creator's Name is Required")
-    @Size(min = 3, max = 20, message = "Creator's Name's length must be between 3 and 20 characters")
+    @NotBlank(groups = OnCreate.class, message = "{validation.vacancy.author.null}")
+    @Size(min = 3, max = 20)
     private String author;
 
     private LocalDateTime createdDate;
