@@ -34,6 +34,8 @@ databaseChangeLog:
               - column:
                   name: salary
                   type: REAL
+                  constraints:
+                    nullable: false
               - column:
                   name: exp_from
                   type: INTEGER

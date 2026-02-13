@@ -1,9 +1,11 @@
+<#import "/spring.ftl" as spring />
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Error | ${status!}</title>
+    <title><@spring.message "error.title"/> | ${status!}</title>
     <style>
+
         body{
             font-family: 'Segoe UI', Arial, sans-serif;
             background-color: #f4f7f6;
@@ -54,13 +56,16 @@
 </head>
 <body>
 
-<div class = "error-container">
-    <div class="error-code">♂${status!"Error"}♂</div>
-    <h2>${error!"Error Occurred"}</h2>
-    <p>${message!"Unhandled Error"}</p>
+<div class="error-container">
+    <div class="error-code">${status!"Error"}</div>
 
+    <h2><@spring.message errorKey!"error.default"/></h2>
 
-    <a href="/api/users/dashboard" class="back-link">Back to Dashboard</a>
+    <p>${message!""}</p>
+
+    <a href="/dashboard" class="back-link">
+        <@spring.message "edit-item.back-to-profile"/>
+    </a>
 </div>
 
 </body>

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springboot.get_a_job.dto.*;
+import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
 import springboot.get_a_job.models.Category;
 import springboot.get_a_job.models.CustomUserDetails;
@@ -33,7 +35,7 @@ public class VacancyController {
 
     @PostMapping("/create")
     public String createVacancy(
-            @Validated @ModelAttribute("vacancyDto") VacancyDto vacancyDto,
+            @Validated(OnCreate.class) @ModelAttribute("vacancyDto") VacancyDto vacancyDto,
             BindingResult bindingResult,
             Model model,
             @AuthenticationPrincipal CustomUserDetails currentUserA) {
@@ -44,7 +46,7 @@ public class VacancyController {
 
             model.addAttribute("categories", categories);
 
-            return "resume-create";
+            return "vacancy-create";
         }
         vacancyDto.setAuthor(currentUserA.getUsername());
 
@@ -123,19 +125,23 @@ public class VacancyController {
     @GetMapping("/all")
     public String getAllActiveVacancies(
             Model model,
-            Pageable pageable,
+            @PageableDefault(size = 9, sort = "id") Pageable pageable,
             @RequestParam(defaultValue = "id") String sort,
             @RequestParam(defaultValue = "asc") String dir) {
 
         Sort sortOrder = dir.equalsIgnoreCase("desc") ? Sort.by(sort).descending() : Sort.by(sort).ascending();
-        pageable = PageRequest.of(0, 10, sortOrder);
+        Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortOrder);
 
-        Page<VacancyDto> vacancyPage = vacancyService.getAllActiveVacancies(pageable);
+        Page<VacancyDto> vacancyPage = vacancyService.getAllActiveVacancies(pageRequest);
 
         model.addAttribute("vacancies", vacancyPage.getContent());
         model.addAttribute("currentPage", vacancyPage.getNumber());
         model.addAttribute("totalPages", vacancyPage.getTotalPages());
         model.addAttribute("totalItems", vacancyPage.getTotalElements());
+        // Передаем параметры сортировки обратно, чтобы ссылки пагинации их не теряли
+        model.addAttribute("sort", sort);
+        model.addAttribute("dir", dir);
+
         return "vacancy-list";
     }
 }

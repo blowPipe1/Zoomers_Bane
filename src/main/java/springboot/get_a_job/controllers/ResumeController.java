@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springboot.get_a_job.dto.*;
+import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
 import springboot.get_a_job.models.Category;
 import springboot.get_a_job.models.CustomUserDetails;
@@ -63,7 +65,7 @@ public class ResumeController {
 
     @PostMapping("/create-resume")
     public String registerResume(
-            @Validated @ModelAttribute("resumeDto") ResumeDto resumeDto,
+            @Validated(OnCreate.class) @ModelAttribute("resumeDto") ResumeDto resumeDto,
             BindingResult bindingResult,
             Model model,
             @AuthenticationPrincipal CustomUserDetails currentUserA) {
@@ -132,19 +134,21 @@ public class ResumeController {
     @GetMapping("/all")
     public String getAllActiveResumes(
             Model model,
-            Pageable pageable,
+            @PageableDefault(size = 9, sort = "id") Pageable pageable,
             @RequestParam(defaultValue = "id") String sort,
             @RequestParam(defaultValue = "asc") String dir) {
 
         Sort sortOrder = dir.equalsIgnoreCase("desc") ? Sort.by(sort).descending() : Sort.by(sort).ascending();
-        pageable = PageRequest.of(0, 10, sortOrder);
+        Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortOrder);
 
-        Page<ResumeDto> resumePage = resumeService.getAllActiveResumes(pageable);
+        Page<ResumeDto> resumePage = resumeService.getAllActiveResumes(pageRequest);
 
         model.addAttribute("resumes", resumePage.getContent());
         model.addAttribute("currentPage", resumePage.getNumber());
         model.addAttribute("totalPages", resumePage.getTotalPages());
         model.addAttribute("totalItems", resumePage.getTotalElements());
+        model.addAttribute("sort", sort);
+        model.addAttribute("dir", dir);
 
         return "resume-list";
     }

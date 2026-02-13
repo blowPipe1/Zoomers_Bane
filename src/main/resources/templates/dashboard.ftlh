@@ -1,94 +1,100 @@
 <#import "/spring.ftl" as spring />
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
+    <title><@spring.message "common.profile"/></title>
     <link rel="stylesheet" href="<@spring.url '/css/dashboard.css'/>">
 </head>
 <body>
-
     <div class="container">
-        <h2>Profile</h2>
+        <div style="text-align: right; margin-bottom: 20px;">
+            <span><@spring.message "common.language.select"/>:</span>
+            <a href="?lang=ru" style="margin-left: 10px; text-decoration: none;">RU</a>
+            <a href="?lang=en" style="margin-left: 10px; text-decoration: none;">EN</a>
+        </div>
 
+        <h2><@spring.message "common.profile"/></h2>
         <div class="profile-header">
-            <div class="user-avatar">
-                <label for="avatarInput" style="cursor: pointer;" title="Change Image">
-                    <#if user.avatar?has_content>
-                        <img src="/images/${user.avatar}" alt="Avatar" id="avatarPreview">
-                    <#else>
-                        <img src="/images/gachi.jpg" alt="No Avatar" id="avatarPreview">
-                    </#if>
-                </label>
-                <form id="avatarForm" action="/api/users/avatar" method="post" enctype="multipart/form-data">
+            <div class="user-avatar-container">
+                <form id="avatarForm" action="/api/users/avatar" method="post" enctype="multipart/form-data" class="avatar-form">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    <div style="margin-top: 10px; display: flex; flex-direction: column; width: 120px">
-                        <input type="file" id="avatarInput" name="file" accept="image/*">
-                        <button type="submit" class="btn-update">Update</button>
+                    <div class="avatar-wrapper">
+                        <label for="avatarInput" class="avatar-label" title="<@spring.message 'dashboard.profile-header.change-image'/>">
+                            <#if user.avatar?has_content>
+                                <img src="/images/${user.avatar}" alt="Avatar" id="avatarPreview">
+                            <#else>
+                                <img src="/images/gachi.jpg" alt="No Avatar" id="avatarPreview">
+                            </#if>
+                        </label>
+                        <input type="file" id="avatarInput" name="file" accept="image/*" onchange="this.form.submit()" style="display: none;">
                     </div>
                 </form>
             </div>
 
             <div class="user-info">
                 <h3>${user.name! "Not Found"} ${user.surname! "Not Found"}</h3>
-                <h3 style="font-weight: normal">Age: ${user.age! 0} years</h3>
+                <h3 style="font-weight: normal"><@spring.message "common.age"/>: ${user.age! 0} <@spring.message "common.years"/></h3>
             </div>
 
             <div class="actions">
-                <div class="action"> <a href="/api/responses/" style="text-decoration: none;">Responses</a></div>
+                <div class="action"> <a href="/api/responses/" style="text-decoration: none;"><@spring.message "dashboard.actions.responses"/></a></div>
                 <#if (user.accountType! "")?lower_case == "applicant">
-                    <div class="action"> <a href="/api/resumes/form" style="text-decoration: none;">Create Resume</a></div>
-                    <div class="action"> <a href="/api/vacancies/all" style="text-decoration: none;">Vacancies</a></div>
+                    <div class="action"> <a href="/api/resumes/form" style="text-decoration: none;"><@spring.message "dashboard.actions.create-resume"/></a></div>
+                    <div class="action"> <a href="/api/vacancies/all" style="text-decoration: none;"><@spring.message "common.vacancies"/></a></div>
                 <#elseif (user.accountType! "")?lower_case == "employer">
-                    <div class="action"> <a href="/api/vacancies/form" style="text-decoration: none;">Create Vacancy</a></div>
-                    <div class="action"> <a href="/api/resumes/all" style="text-decoration: none;">Resumes</a></div>
-                <#else>
-                    <p>Cannot identify Account Type</p>
+                    <div class="action"> <a href="/api/vacancies/form" style="text-decoration: none;"><@spring.message "dashboard.actions.create-vacancy"/></a></div>
+                    <div class="action"> <a href="/api/resumes/all" style="text-decoration: none;"><@spring.message "common.resumes"/></a></div>
                 </#if>
-                <div class="action"> <a href="/api/users/edit" style="text-decoration: none;">Edit</a></div>
+                <div class="action"> <a href="/api/users/edit" style="text-decoration: none;"><@spring.message "common.edit-btn"/></a></div>
+                <div class="action"><form action="/logout" method="post" class="nav-form">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <button type="submit" class="btn-reset"><@spring.message "common.logout"/></button>
+                    </form></div>
             </div>
         </div>
 
         <#if (user.accountType! "")?lower_case == "applicant">
-            <h2>Resumes:</h2>
+            <h2><@spring.message "common.resumes"/>:</h2>
             <div class="resume-list">
                 <#list itemsList![] as items>
                     <div class="resume-card">
-                        <h3>${items.name! "Resume's Title"}</h3>
-                        <p>Category: ${items.category! ""}</p>
-                        <p>Salary: ${items.salary! 0}</p>
-                        <p>Status: ${items.isActive?string('Active', 'Inactive')}</p>
-                        <div class="action"> <a href="/api/resumes/edit/${items.id}" style="text-decoration: none;">Edit</a></div>
+                        <h3>${items.name! ""}</h3>
+                        <p><@spring.message "common.category"/>: ${items.category! ""}</p>
+                        <p><@spring.message "common.salary"/>: ${items.salary! 0}</p>
+                        <p><@spring.message "common.status"/>:
+                            <@spring.message items.isActive?string('common.status-value.active', 'common.status-value.inactive')/> </p>
+                        <div class="action"> <a href="/api/resumes/edit/${items.id}" style="text-decoration: none;"><@spring.message "common.edit-btn"/></a></div>
 
                     </div>
                 <#else>
                     <div class="empty-state">
-                        <p>You haven't created any resumes yet.</p>
+                        <p><@spring.message "dashboard.item-list.empty.resume"/></p>
                     </div>
                 </#list>
             </div>
         <#elseif (user.accountType! "")?lower_case == "employer">
-            <h2>Vacancies:</h2>
+            <h2><@spring.message "dashboard.item-list.header.vacancies"/>:</h2>
             <div class="vacancy-list">
                 <#list itemsList![] as items>
                     <div class="vacancy-card">
                         <h3>${items.name! "Vacancy's Title"}</h3>
-                        <p>Category: ${items.category! ""}</p>
-                        <p>Salary: ${items.salary! 0}</p>
-                        <p>Status: ${items.isActive?string('Active', 'Inactive')}</p>
-                        <p>Experience: ${items.expFrom! 0} to ${items.expTo! 0} years</p>
-                        <div class="action"> <a href="/api/vacancies/edit/${items.id}" style="text-decoration: none;">Edit</a></div>
+                        <p><@spring.message "common.category"/>: ${items.category! ""}</p>
+                        <p><@spring.message "common.salary"/>: ${items.salary! 0}</p>
+                        <p><@spring.message "common.status"/>:
+                            <@spring.message items.isActive?string('common.status-value.active', 'common.status-value.inactive')/> </p>
+                        <p><@spring.message "common.experience"/>: ${items.expFrom! 0} - ${items.expTo! 0} <@spring.message "common.years"/></p>
+                        <div class="action"> <a href="/api/vacancies/edit/${items.id}" style="text-decoration: none;"><@spring.message "common.edit-btn"/></a></div>
                     </div>
                 <#else>
                     <div class="empty-state">
-                        <p>You have no active vacancies.</p>
-                        <a href="/api/vacancies/form">Post a new vacancy</a>
+                        <p><@spring.message "dashboard.item-list.empty.vacancy"/></p>
                     </div>
                 </#list>
             </div>
         <#else>
-            <p>Cannot identify Account Type</p>
+            <p><@spring.message "common.not-found"/></p>
         </#if>
     </div>
 

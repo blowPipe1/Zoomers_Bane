@@ -16,24 +16,24 @@ import java.util.List;
 public class ResumeDto {
     private Integer id;
 
-    @NotBlank(groups = OnCreate.class, message = "Email is Required")
-    @Email(groups = OnCreate.class, message = "Email should be valid")
+    @NotBlank(groups = OnCreate.class, message = "{validation.resume.applicant-email.required}")
+    @Email(groups = OnCreate.class, message = "{validation.resume.applicant-email.format}")
     private String applicantEmail;
 
-    @NotBlank(groups = OnCreate.class, message = "Resume's title is Required")
-    @NotNull(groups = OnUpdate.class, message = "Resume's title cant be null")
-    @Size(min = 3, max = 30, message = "Resume's title's length must be between 3 and 30 characters")
+    @NotBlank(groups = OnCreate.class, message = "{validation.resume.name.required}")
+    @NotNull(groups = OnUpdate.class, message = "{validation.resume.name.null}")
+    @Size(min = 3, max = 30, message = "{validation.resume.name.length}")
     private String name;
 
-    @NotBlank(groups = OnCreate.class, message = "Resume's category is Required")
-    @NotNull(groups = OnUpdate.class, message = "Resume's category cant be null")
+    @NotBlank(groups = OnCreate.class, message = "{validation.resume.category.required}")
+    @NotNull(groups = OnUpdate.class, message = "{validation.resume.category.null}")
     private String category;
 
-    @NotNull(groups = OnCreate.class, message = "Resume's salary is Required")
-    @Positive(message = "Resume's salary can't be 0 or negative value")
+    @NotNull(groups = OnCreate.class, message = "{validation.resume.salary.required}")
+    @Positive(message = "{validation.resume.salary.positive}")
     private Double salary;
 
-    @NotNull(message = "Resume's status is Required")
+    @NotNull(message = "{validation.resume.status.required}")
     private Boolean isActive;
 
     private LocalDateTime createdDate;

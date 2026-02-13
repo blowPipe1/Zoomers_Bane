@@ -11,8 +11,9 @@ public class GetAJobApplication {
     public static void main(String[] args) {
         SpringApplication.run(GetAJobApplication.class, args);
         PasswordEncoder ps = new BCryptPasswordEncoder();
-        System.out.println("Van's password - " + " secure" + ps.encode("secure"));
-        System.out.println("Billy's password - " + " password123" + ps.encode("password123"));
+        System.out.println("Van's password - " + " secure" + ps.encode("1234567"));
+        System.out.println("Billy's password - " + " password123" + ps.encode("12345678"));
+        System.out.println("Billy's password - " + " password123" + ps.encode("123456789"));
 //        System.out.println("Nico's password - " + " qwerty");
     }
 }

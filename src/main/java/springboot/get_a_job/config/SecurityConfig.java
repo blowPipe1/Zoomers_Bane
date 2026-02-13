@@ -27,7 +27,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/register-form/**", "/register/**", "/api/vacancies/all", "/passwords/**").permitAll()
+                        .requestMatchers("/login", "/register-form/**", "/register/**", "/api/vacancies/all", "/passwords/**").permitAll()
                         .requestMatchers("/images/**", "/css/**", "/js/**", "/static/**").permitAll()
 
                         .requestMatchers("/api/vacancies/create").hasRole("EMPLOYER")

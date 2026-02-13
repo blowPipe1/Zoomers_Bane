@@ -13,42 +13,40 @@ import springboot.get_a_job.dto.validation.OnUpdate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
-    @NotBlank(groups = OnCreate.class, message = "Name is Required")
-    @NotNull(groups = OnUpdate.class, message = "Name cant be null")
-    @Size(groups = {OnCreate.class, OnUpdate.class}, min = 3, max = 20, message = "Name's length must be between 3 and 20 characters")
+    @NotBlank(groups = OnCreate.class, message = "{validation.name.required}")
+    @NotNull(groups = OnUpdate.class, message = "{validation.name.null}")
+    @Size(groups = {OnCreate.class, OnUpdate.class}, min = 3, max = 20, message = "{validation.name.length}")
     private String name;
 
-    @NotBlank(groups = OnCreate.class, message = "Surname is Required")
-    @NotNull(groups = OnUpdate.class, message = "Surname cant be null")
-    @Size(groups = {OnCreate.class, OnUpdate.class}, min = 5, max = 25, message = "Surname's length must be between 5 and 25 characters")
+    @NotBlank(groups = OnCreate.class, message = "{validation.surname.required}")
+    @NotNull(groups = OnUpdate.class, message = "{validation.surname.null}")
+    @Size(groups = {OnCreate.class, OnUpdate.class}, min = 5, max = 25, message = "{validation.surname.length}")
     private String surname;
 
     @Positive
-    @NotNull(groups = OnCreate.class, message = "Age is Required")
-    @Min(groups = OnCreate.class, value = 18, message = "Must at least 18 years old")
-    @Min(groups = OnUpdate.class, value = 0, message = "Set 0 if no updates are incoming")
-    @Max(value = 100, message = "Invalid Age")
+    @NotNull(groups = OnCreate.class, message = "{validation.age.required}")
+    @Min(groups = OnCreate.class, value = 18, message = "{validation.age.min}")
+    @Max(value = 100, message = "{validation.age.max}")
     private Integer age;
 
-    @NotBlank(groups = OnCreate.class, message = "Email is Required")
-    @NotNull(groups = OnUpdate.class, message = "Email cant be null")
-    @Email(groups = {OnUpdate.class, OnCreate.class},  message = "Provide a valid email address")
+    @NotBlank(groups = OnCreate.class, message = "{validation.email.required}")
+    @NotNull(groups = OnUpdate.class, message = "{validation.email.null}")
+    @Email(groups = {OnUpdate.class, OnCreate.class},  message = "{validation.email.format}")
     private String email;
 
-    @NotBlank(groups = OnCreate.class, message = "Password is Required")
-    @Size(groups = OnCreate.class, min = 7, max = 30, message = "Password's length must be between 7 and 30 characters")
+    @NotBlank(groups = OnCreate.class, message = "{validation.password.required}")
+    @Size(groups = OnCreate.class, min = 7, max = 30, message = "{validation.password.length}")
     private String password;
 
-    @NotBlank(groups = OnCreate.class, message = "Phone Number is Required")
-    @NotNull(groups = OnUpdate.class, message = "Phone Number cant be null")
-    @Size(groups = {OnCreate.class, OnUpdate.class}, min = 10, max = 15, message = "Phone number length is invalid")
+    @NotBlank(groups = OnCreate.class, message = "{validation.phone-number.required}")
+    @NotNull(groups = OnUpdate.class, message = "{validation.phone-number.null}")
+    @Size(groups = {OnCreate.class, OnUpdate.class}, min = 10, max = 15, message = "{validation.phone-number.length}")
     private String phoneNumber;
 
-    @NotNull(groups = OnCreate.class, message = "Avatar must al least be empty")
+    @NotNull(groups = OnCreate.class, message = "{validation.avatar.null}")
     private String avatar;
 
-    @NotBlank(groups = OnCreate.class, message = "Account type is Required (Applicant / Employer)")
-    @NotNull(groups = OnUpdate.class, message = "Account type cant be null")
-    @Size(groups = OnCreate.class, min = 3, max = 9, message = "Format Should look like this: 'applicant' / 'employer'")
+    @NotBlank(groups = OnCreate.class, message = "{validation.account-type.required}")
+    @NotNull(groups = OnUpdate.class, message = "{validation.account-type.null}")
     private String accountType;
 }

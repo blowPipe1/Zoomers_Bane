@@ -1,5 +1,6 @@
 package springboot.get_a_job.models;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class Vacancy {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @Column(nullable = false)
     private Double salary;
     private Integer expFrom;
     private Integer expTo;

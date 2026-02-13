@@ -3,6 +3,7 @@ package springboot.get_a_job.serviceImplementations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class UserAccountServiceImpl implements UserAccountService {
-    private final String subDir = "src/main/resources/static/images/";
+    @Value("${upload.path}")
+    private String uploadPath;
     @Autowired
     @Lazy
     private UserRepository userRepository;
@@ -93,14 +95,18 @@ public class UserAccountServiceImpl implements UserAccountService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        Path uploadPath = Paths.get(subDir);
-        if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
+        Path root = Paths.get(uploadPath).toAbsolutePath().normalize();
+        if (!Files.exists(root)) {
+            Files.createDirectories(root);
+        }
 
         String fileName = userId + "_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        Path filePath = uploadPath.resolve(fileName);
+
+        Path filePath = root.resolve(fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         user.setAvatar(fileName);
+
         log.info("Server Successfully updated user avatar (ID: {}) to {}", userId, fileName);
     }
 

@@ -47,7 +47,7 @@ logging:
     path: log
 
 upload:
-  path: ./src/main/java/springboot/get_a_job/data/images/
+  path: "./data/images/"
 
 
 
