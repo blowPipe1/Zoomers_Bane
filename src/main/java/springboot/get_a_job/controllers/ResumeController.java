@@ -7,12 +7,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import springboot.get_a_job.dto.*;
 import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
@@ -38,28 +40,14 @@ public class ResumeController {
     public String showCreateForm(Model model) {
         ResumeDto resumeDto = new ResumeDto();
 
-        Map<String, String> categories = categoryService.findAll().stream()
-                .collect(Collectors.toMap(
-                        Category::getName,
-                        Category::getName,
-                        (existing, replacement) -> existing
-                ));
-
-        Map<String, String> contactTypesMap = contactInfoService.findAll().stream()
-                .collect(Collectors.toMap(
-                        type -> type,
-                        type -> type,
-                        (existing, replacement) -> existing
-                ));
-
         resumeDto.setEducation(new ArrayList<>(List.of(new EducationDto())));
         resumeDto.setWorkExperience(new ArrayList<>(List.of(new WorkExperienceDto())));
         resumeDto.setContactInfo(new ArrayList<>(List.of(new ContactInfoDto())));
         resumeDto.setIsActive(true);
 
         model.addAttribute("resumeDto", resumeDto);
-        model.addAttribute("categories", categories);
-        model.addAttribute("contactTypesMap", contactTypesMap);
+        model.addAttribute("categories", getCategoriesMap());
+        model.addAttribute("contactTypesMap", getContactTypesMap());
         return "resume-create";
     }
 
@@ -71,14 +59,9 @@ public class ResumeController {
             @AuthenticationPrincipal CustomUserDetails currentUserA) {
 
         if (bindingResult.hasErrors()) {
-            Map<String, String> categories = categoryService.findAll().stream()
-                    .collect(Collectors.toMap(Category::getName, Category::getName, (existing, replacement) -> existing));
 
-            Map<String, String> contactTypesMap = contactInfoService.findAll().stream()
-                    .collect(Collectors.toMap(type -> type, type -> type, (existing, replacement) -> existing));
-
-            model.addAttribute("categories", categories);
-            model.addAttribute("contactTypesMap", contactTypesMap);
+            model.addAttribute("categories", getCategoriesMap());
+            model.addAttribute("contactTypesMap", getContactTypesMap());
 
             return "resume-create";
         }
@@ -91,19 +74,12 @@ public class ResumeController {
 
     @GetMapping("/edit/{resumeId}")
     public String editResume(@PathVariable Integer resumeId, Model model) {
-        ResumeDto resumeDto = resumeService.findResumeById(resumeId).orElseThrow();
-        Map<String, String> categories = categoryService.findAll().stream()
-                .collect(Collectors.toMap(
-                        Category::getName,
-                        Category::getName,
-                        (existing, replacement) -> existing
-                ));
-        Map<String, String> contactTypesMap = contactInfoService.findAll().stream()
-                .collect(Collectors.toMap(type -> type, type -> type, (existing, replacement) -> existing));
 
-        model.addAttribute("categories", categories);
+        ResumeDto resumeDto = resumeService.findResumeById(resumeId).orElseThrow();
+
+        model.addAttribute("categories", getCategoriesMap());
         model.addAttribute("resumeDto", resumeDto);
-        model.addAttribute("contactTypesMap", contactTypesMap);
+        model.addAttribute("contactTypesMap", getContactTypesMap());
 
         return "edit-resume";
     }
@@ -113,19 +89,26 @@ public class ResumeController {
             @PathVariable Integer resumeId,
             @Validated(OnUpdate.class) @ModelAttribute("resumeDto") ResumeDto resumeDto,
             BindingResult bindingResult,
-            @AuthenticationPrincipal CustomUserDetails userDetails
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            Model model
     ) {
-        if (resumeDto.getEducation() == null) {
-            resumeDto.setEducation(new ArrayList<>());
+        ResumeDto original = resumeService.findResumeById(resumeId).orElseThrow();
+        if (!original.getApplicantEmail().equals(userDetails.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
         if (bindingResult.hasErrors()) {
+            resumeDto.setId(resumeId);
+            resumeDto.setEducation(original.getEducation());
+            resumeDto.setWorkExperience(original.getWorkExperience());
+            resumeDto.setContactInfo(original.getContactInfo());
+            model.addAttribute("categories", getCategoriesMap());
+            model.addAttribute("contactTypesMap", getContactTypesMap());
             return "edit-resume";
         }
 
         resumeDto.setApplicantEmail(userDetails.getUsername());
         resumeService.updateResume(resumeId, resumeDto);
-
 
         return "redirect:/api/users/dashboard";
     }
@@ -158,5 +141,19 @@ public class ResumeController {
         ResumeDto resume = resumeService.findResumeById(resumeId).orElseGet(null);
         model.addAttribute("resume", resume);
         return "resume";
+    }
+
+    private Map<String, String> getContactTypesMap() {
+        return  contactInfoService.findAll().stream()
+                .collect(Collectors.toMap(type -> type, type -> type, (existing, replacement) -> existing));
+    }
+
+    private Map<String, String> getCategoriesMap() {
+        return categoryService.findAll().stream()
+                .collect(Collectors.toMap(
+                        Category::getName,
+                        Category::getName,
+                        (existing, replacement) -> existing
+                ));
     }
 }

@@ -16,6 +16,8 @@ import springboot.get_a_job.services.EducationInfoService;
 import springboot.get_a_job.services.ResumeService;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -107,7 +109,7 @@ public class EducationInfoServiceImpl implements EducationInfoService {
         if (dto.getInstitution() != null) entity.setInstitution(dto.getInstitution());
         if (dto.getProgram() != null) entity.setProgram(dto.getProgram());
         if (dto.getStartDate() != null) entity.setStartDate(dto.getStartDate());
-        if (dto.getEndDate() != null) entity.setEndDate(dto.getEndDate());
+        if (dto.getEndDate() != null && dto.isValidDateRange()) entity.setEndDate(dto.getEndDate());
         if (dto.getDegree() != null) entity.setDegree(dto.getDegree());
     }
 
