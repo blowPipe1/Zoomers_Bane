@@ -11,7 +11,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springboot.get_a_job.dto.UserDto;
 import springboot.get_a_job.dto.validation.OnCreate;
+import springboot.get_a_job.exceptions.EmailAlreadyExistsException;
 import springboot.get_a_job.services.UserAccountService;
+
+import java.util.Locale;
 
 @Controller
 @RequiredArgsConstructor
@@ -35,7 +38,7 @@ public class AuthController {
     @PostMapping("/register")
     public String registerUser(@Validated(OnCreate.class) @ModelAttribute("userDto") UserDto userDto,
                                BindingResult result,
-                               HttpServletRequest request) {
+                               HttpServletRequest request){
         if (result.hasErrors()) {
             return "registration";
         }
@@ -45,7 +48,7 @@ public class AuthController {
         try {
             request.login(userDto.getEmail(), userDto.getPassword());
         } catch (ServletException e) {
-            return "redirect:/login?error";
+            return "registration";
         }
 
         if (userDto.getAccountType().equalsIgnoreCase("applicant")){

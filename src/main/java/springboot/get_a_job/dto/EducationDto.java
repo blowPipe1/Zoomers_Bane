@@ -7,7 +7,6 @@ import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import springboot.get_a_job.dto.validation.OnCreate;
-import springboot.get_a_job.dto.validation.OnUpdate;
 
 @Getter
 @Setter

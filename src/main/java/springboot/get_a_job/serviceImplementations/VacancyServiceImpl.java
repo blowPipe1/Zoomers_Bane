@@ -18,6 +18,7 @@ import springboot.get_a_job.models.User;
 import springboot.get_a_job.models.Vacancy;
 import springboot.get_a_job.repositories.VacancyRepository;
 import springboot.get_a_job.services.CategoryService;
+import springboot.get_a_job.services.RespondedApplicantService;
 import springboot.get_a_job.services.UserAccountService;
 import springboot.get_a_job.services.VacancyService;
 
@@ -37,6 +38,9 @@ public class VacancyServiceImpl implements VacancyService {
     @Autowired
     @Lazy
     private UserAccountService userAccountService;
+    @Autowired
+    @Lazy
+    private RespondedApplicantService respondedApplicantService;
 
     @Override
     @Transactional
@@ -116,7 +120,8 @@ public class VacancyServiceImpl implements VacancyService {
                 vacancy.getIsActive(),
                 vacancy.getAuthor() != null ? vacancy.getAuthor().getEmail() : null,
                 vacancy.getCreatedDate(),
-                vacancy.getUpdateTime()
+                vacancy.getUpdateTime(),
+                respondedApplicantService.getApplicantByVacancy_Id(vacancy.getId()).size()
         );
     }
 
@@ -140,7 +145,7 @@ public class VacancyServiceImpl implements VacancyService {
         vacancy.setIsActive(dto.getIsActive() != null ? dto.getIsActive() : true);
         vacancy.setCreatedDate(LocalDateTime.now());
         vacancy.setUpdateTime(LocalDateTime.now());
-
+        vacancy.setApplications(0);
         return vacancy;
     }
 }

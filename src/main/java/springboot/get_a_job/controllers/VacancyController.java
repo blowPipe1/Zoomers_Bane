@@ -37,15 +37,9 @@ public class VacancyController {
     public String createVacancy(
             @Validated(OnCreate.class) @ModelAttribute("vacancyDto") VacancyDto vacancyDto,
             BindingResult bindingResult,
-            Model model,
             @AuthenticationPrincipal CustomUserDetails currentUserA) {
 
         if (bindingResult.hasErrors()) {
-            Map<String, String> categories = categoryService.findAll().stream()
-                    .collect(Collectors.toMap(Category::getName, Category::getName, (existing, replacement) -> existing));
-
-            model.addAttribute("categories", categories);
-
             return "vacancy-create";
         }
         vacancyDto.setAuthor(currentUserA.getUsername());
@@ -57,21 +51,11 @@ public class VacancyController {
     @GetMapping("/form")
     public String showCreateForm(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
         VacancyDto vacancyDto = new VacancyDto();
-
-
-        Map<String, String> categories = categoryService.findAll().stream()
-                .collect(Collectors.toMap(
-                        Category::getName,
-                        Category::getName,
-                        (existing, replacement) -> existing
-                ));
-
         vacancyDto.setIsActive(true);
         vacancyDto.setAuthor(userDetails.getUsername());
 
         model.addAttribute("vacancyDto", vacancyDto);
-        model.addAttribute("categories", categories);
-
+        model.addAttribute("categories", getCategoriesMap());
 
         return "vacancy-create";
     }
@@ -80,14 +64,8 @@ public class VacancyController {
     @GetMapping("/edit/{vacancyId}")
     public String editVacancy(@PathVariable Integer vacancyId, Model model) {
         VacancyDto vacancyDto = vacancyService.findVacancyById(vacancyId).orElseThrow();
-        Map<String, String> categories = categoryService.findAll().stream()
-                .collect(Collectors.toMap(
-                        Category::getName,
-                        Category::getName,
-                        (existing, replacement) -> existing
-                ));
 
-        model.addAttribute("categories", categories);
+        model.addAttribute("categories", getCategoriesMap());
         model.addAttribute("vacancyDto", vacancyDto);
 
         return "edit-vacancy";
@@ -138,10 +116,18 @@ public class VacancyController {
         model.addAttribute("currentPage", vacancyPage.getNumber());
         model.addAttribute("totalPages", vacancyPage.getTotalPages());
         model.addAttribute("totalItems", vacancyPage.getTotalElements());
-        // Передаем параметры сортировки обратно, чтобы ссылки пагинации их не теряли
         model.addAttribute("sort", sort);
         model.addAttribute("dir", dir);
 
         return "vacancy-list";
+    }
+
+    private Map<String, String> getCategoriesMap() {
+        return categoryService.findAll().stream()
+                .collect(Collectors.toMap(
+                        Category::getName,
+                        Category::getName,
+                        (existing, replacement) -> existing
+                ));
     }
 }

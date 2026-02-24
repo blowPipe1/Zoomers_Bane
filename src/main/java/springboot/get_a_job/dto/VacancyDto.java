@@ -51,4 +51,6 @@ public class VacancyDto {
 
     private LocalDateTime createdDate;
     private LocalDateTime updateTime;
+
+    private Integer applications;
 }

@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public Object handleNotFound(ResourceNotFoundException ex, HttpServletRequest request, Locale locale) {
         String localizedMessage = messageSource.getMessage(ex.getMessage(), null, ex.getMessage(), locale);
-        String localizedTitle = messageSource.getMessage("error.notfound.title", null, "Not Found", locale);
+        String localizedTitle = messageSource.getMessage("error.404", null, "Not Found", locale);
 
         if (isApiRequest(request)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -34,6 +34,18 @@ public class GlobalExceptionHandler {
         }
 
         return createErrorView(HttpStatus.NOT_FOUND, localizedTitle, localizedMessage);
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public Object handleDuplicateEmail(EmailAlreadyExistsException ex, HttpServletRequest request, Locale locale) {
+        String localizedMessage = messageSource.getMessage(ex.getMessage(), null, locale);
+        String localizedTitle = messageSource.getMessage("error.409", null, locale);
+
+        if (isApiRequest(request)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ErrorResponse(409, localizedTitle, localizedMessage, request.getRequestURI()));
+        }
+        return createErrorView(HttpStatus.CONFLICT, localizedTitle, localizedMessage);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
