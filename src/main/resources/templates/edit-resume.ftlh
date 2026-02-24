@@ -13,6 +13,7 @@
 
     <form action="/api/resumes/update/${resumeDto.id}" method="post">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        <@spring.formHiddenInput "resumeDto.id" "" />
         <@spring.bind "resumeDto"/>
 
         <div class="form-group">
@@ -71,10 +72,12 @@
                 <div class="form-group">
                     <label><@spring.message "common.education.start-date"/></label>
                     <@spring.formInput "resumeDto.education[${edu?index}].startDate", "type='date'" />
+                    <@spring.showErrors "<br/>", "error" />
                 </div>
                 <div class="form-group">
                     <label><@spring.message "common.education.end-date"/></label>
                     <@spring.formInput "resumeDto.education[${edu?index}].endDate", "type='date'" />
+                    <@spring.showErrors "<br/>", "error" />
                 </div>
             </div>
         </#list>

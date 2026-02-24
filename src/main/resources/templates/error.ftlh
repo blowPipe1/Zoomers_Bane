@@ -63,7 +63,7 @@
 
     <p>${message!""}</p>
 
-    <a href="/dashboard" class="back-link">
+    <a href="/api/users/dashboard" class="back-link">
         <@spring.message "edit-item.back-to-profile"/>
     </a>
 </div>

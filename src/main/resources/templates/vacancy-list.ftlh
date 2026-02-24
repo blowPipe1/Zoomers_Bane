@@ -37,6 +37,7 @@
                 <option value="salary" ${(RequestParameters.sort?? && RequestParameters.sort == 'salary')?string('selected', '')}><@spring.message "item-list.sort.by-salary"/></option>
                 <option value="name" ${(RequestParameters.sort?? && RequestParameters.sort == 'name')?string('selected', '')}><@spring.message "item-list.sort.by-title"/></option>
                 <option value="createdDate" ${(RequestParameters.sort?? && RequestParameters.sort == 'createdDate')?string('selected', '')}><@spring.message "item-list.sort.by-date"/></option>
+                <option value="applications" ${(RequestParameters.sort?? && RequestParameters.sort == 'applications')?string('selected', '')}><@spring.message "item-list.sort.by-applications"/></option>
             </select>
             <select name="dir" onchange="this.form.submit()">
                 <option value="asc" ${(RequestParameters.dir?? && RequestParameters.dir == 'asc')?string('selected', '')}><@spring.message "item-list.sort.asc"/></option>
@@ -55,6 +56,7 @@
                         <p><span><@spring.message "vacancy-list.owner"/>: </span> ${vacancy.author! "N/A"}</p>
                         <p><span><@spring.message "item-list.created"/>: </span> ${vacancy.createdDate! "N/A"}</p>
                         <p><span><@spring.message "item-list.updated"/>: </span> ${vacancy.updateTime! "N/A"}</p>
+                        <p><span><@spring.message "common.applications"/>: </span> ${vacancy.applications! 0}</p>
                     </div>
                     <div class="meta-info">
                         <p><span><@spring.message "common.experience"/>: </span> ${vacancy.expFrom! 0} - ${vacancy.expTo! 0}</p>

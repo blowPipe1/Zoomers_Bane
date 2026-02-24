@@ -35,4 +35,9 @@ public class EducationDto {
     @NotNull(groups = { OnCreate.class}, message = "{validation.education.degree.null}")
     @Size(max = 50, message = "{validation.education.degree.length}")
     private String degree;
+
+    @AssertTrue( message = "{validation.education.end-date.after-start-date}")
+    public boolean isValidDateRange() {
+        return endDate.isAfter(startDate);
+    }
 }

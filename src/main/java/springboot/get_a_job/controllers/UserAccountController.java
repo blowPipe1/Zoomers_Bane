@@ -41,7 +41,7 @@ public class UserAccountController {
     public String dashboard(
             Model model,
             @AuthenticationPrincipal CustomUserDetails currentUserA,
-            @PageableDefault(size = 9, sort = "salary") Pageable pageable) {
+            @PageableDefault(size = 6, sort = "id") Pageable pageable) {
         UserDto currentUser = userAccountService.findUserById(currentUserA.getId())
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + currentUserA.getId()));
 

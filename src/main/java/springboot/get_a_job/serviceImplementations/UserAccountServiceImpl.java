@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import springboot.get_a_job.dto.UserDto;
+import springboot.get_a_job.exceptions.EmailAlreadyExistsException;
 import springboot.get_a_job.exceptions.InvalidAccountTypeException;
 import springboot.get_a_job.exceptions.UserNotFoundException;
 import springboot.get_a_job.models.User;
@@ -50,6 +51,9 @@ public class UserAccountServiceImpl implements UserAccountService {
     public void registerUser(UserDto userDto) {
         if (userDto == null) {
             throw new UserNotFoundException("Error registering user: DTO is null");
+        }
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            throw new EmailAlreadyExistsException("error.duplicate-email");
         }
 
         User user = convertIntoModel(userDto);

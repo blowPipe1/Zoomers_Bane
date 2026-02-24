@@ -96,6 +96,30 @@
         <#else>
             <p><@spring.message "common.not-found"/></p>
         </#if>
+        <div class="pagination">
+            <#if totalPages gt 1>
+                <ul class="pagination-list" style="display: flex; justify-content: center; list-style: none; gap: 10px; margin-top: 20px;">
+                    <#if currentPage gt 0>
+                        <li>
+                            <a href="?page=${currentPage - 1}">&laquo; <@spring.message "common.previous"/></a>
+                        </li>
+                    </#if>
+                    <#list 0..totalPages-1 as i>
+                        <li>
+                            <a href="?page=${i}"
+                               class="${(i == currentPage)?string('active-page', '')}">
+                                ${i + 1}
+                            </a>
+                        </li>
+                    </#list>
+                    <#if currentPage lt totalPages - 1>
+                        <li>
+                            <a href="?page=${currentPage + 1}"><@spring.message "common.next"/> &raquo;</a>
+                        </li>
+                    </#if>
+                </ul>
+            </#if>
+        </div>
     </div>
 
 </body>

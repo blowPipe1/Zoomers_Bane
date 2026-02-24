@@ -72,6 +72,4 @@ public class RespondedApplicantServiceImpl implements RespondedApplicantService 
         return respondedApplicantRepository.findByVacancy_Author_Id(employerId);
     }
 
-
-
 }
