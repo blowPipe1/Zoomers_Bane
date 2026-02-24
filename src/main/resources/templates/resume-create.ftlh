@@ -14,6 +14,21 @@
         { value: "${key}", label: "${contactTypesMap[key]}" }<#if key_has_next>,</#if>
         </#list>
     ];
+    const i18n = {
+        institution: "${springMacroRequestContext.getMessage('common.education.institution')?js_string}",
+        degree:      "${springMacroRequestContext.getMessage('common.education.degree')?js_string}",
+        program:     "${springMacroRequestContext.getMessage('common.education.program')?js_string}",
+        startDate:   "${springMacroRequestContext.getMessage('common.education.start-date')?js_string}",
+        endDate:     "${springMacroRequestContext.getMessage('common.education.end-date')?js_string}",
+        deleteBtn:   "${springMacroRequestContext.getMessage('common.delete-btn')?js_string}",
+        company:     "${springMacroRequestContext.getMessage('common.experience.company')?js_string}",
+        experience:  "${springMacroRequestContext.getMessage('common.experience')?js_string}",
+        years:  "${springMacroRequestContext.getMessage('common.years')?js_string}",
+        position:  "${springMacroRequestContext.getMessage('common.experience.position')?js_string}",
+        responsibilities:  "${springMacroRequestContext.getMessage('common.experience.responsibilities')?js_string}",
+        type:  "${springMacroRequestContext.getMessage('common.contacts.type')?js_string}",
+        value:  "${springMacroRequestContext.getMessage('common.contacts.value')?js_string}"
+    };
 </script>
 
 <div class="container">

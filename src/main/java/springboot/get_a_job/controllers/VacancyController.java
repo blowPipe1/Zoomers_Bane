@@ -35,11 +35,14 @@ public class VacancyController {
 
     @PostMapping("/create")
     public String createVacancy(
-            @Validated(OnCreate.class) @ModelAttribute("vacancyDto") VacancyDto vacancyDto,
+            @ModelAttribute("vacancyDto") VacancyDto vacancyDto,
             BindingResult bindingResult,
+            Model model,
             @AuthenticationPrincipal CustomUserDetails currentUserA) {
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute("categories", getCategoriesMap());
+
             return "vacancy-create";
         }
         vacancyDto.setAuthor(currentUserA.getUsername());
@@ -51,11 +54,13 @@ public class VacancyController {
     @GetMapping("/form")
     public String showCreateForm(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
         VacancyDto vacancyDto = new VacancyDto();
+
         vacancyDto.setIsActive(true);
         vacancyDto.setAuthor(userDetails.getUsername());
 
         model.addAttribute("vacancyDto", vacancyDto);
         model.addAttribute("categories", getCategoriesMap());
+
 
         return "vacancy-create";
     }

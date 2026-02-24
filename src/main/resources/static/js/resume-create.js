@@ -75,26 +75,26 @@ function addEducation() {
     const html = `
         <div class="education-entry border-bottom mb-4 pb-3">
             <div class="form-group">
-                <label>institution</label>
-                <input type="text" class="inst" placeholder="institution">
+                <label>${i18n.institution}</label>
+                <input type="text" class="inst">
             </div>
             <div class="form-group">
-                <label>degree</label>
-                <input type="text" class="degree" placeholder="degree">
+                <label>${i18n.degree}</label>
+                <input type="text" class="degree">
             </div>
             <div class="form-group">
-                <label>Program</label>
-                <input type="text" class="program" placeholder="Program">
+                <label>${i18n.program}</label>
+                <input type="text" class="program">
             </div>
             <div class="form-group">
-                <label>Start Date</label>
+                <label>${i18n.startDate}</label>
                 <input type="date" class="sDate">
             </div>
             <div class="form-group">
-                <label>end date</label>
+                <label>${i18n.endDate}</label>
                 <input type="date" class="eDate">
             </div>
-            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">delete</button>
+            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">${i18n.deleteBtn}</button>
         </div>`;
     document.getElementById('education-container').insertAdjacentHTML('beforeend', html);
 }
@@ -103,22 +103,22 @@ function addExperience() {
     const html = `
         <div class="work-entry border-bottom mb-4 pb-3">
             <div class="form-group">
-                <label>company</label>
+                <label>${i18n.company}</label>
                 <input type="text" class="company">
             </div>
             <div class="form-group">
-                <label>experience</label>
+                <label>${i18n.experience}</label>
                 <input type="number" class="years">
             </div>
             <div class="form-group">
-                <label>position</label>
+                <label>${i18n.position}</label>
                 <input type="text" class="pos">
             </div>
             <div class="form-group">
-                <label>resp-ties</label>
+                <label>${i18n.responsibilities}</label>
                 <input type="text" class="resp">
             </div>
-            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">delete</button>
+            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">${i18n.deleteBtn}</button>
         </div>`;
     document.getElementById('experience-container').insertAdjacentHTML('beforeend', html);
 }
@@ -131,17 +131,16 @@ function addContact() {
     const html = `
         <div class="contact-entry border-bottom mb-4 pb-3">
             <div class="form-group">
-                <label>type</label>
+                <label>${i18n.type}</label>
                 <select class="cType">
-                    <option value="" disabled selected>select type</option>
                     ${optionsHtml}
                 </select>
             </div>
             <div class="form-group">
-                <label>Value</label>
+                <label>${i18n.value}</label>
                 <input type="text" class="cValue">
             </div>
-            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">delete</button>
+            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">${i18n.deleteBtn}</button>
         </div>`;
     document.getElementById('contacts-container').insertAdjacentHTML('beforeend', html);
 }
