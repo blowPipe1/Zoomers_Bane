@@ -33,6 +33,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/vacancies/create").hasRole("EMPLOYER")
                         .requestMatchers("/api/vacancies/update/*").hasRole("EMPLOYER")
                         .requestMatchers("/api/vacancies/delete/*").hasRole("EMPLOYER")
+                        .requestMatchers("/api/resumes/all").hasRole("EMPLOYER")
 
                         .requestMatchers("/api/resumes/create").hasRole("APPLICANT")
                         .requestMatchers("/api/resumes/update/**").hasRole("APPLICANT")

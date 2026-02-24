@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: formData.get('name') || "N/A",
                 applicantEmail: "zaglushka",
                 salary: parseFloat(formData.get('salary')) || 0,
-                category: formData.get('category') || "Default",
+                category: formData.get('category'),
                 isActive: true,
                 education: [],
                 workExperience: [],

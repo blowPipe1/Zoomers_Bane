@@ -1,6 +1,5 @@
 package springboot.get_a_job.controllers;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,7 +17,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import springboot.get_a_job.dto.*;
-import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
 import springboot.get_a_job.models.Category;
 import springboot.get_a_job.models.CustomUserDetails;
@@ -56,7 +54,7 @@ public class ResumeController {
     @PostMapping("/create-resume")
     @ResponseBody
     public ResponseEntity<?> registerResume(
-            @RequestBody ResumeDto resumeDto,
+            @Validated @RequestBody ResumeDto resumeDto,
             BindingResult bindingResult,
             @AuthenticationPrincipal CustomUserDetails currentUserA) {
 

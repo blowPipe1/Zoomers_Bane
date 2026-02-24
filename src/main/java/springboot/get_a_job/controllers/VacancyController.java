@@ -13,7 +13,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springboot.get_a_job.dto.*;
-import springboot.get_a_job.dto.validation.OnCreate;
 import springboot.get_a_job.dto.validation.OnUpdate;
 import springboot.get_a_job.models.Category;
 import springboot.get_a_job.models.CustomUserDetails;
@@ -35,7 +34,7 @@ public class VacancyController {
 
     @PostMapping("/create")
     public String createVacancy(
-            @ModelAttribute("vacancyDto") VacancyDto vacancyDto,
+            @Validated @ModelAttribute("vacancyDto") VacancyDto vacancyDto,
             BindingResult bindingResult,
             Model model,
             @AuthenticationPrincipal CustomUserDetails currentUserA) {
