@@ -12,6 +12,8 @@ import springboot.get_a_job.repositories.UserRepository;
 import springboot.get_a_job.services.EmailService;
 import springboot.get_a_job.services.PasswordResetService;
 
+import java.util.Locale;
+
 @Slf4j
 @Controller
 @RequestMapping("/passwords")
@@ -28,11 +30,11 @@ public class PasswordResetController {
 
 
     @PostMapping("/forgot-password")
-    public String processForgotPassword(@RequestParam String email, Model model) {
+    public String processForgotPassword(@RequestParam String email, Model model, Locale locale) {
         userRepository.findByEmail(email).ifPresent(user -> {
             try {
                 String token = resetService.createPasswordResetToken(user);
-                emailService.sendResetEmail(user, token);
+                emailService.sendResetEmail(user, token, locale);
             } catch (Exception e) {
                 model.addAttribute("error", "Error while sending reset email");
             }
