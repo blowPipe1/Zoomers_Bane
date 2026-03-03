@@ -92,6 +92,7 @@
         </#if>
     </div>
 </div>
+<script src="<@spring.url '/js/vacancy-filter.js'/>"></script>
 
 </body>
 </html>

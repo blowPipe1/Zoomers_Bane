@@ -7,6 +7,20 @@ spring:
     password: 1234
     driver-class-name: org.h2.Driver
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: tzolcubekov@gmail.com
+    password: cddmjjrqjxmchijd
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
 
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
@@ -22,22 +36,6 @@ spring:
   liquibase:
     change-log: classpath:/db/changelog/master.yaml
 
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: tzolcubekov@gmail.com
-    password: cddmjjrqjxmchijd
-    protocol: smtp
-    default-encoding: UTF-8
-    properties:
-      mail:
-#        debug: true
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
-
 # Logging
 logging:
   level:
@@ -48,8 +46,6 @@ logging:
 
 upload:
   path: "./data/images/"
-
-
 
 
 
