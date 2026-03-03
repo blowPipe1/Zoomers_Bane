@@ -30,6 +30,12 @@
     <div class="sorting-panel">
         <form action="/api/resumes/all" method="get" class="sort-form">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+            <input type="text" name="name"
+                   placeholder="<@spring.message "item-list.search.by-title"/>"
+                   value="${name!''}"
+                   style="margin-right: 10px; padding: 5px;">
+
             <label><@spring.message "item-list.sort"/></label>
             <select name="sort" onchange="this.form.submit()">
                 <option value="id" ${(RequestParameters.sort?? && RequestParameters.sort == 'id')?string('selected', '')}><@spring.message "item-list.sort.default"/></option>
@@ -94,7 +100,7 @@
             <ul class="pagination-list" style="display: flex; justify-content: center; list-style: none; gap: 10px; margin-top: 20px;">
                 <#if currentPage gt 0>
                     <li>
-                        <a href="?page=${currentPage - 1}&sort=${sort}&dir=${dir}">&laquo; <@spring.message "common.previous"/></a>
+                        <a href="?page=${currentPage - 1}&sort=${sort}&dir=${dir}&name=${name!''}">&laquo; <@spring.message "common.previous"/></a>
                     </li>
                 </#if>
                 <#list 0..totalPages-1 as i>
@@ -107,13 +113,13 @@
                 </#list>
                 <#if currentPage lt totalPages - 1>
                     <li>
-                        <a href="?page=${currentPage + 1}&sort=${sort}&dir=${dir}"><@spring.message "common.next"/> &raquo;</a>
+                        <a href="?page=${currentPage + 1}&sort=${sort}&dir=${dir}&name=${name!''}"><@spring.message "common.next"/> &raquo;</a>
                     </li>
                 </#if>
             </ul>
         </#if>
     </div>
 </div>
-
+<script src="<@spring.url '/js/resume-filter.js'/>"></script>
 </body>
 </html>

@@ -78,7 +78,7 @@
             <ul class="pagination-list" style="display: flex; justify-content: center; list-style: none; gap: 10px; margin-top: 20px;">
                 <#if currentPage gt 0>
                     <li>
-                        <a href="?page=${currentPage - 1}&sort=${sort}&dir=${dir}">&laquo; <@spring.message "common.previous"/></a>
+                        <a href="?page=${currentPage - 1}&sort=${sort}&dir=${dir}&name=${name!''}">&laquo; <@spring.message "common.previous"/></a>
                     </li>
                 </#if>
                 <#list 0..totalPages-1 as i>
@@ -91,7 +91,7 @@
                 </#list>
                 <#if currentPage lt totalPages - 1>
                     <li>
-                        <a href="?page=${currentPage + 1}&sort=${sort}&dir=${dir}"><@spring.message "common.next"/> &raquo;</a>
+                        <a href="?page=${currentPage + 1}&sort=${sort}&dir=${dir}&name=${name!''}"><@spring.message "common.next"/> &raquo;</a>
                     </li>
                 </#if>
             </ul>
