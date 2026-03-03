@@ -47,7 +47,6 @@ public class UserAccountController {
 
         model.addAttribute("user", currentUser);
 
-
         if (currentUser.getAccountType().equalsIgnoreCase("applicant")) {
             Page<ResumeDto> resumePage = resumeService.findResumeByCreator(currentUserA.getId(), pageable);
             model.addAttribute("itemsList", resumePage.getContent());
@@ -64,7 +63,6 @@ public class UserAccountController {
 
         return "dashboard";
     }
-
 
 
     @GetMapping("/edit")
@@ -94,15 +92,6 @@ public class UserAccountController {
         return "redirect:/api/users/dashboard";
     }
 
-
-
-    @DeleteMapping("")
-    public ResponseEntity<String> deleteUser(@PathVariable Integer id) {
-        userAccountService.deleteUser(id);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body("User successfully deleted");
-    }
 
     @PostMapping("/avatar")
     public String uploadAvatar(@AuthenticationPrincipal CustomUserDetails currentUserA, @RequestParam("file") MultipartFile file) {
