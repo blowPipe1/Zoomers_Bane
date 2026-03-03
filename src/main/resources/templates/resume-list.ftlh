@@ -59,8 +59,8 @@
                         <p><span><@spring.message "common.salary"/>: </span> ${resume.salary! 0}</p>
                         <p><@spring.message "common.status"/>:
                             <@spring.message resume.isActive?string('common.status-value.active', 'common.status-value.inactive')/> </p>
-                        <p><span><@spring.message "item-list.created"/>: </span> ${resume.createdDate! "N/A"}</p>
-                        <p><span><@spring.message "item-list.updated"/>: </span> ${resume.updateTime! "N/A"}</p>
+                        <p><span><@spring.message "item-list.created"/>: </span> ${resume.formattedCreatedDate}</p>
+                        <p><span><@spring.message "item-list.updated"/>: </span> ${resume.formattedUpdateTime}</p>
                     </div>
 
                     <div class="experience">
@@ -78,6 +78,9 @@
                         <#if resume.education?has_content>
                             <p><span><@spring.message "common.education.institution"/>: </span> ${resume.education[0].institution! "N/A"}</p>
                             <p><span><@spring.message "common.education.degree"/>: </span> ${resume.education[0].degree! "N/A"}</p>
+                            <p><span><@spring.message "common.education.program"/>: </span> ${resume.education[0].program! "N/A"}</p>
+                            <p><span><@spring.message "common.education.start-date"/>: </span> ${resume.education[0].formattedStartDate}</p>
+                            <p><span><@spring.message "common.education.end-date"/>: </span> ${resume.education[0].formattedEndDate}</p>
                         <#else>
                             <p><@spring.message "common.not-found"/></p>
                         </#if>

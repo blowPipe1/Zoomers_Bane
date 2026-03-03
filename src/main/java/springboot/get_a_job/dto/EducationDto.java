@@ -40,4 +40,15 @@ public class EducationDto {
     public boolean isValidDateRange() {
         return endDate.isAfter(startDate);
     }
+
+
+    public String getFormattedStartDate() {
+        if (startDate == null) return "N/A";
+        return startDate.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
+
+    public String getFormattedEndDate() {
+        if (endDate == null) return "N/A";
+        return endDate.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
 }

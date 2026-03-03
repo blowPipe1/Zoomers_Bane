@@ -53,4 +53,17 @@ public class VacancyDto {
     private LocalDateTime updateTime;
 
     private Integer applications;
+
+
+    public String getFormattedCreatedDate() {
+        if (createdDate == null) return "N/A";
+        return createdDate.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+    }
+
+    public String getFormattedUpdateTime() {
+        if (updateTime == null) return "N/A";
+        return updateTime.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+    }
 }
+
+

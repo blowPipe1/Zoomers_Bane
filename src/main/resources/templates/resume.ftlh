@@ -30,11 +30,11 @@
             </div>
             <div class="data-item">
                 <label><@spring.message "item-list.created"/></label>
-                <span>${resume.createdDate!'N/A'}</span>
+                <span>${resume.formattedCreatedDate}</span>
             </div>
             <div class="data-item">
                 <label><@spring.message "item-list.updated"/></label>
-                <span>${resume.updateTime!'N/A'}</span>
+                <span>${resume.formattedUpdateTime}</span>
             </div>
         </div>
     </div>
@@ -76,7 +76,7 @@
                 <div class="entry-card">
                     <div class="entry-header">
                         <span><strong><@spring.message "common.education.degree"/>: </strong> ${edu.degree}</span>
-                        <span>${edu.startDate} — ${(edu.endDate)!"Still on it"}</span>
+                        <span>${edu.formattedStartDate} — ${(edu.formattedEndDate)!"Still on it"}</span>
                     </div>
                     <div><strong><@spring.message "common.education.institution"/>: </strong> ${edu.institution}</div>
                     <div><strong><@spring.message "common.education.program"/>: </strong> ${edu.program}</div>

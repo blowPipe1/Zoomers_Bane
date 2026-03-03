@@ -30,15 +30,15 @@
             </div>
             <div class="data-item">
                 <label><@spring.message "vacancy.experience"/>(<@spring.message "common.years"/>)</label>
-                <span>from ${vacancy.expFrom!"N/A"} to ${vacancy.expTo!"N/A"}</span>
+                <span>from ${vacancy.expFrom! 0} to ${vacancy.expTo! 0}</span>
             </div>
             <div class="data-item">
                 <label><@spring.message "item-list.created"/></label>
-                <span>${vacancy.createdDate!'N/A'}</span>
+                <span>${vacancy.formattedCreatedDate}</span>
             </div>
             <div class="data-item">
                 <label><@spring.message "item-list.updated"/></label>
-                <span>${vacancy.updateTime!'N/A'}</span>
+                <span>${vacancy.formattedUpdateTime}</span>
             </div>
         </div>
     </div>

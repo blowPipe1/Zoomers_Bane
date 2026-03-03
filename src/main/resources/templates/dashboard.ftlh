@@ -65,6 +65,8 @@
                         <p><@spring.message "common.salary"/>: ${items.salary! 0}</p>
                         <p><@spring.message "common.status"/>:
                             <@spring.message items.isActive?string('common.status-value.active', 'common.status-value.inactive')/> </p>
+                        <p><@spring.message "item-list.created"/>: ${items.formattedCreatedDate}</p>
+                        <p><@spring.message "item-list.updated"/>: ${items.formattedUpdateTime}</p>
                         <div class="action"> <a href="/api/resumes/edit/${items.id}" style="text-decoration: none;"><@spring.message "common.edit-btn"/></a></div>
 
                     </div>
@@ -85,6 +87,8 @@
                         <p><@spring.message "common.status"/>:
                             <@spring.message items.isActive?string('common.status-value.active', 'common.status-value.inactive')/> </p>
                         <p><@spring.message "common.experience"/>: ${items.expFrom! 0} - ${items.expTo! 0} <@spring.message "common.years"/></p>
+                        <p><@spring.message "item-list.created"/>: ${items.formattedCreatedDate}</p>
+                        <p><@spring.message "item-list.updated"/>: ${items.formattedUpdateTime}</p>
                         <div class="action"> <a href="/api/vacancies/edit/${items.id}" style="text-decoration: none;"><@spring.message "common.edit-btn"/></a></div>
                     </div>
                 <#else>

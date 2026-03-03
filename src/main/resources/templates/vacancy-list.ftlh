@@ -59,8 +59,8 @@
                         <p><span><@spring.message "common.category"/>: </span> ${vacancy.category! "N/A"}</p>
                         <p><span><@spring.message "common.salary"/>: </span> ${vacancy.salary! 0}</p>
                         <p><span><@spring.message "vacancy-list.owner"/>: </span> ${vacancy.author! "N/A"}</p>
-                        <p><span><@spring.message "item-list.created"/>: </span> ${vacancy.createdDate! "N/A"}</p>
-                        <p><span><@spring.message "item-list.updated"/>: </span> ${vacancy.updateTime! "N/A"}</p>
+                        <p><span><@spring.message "item-list.created"/>: </span> ${vacancy.formattedCreatedDate}</p>
+                        <p><span><@spring.message "item-list.updated"/>: </span> ${vacancy.formattedUpdateTime}</p>
                         <p><span><@spring.message "common.applications"/>: </span> ${vacancy.applications! 0}</p>
                     </div>
                     <div class="meta-info">
