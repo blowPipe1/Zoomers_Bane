@@ -17,15 +17,15 @@
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <button type="submit" class="nav-link nav-logout"><@spring.message "common.logout"/></button>
             </form>
+            <span><@spring.message "common.language.select"/>:</span>
+            <a href="?lang=ru" style="margin-left: 10px; text-decoration: none;">RU</a>
+            <a href="?lang=en" style="margin-left: 10px; text-decoration: none;">EN</a>
         </div>
+
     </div>
 </nav>
 <div class="container">
-    <div style="text-align: right; margin-bottom: 20px;">
-        <span><@spring.message "common.language.select"/>:</span>
-        <a href="?lang=ru" style="margin-left: 10px; text-decoration: none;">RU</a>
-        <a href="?lang=en" style="margin-left: 10px; text-decoration: none;">EN</a>
-    </div>
+
         <h2><@spring.message "resume-list.body.header"/></h2>
     <div class="sorting-panel">
         <form action="/api/resumes/all" method="get" class="sort-form">
@@ -34,7 +34,7 @@
             <input type="text" name="name"
                    placeholder="<@spring.message "item-list.search.by-title"/>"
                    value="${name!''}"
-                   style="margin-right: 10px; padding: 5px;">
+                   class="search-input">
 
             <label><@spring.message "item-list.sort"/></label>
             <select name="sort" onchange="this.form.submit()">

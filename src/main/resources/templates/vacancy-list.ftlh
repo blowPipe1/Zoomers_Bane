@@ -17,16 +17,15 @@
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <button type="submit" class="nav-link nav-logout"><@spring.message "common.logout"/></button>
             </form>
+            <span><@spring.message "common.language.select"/>:</span>
+            <a href="?lang=ru" style="margin-left: 10px; text-decoration: none;">RU</a>
+            <a href="?lang=en" style="margin-left: 10px; text-decoration: none;">EN</a>
         </div>
     </div>
 </nav>
 
 <div class="container">
-    <div style="text-align: right; margin-bottom: 20px;">
-        <span><@spring.message "common.language.select"/>:</span>
-        <a href="?lang=ru" style="margin-left: 10px; text-decoration: none;">RU</a>
-        <a href="?lang=en" style="margin-left: 10px; text-decoration: none;">EN</a>
-    </div>
+
     <h2><@spring.message "vacancy-list.body.header"/></h2>
     <div class="sorting-panel">
         <form action="/api/vacancies/all" method="get" class="sort-form">
