@@ -29,4 +29,6 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Integer> {
     List<Vacancy> findAllByAuthorId(Integer authorId);
 
     List<Vacancy> findAllByAuthorNameContainingIgnoreCase(String name);
+
+    Page<Vacancy> findAllByIsActiveTrueAndNameContainingIgnoreCase(String name, Pageable pageable);
 }

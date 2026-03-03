@@ -31,6 +31,12 @@
     <div class="sorting-panel">
         <form action="/api/vacancies/all" method="get" class="sort-form">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+            <input type="text" name="name"
+                   placeholder="<@spring.message "item-list.search.by-title"/>"
+                   value="${RequestParameters.name!''}"
+                   class="search-input">
+
             <label><@spring.message "item-list.sort"/></label>
             <select name="sort" onchange="this.form.submit()">
                 <option value="id" ${(RequestParameters.sort?? && RequestParameters.sort == 'id')?string('selected', '')}><@spring.message "item-list.sort.default"/></option>
