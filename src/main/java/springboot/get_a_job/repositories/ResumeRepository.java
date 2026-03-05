@@ -23,6 +23,8 @@ public interface ResumeRepository extends JpaRepository<Resume, Integer> {
 
     Page<Resume> findAllByApplicantId(Integer applicantId, Pageable pageable);
 
+    Page<Resume> findAllByApplicantIdAndIsActiveTrue(Integer applicantId, Pageable pageable);
+
     List<Resume> findAllByApplicantId(Integer applicantId);
 
     List<Resume> findAllByApplicantNameContainingIgnoreCase(String name);

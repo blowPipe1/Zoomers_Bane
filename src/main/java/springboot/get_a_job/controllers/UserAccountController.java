@@ -104,5 +104,37 @@ public class UserAccountController {
             return (e.getMessage());
         }
     }
+
+    @GetMapping("/{userId}")
+    public String getUserById(
+            @PathVariable Integer userId,
+            Model model,
+            @PageableDefault(size = 3, sort = "id") Pageable pageable,
+            @AuthenticationPrincipal CustomUserDetails currentUserA){
+        if (userId.equals(currentUserA.getId())) {
+            return "redirect:/api/users/dashboard";
+        }
+
+        UserDto currentUser = userAccountService.findUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+
+        model.addAttribute("user", currentUser);
+
+        if (currentUser.getAccountType().equalsIgnoreCase("applicant")) {
+            Page<ResumeDto> resumePage = resumeService.findActiveResumesByCreator(userId, pageable);
+            model.addAttribute("itemsList", resumePage.getContent());
+            model.addAttribute("currentPage", resumePage.getNumber());
+            model.addAttribute("totalPages", resumePage.getTotalPages());
+            model.addAttribute("totalItems", resumePage.getTotalElements());
+        } else if (currentUser.getAccountType().equalsIgnoreCase("employer")) {
+            Page<VacancyDto> vacancyPage = vacancyService.findActiveVacanciesByCreator(userId, pageable);
+            model.addAttribute("itemsList", vacancyPage.getContent());
+            model.addAttribute("currentPage", vacancyPage.getNumber());
+            model.addAttribute("totalPages", vacancyPage.getTotalPages());
+            model.addAttribute("totalItems", vacancyPage.getTotalElements());
+        }
+
+        return "view-profile";
+    }
 }
 

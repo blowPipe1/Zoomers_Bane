@@ -31,6 +31,21 @@
     transition: transform 0.3s ease;
 }
 
+.avatar-wrapper-other {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.avatar-wrapper-other img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .avatar-wrapper:hover {
     transform: scale(1.03);
 }

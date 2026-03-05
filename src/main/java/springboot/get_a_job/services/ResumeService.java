@@ -14,6 +14,7 @@ public interface ResumeService {
     Page<ResumeDto> getAllActiveResumes(Pageable pageable, String name);
     Optional<ResumeDto>findResumeById(Integer id);
     Page<ResumeDto>findResumeByCreator(Integer applicant_id, Pageable pageable);
+    Page<ResumeDto> findActiveResumesByCreator(Integer applicantId, Pageable pageable);
     void createResume(ResumeDto resumeDto);
     Optional<Resume>findById(Integer id);
     List<ResumeDto> findAllByApplicantId(Integer applicantId);

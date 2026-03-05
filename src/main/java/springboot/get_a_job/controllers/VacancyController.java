@@ -16,8 +16,10 @@ import springboot.get_a_job.dto.*;
 import springboot.get_a_job.dto.validation.OnUpdate;
 import springboot.get_a_job.models.Category;
 import springboot.get_a_job.models.CustomUserDetails;
+import springboot.get_a_job.models.User;
 import springboot.get_a_job.services.CategoryService;
 import springboot.get_a_job.services.ResumeService;
+import springboot.get_a_job.services.UserAccountService;
 import springboot.get_a_job.services.VacancyService;
 
 import java.util.List;
@@ -31,6 +33,7 @@ public class VacancyController {
     private final VacancyService vacancyService;
     private final CategoryService categoryService;
     private final ResumeService resumeService;
+    private final UserAccountService userAccountService;
 
     @PostMapping("/create")
     public String createVacancy(
@@ -97,7 +100,9 @@ public class VacancyController {
                           Model model,
                           @AuthenticationPrincipal CustomUserDetails currentUser){
         VacancyDto vacancy = vacancyService.findVacancyById(vacancyId).orElseGet(null);
+        Integer creatorId = userAccountService.findByEmail(vacancy.getAuthor()).orElse(new User()).getId();
         model.addAttribute("vacancy", vacancy);
+        model.addAttribute("creatorId", creatorId);
 
         List<ResumeDto> userResumes = resumeService.findAllByApplicantId(currentUser.getId());
         model.addAttribute("userResumes", userResumes);

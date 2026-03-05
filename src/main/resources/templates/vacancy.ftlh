@@ -12,7 +12,9 @@
     <div class="profile-header">
         <div class="user-info">
             <h1>${vacancy.name}</h1>
-            <p><strong><@spring.message "vacancy.owner"/>: </strong> ${vacancy.author}</p>
+            <span><@spring.message "vacancy.owner"/>:
+                <a href="/api/users/${creatorId}" style="color: blue; text-decoration: none;">${vacancy.author}</a>
+            </span>
             <p><@spring.message "common.status"/>:
                 <@spring.message vacancy.isActive?string('common.status-value.active', 'common.status-value.inactive')/> </p>
         </div>

@@ -14,6 +14,7 @@ public interface VacancyService {
     Page<VacancyDto> getAllActiveVacancies(Pageable pageable, String name);
     Optional<VacancyDto>findVacancyById(Integer id);
     Page<VacancyDto> findVacancyByCreator(Integer applicant_id, Pageable pageable);
+    Page<VacancyDto> findActiveVacanciesByCreator(Integer authorId, Pageable pageable);
     List<VacancyDto> findAllByAuthorId(Integer authorId);
     Vacancy convertIntoModel(VacancyDto dto);
 }

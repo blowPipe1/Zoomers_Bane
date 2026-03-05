@@ -102,6 +102,12 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
+    public Page<VacancyDto> findActiveVacanciesByCreator(Integer authorId, Pageable pageable) {
+        Page<Vacancy> vacancies = vacancyRepository.findAllByAuthorIdAndIsActiveTrue(authorId, pageable);
+        return vacancies.map(this::convertToDto);
+    }
+
+    @Override
     public List<VacancyDto> findAllByAuthorId(Integer authorId){
         return vacancyRepository.findAllByAuthorId(authorId)
                 .stream()

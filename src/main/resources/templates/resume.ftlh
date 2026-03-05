@@ -12,7 +12,10 @@
     <div class="profile-header">
         <div class="user-info">
             <h1>${resume.name}</h1>
-            <p><strong><@spring.message "common.category"/>: </strong> ${resume.category}</p>
+            <span><@spring.message "resume.applicant"/>:
+                <a href="/api/users/${creatorId}" style="color: blue; text-decoration: none;">${resume.applicantEmail}</a>
+            </span>
+
             <p><@spring.message "common.status"/>:
                 <@spring.message resume.isActive?string('common.status-value.active', 'common.status-value.inactive')/> </p>
         </div>
@@ -22,7 +25,7 @@
         <div class="info-grid">
             <div class="data-item">
                 <label><@spring.message "resume.applicant"/></label>
-                <span>${resume.applicantEmail}</span>
+                <span><@spring.message "common.category"/>: ${resume.category}</span>
             </div>
             <div class="data-item">
                 <label><@spring.message "resume.salary"/></label>
@@ -36,6 +39,7 @@
                 <label><@spring.message "item-list.updated"/></label>
                 <span>${resume.formattedUpdateTime}</span>
             </div>
+
         </div>
     </div>
 

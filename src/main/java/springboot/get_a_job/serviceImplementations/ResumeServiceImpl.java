@@ -131,6 +131,12 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    public Page<ResumeDto> findActiveResumesByCreator(Integer applicantId, Pageable pageable) {
+        Page<Resume> resumes = resumeRepository.findAllByApplicantIdAndIsActiveTrue(applicantId, pageable);
+        return resumes.map(this::convertIntoDto) ;
+    }
+
+    @Override
     public Optional<Resume>findById(Integer id){
         return resumeRepository.findById(id);
     }

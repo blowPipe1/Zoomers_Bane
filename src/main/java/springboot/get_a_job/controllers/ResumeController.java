@@ -20,6 +20,7 @@ import springboot.get_a_job.dto.*;
 import springboot.get_a_job.dto.validation.OnUpdate;
 import springboot.get_a_job.models.Category;
 import springboot.get_a_job.models.CustomUserDetails;
+import springboot.get_a_job.models.User;
 import springboot.get_a_job.services.*;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class ResumeController {
     private final CategoryService categoryService;
     private final ResumeService resumeService;
     private final ContactInfoService contactInfoService;
+    private final UserAccountService userAccountService;
 
     @GetMapping("/form")
     public String showCreateForm(Model model) {
@@ -143,9 +145,11 @@ public class ResumeController {
     }
 
     @GetMapping("/{resumeId}")
-    public String getRusumeById(@PathVariable Integer resumeId, Model model) {
+    public String getResumeById(@PathVariable Integer resumeId, Model model) {
         ResumeDto resume = resumeService.findResumeById(resumeId).orElseGet(null);
+        Integer creatorId = userAccountService.findByEmail(resume.getApplicantEmail()).orElse(new User()).getId();
         model.addAttribute("resume", resume);
+        model.addAttribute("creatorId", creatorId);
         return "resume";
     }
 

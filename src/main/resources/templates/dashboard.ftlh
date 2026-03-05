@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><@spring.message "common.profile"/></title>
+    <title><@spring.message "common.profile.your"/></title>
     <link rel="stylesheet" href="<@spring.url '/css/dashboard.css'/>">
 </head>
 <body>
@@ -15,7 +15,7 @@
             <a href="?lang=en" style="margin-left: 10px;">EN</a>
         </div>
 
-        <h2><@spring.message "common.profile"/></h2>
+        <h2><@spring.message "common.profile.your"/></h2>
         <div class="profile-header">
             <div class="user-avatar-container">
                 <form id="avatarForm" action="/api/users/avatar" method="post" enctype="multipart/form-data" class="avatar-form">
