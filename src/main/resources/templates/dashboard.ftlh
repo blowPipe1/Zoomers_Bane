@@ -11,8 +11,8 @@
     <div class="container">
         <div style="text-align: right; margin-bottom: 20px;">
             <span><@spring.message "common.language.select"/>:</span>
-            <a href="?lang=ru" style="margin-left: 10px; text-decoration: none;">RU</a>
-            <a href="?lang=en" style="margin-left: 10px; text-decoration: none;">EN</a>
+            <a href="?lang=ru" style="margin-left: 10px;">RU</a>
+            <a href="?lang=en" style="margin-left: 10px;">EN</a>
         </div>
 
         <h2><@spring.message "common.profile"/></h2>
@@ -39,19 +39,33 @@
             </div>
 
             <div class="actions">
-                <div class="action"> <a href="/api/responses/" style="text-decoration: none;"><@spring.message "dashboard.actions.responses"/></a></div>
+                <a href="/api/responses/">
+                    <div class="action"><@spring.message "dashboard.actions.responses"/></div>
+                </a>
                 <#if (user.accountType! "")?lower_case == "applicant">
-                    <div class="action"> <a href="/api/resumes/form" style="text-decoration: none;"><@spring.message "dashboard.actions.create-resume"/></a></div>
-                    <div class="action"> <a href="/api/vacancies/all" style="text-decoration: none;"><@spring.message "common.vacancies"/></a></div>
+                    <a href="/api/resumes/form">
+                        <div class="action"><@spring.message "dashboard.actions.create-resume"/></div>
+                    </a>
+                    <a href="/api/vacancies/all">
+                        <div class="action"><@spring.message "common.vacancies"/></div>
+                    </a>
                 <#elseif (user.accountType! "")?lower_case == "employer">
-                    <div class="action"> <a href="/api/vacancies/form" style="text-decoration: none;"><@spring.message "dashboard.actions.create-vacancy"/></a></div>
-                    <div class="action"> <a href="/api/resumes/all" style="text-decoration: none;"><@spring.message "common.resumes"/></a></div>
+                    <a href="/api/vacancies/form">
+                        <div class="action"><@spring.message "dashboard.actions.create-vacancy"/></div>
+                    </a>
+                    <a href="/api/resumes/all">
+                        <div class="action"><@spring.message "common.resumes"/></div>
+                    </a>
                 </#if>
-                <div class="action"> <a href="/api/users/edit" style="text-decoration: none;"><@spring.message "common.edit-btn"/></a></div>
-                <div class="action"><form action="/logout" method="post" class="nav-form">
+                <a href="/api/users/edit">
+                    <div class="action"><@spring.message "common.edit-btn"/></div>
+                </a>
+                <form action="/logout" method="post" class="nav-form">
+                    <div class="action">
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                        <button type="submit" class="btn-reset"><@spring.message "common.logout"/></button>
-                    </form></div>
+                        <button type="submit" class="btn-reset" style="color: inherit"><@spring.message "common.logout"/></button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -61,13 +75,11 @@
                 <#list itemsList![] as items>
                     <div class="resume-card">
                         <h3>${items.name! ""}</h3>
-                        <p><@spring.message "common.category"/>: ${items.category! ""}</p>
-                        <p><@spring.message "common.salary"/>: ${items.salary! 0}</p>
-                        <p><@spring.message "common.status"/>:
-                            <@spring.message items.isActive?string('common.status-value.active', 'common.status-value.inactive')/> </p>
-                        <p><@spring.message "item-list.created"/>: ${items.formattedCreatedDate}</p>
                         <p><@spring.message "item-list.updated"/>: ${items.formattedUpdateTime}</p>
-                        <div class="action"> <a href="/api/resumes/edit/${items.id}" style="text-decoration: none;"><@spring.message "common.edit-btn"/></a></div>
+                        <div style="display: flex; flex-direction: row; gap: 10px; width: 100%; box-sizing: border-box;" >
+                            <a href="/api/resumes/edit/${items.id}" style="flex: 1;"><div class="card-action" style="text-align: center;"> <@spring.message "common.edit-btn"/> </div></a>
+                            <a href="javascript:location.reload();" style="flex: 1;"><div class="card-action" style="text-align: center;"> <@spring.message "common.update-btn"/> </div></a>
+                        </div>
 
                     </div>
                 <#else>
@@ -82,14 +94,11 @@
                 <#list itemsList![] as items>
                     <div class="vacancy-card">
                         <h3>${items.name! "Vacancy's Title"}</h3>
-                        <p><@spring.message "common.category"/>: ${items.category! ""}</p>
-                        <p><@spring.message "common.salary"/>: ${items.salary! 0}</p>
-                        <p><@spring.message "common.status"/>:
-                            <@spring.message items.isActive?string('common.status-value.active', 'common.status-value.inactive')/> </p>
-                        <p><@spring.message "common.experience"/>: ${items.expFrom! 0} - ${items.expTo! 0} <@spring.message "common.years"/></p>
-                        <p><@spring.message "item-list.created"/>: ${items.formattedCreatedDate}</p>
                         <p><@spring.message "item-list.updated"/>: ${items.formattedUpdateTime}</p>
-                        <div class="action"> <a href="/api/vacancies/edit/${items.id}" style="text-decoration: none;"><@spring.message "common.edit-btn"/></a></div>
+                        <div style="display: flex; flex-direction: row; gap: 10px; width: 100%; box-sizing: border-box;" >
+                            <a href="/api/vacancies/edit/${items.id}" style="flex: 1;"><div class="card-action" style="text-align: center;"> <@spring.message "common.edit-btn"/> </div></a>
+                            <a href="javascript:location.reload();" style="flex: 1;"><div class="card-action" style="text-align: center;"> <@spring.message "common.update-btn"/> </div></a>
+                        </div>
                     </div>
                 <#else>
                     <div class="empty-state">

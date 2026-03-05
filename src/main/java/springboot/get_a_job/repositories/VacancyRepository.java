@@ -14,8 +14,6 @@ import java.util.List;
 public interface VacancyRepository extends JpaRepository<Vacancy, Integer> {
     Page<Vacancy> findAllByIsActiveTrue(Pageable pageable);
 
-    List<Vacancy> findAllByCategoryNameContainingIgnoreCase(String categoryName);
-
     List<Vacancy> findAllByCategoryId(Integer categoryId);
 
     @Query("SELECT v FROM Vacancy v " +

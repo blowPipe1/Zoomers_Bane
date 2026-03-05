@@ -117,12 +117,15 @@ public class ResumeController {
     @GetMapping("/all")
     public String getAllActiveResumes(
             Model model,
-            @PageableDefault(size = 9, sort = "id") Pageable pageable,
-            @RequestParam(defaultValue = "id") String sort,
-            @RequestParam(defaultValue = "asc") String dir,
+            @PageableDefault(size = 9) Pageable pageable,
+            @RequestParam(defaultValue = "createdDate") String sort,
+            @RequestParam(defaultValue = "desc") String dir,
             @RequestParam(required = false) String name) {
 
-        Sort sortOrder = dir.equalsIgnoreCase("desc") ? Sort.by(sort).descending() : Sort.by(sort).ascending();
+        Sort sortOrder = dir.equalsIgnoreCase("desc")
+                ? Sort.by(sort).descending()
+                : Sort.by(sort).ascending();
+
         Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortOrder);
 
         Page<ResumeDto> resumePage = resumeService.getAllActiveResumes(pageRequest, name);
@@ -131,6 +134,7 @@ public class ResumeController {
         model.addAttribute("currentPage", resumePage.getNumber());
         model.addAttribute("totalPages", resumePage.getTotalPages());
         model.addAttribute("totalItems", resumePage.getTotalElements());
+
         model.addAttribute("sort", sort);
         model.addAttribute("dir", dir);
         model.addAttribute("name", name);

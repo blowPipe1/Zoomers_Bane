@@ -11,7 +11,7 @@
 <div class="container">
     <div class="header">
         <h1><@spring.message "user-applications.title"/></h1>
-        <a href="/api/vacancies/all" style="text-decoration: none; color: #6c757d; font-size: 14px;"><@spring.message "common.back-to-list"/></a>
+        <a href="/api/users/dashboard" style="text-decoration: none; color: #6c757d; font-size: 14px;"><@spring.message "common.dashboard"/></a>
     </div>
 
     <#list applications as app>
