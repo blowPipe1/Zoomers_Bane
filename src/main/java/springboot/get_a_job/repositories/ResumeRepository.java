@@ -35,5 +35,12 @@ public interface ResumeRepository extends JpaRepository<Resume, Integer> {
     @Query("SELECT r.id FROM Resume r WHERE r.name ILIKE :name")
     Optional<Integer> findIdByName(@Param("name") String name);
 
-    Page<Resume> findAllByIsActiveTrueAndNameContainingIgnoreCase(Pageable pageable, String name);
+
+    @Query("SELECT r FROM Resume r JOIN r.category c " +
+            "WHERE r.isActive = true " +
+            "AND (:name IS NULL OR LOWER(r.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
+            "AND (:category IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :category, '%')))")
+    Page<Resume> searchResumes(@Param("name") String name,
+                               @Param("category") String category,
+                               Pageable pageable);
 }

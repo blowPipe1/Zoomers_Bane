@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface ResumeService {
     void updateResume(Integer id, ResumeDto resumeDto);
     void deleteResume(Integer id);
-    Page<ResumeDto> getAllActiveResumes(Pageable pageable, String name);
+    Page<ResumeDto> getAllActiveResumes(Pageable pageable, String name, String category);
     Optional<ResumeDto>findResumeById(Integer id);
     Page<ResumeDto>findResumeByCreator(Integer applicant_id, Pageable pageable);
     Page<ResumeDto> findActiveResumesByCreator(Integer applicantId, Pageable pageable);

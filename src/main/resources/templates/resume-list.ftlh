@@ -36,6 +36,18 @@
                    value="${name!''}"
                    class="search-input">
 
+            <div class="search-group">
+                <label for="category"><@spring.message "item-list.search.by-title"/></label>
+                <select name="category" id="category" class="form-control search-input" onchange="this.form.submit()">
+                    <option value="">None</option>
+                    <#list categories?keys as key>
+                        <option value="${key}" ${(category?? && category == key)?string('selected', '')}>
+                            ${categories[key]}
+                        </option>
+                    </#list>
+                </select>
+            </div>
+
             <label><@spring.message "item-list.sort"/></label>
             <select name="sort" onchange="this.form.submit()">
                 <option value="id" ${(RequestParameters.sort?? && RequestParameters.sort == 'id')?string('selected', '')}><@spring.message "item-list.sort.default"/></option>
@@ -95,6 +107,8 @@
                     </div>
                 </div>
             </a>
+            <#else>
+                <p style="text-align: center"><@spring.message "resume-list.content.notfound"/></p>
         </#list>
     </div>
 
@@ -103,12 +117,12 @@
             <ul class="pagination-list" style="display: flex; justify-content: center; list-style: none; gap: 10px; margin-top: 20px;">
                 <#if currentPage gt 0>
                     <li>
-                        <a href="?page=${currentPage - 1}&sort=${sort}&dir=${dir}&name=${name!''}">&laquo; <@spring.message "common.previous"/></a>
+                        <a href="?page=${currentPage - 1}&sort=${sort}&dir=${dir}&name=${name!''}&category=${category!''}">&laquo; <@spring.message "common.previous"/></a>
                     </li>
                 </#if>
                 <#list 0..totalPages-1 as i>
                     <li>
-                        <a href="?page=${i}&sort=${sort}&dir=${dir}"
+                        <a href="?page=${i}&sort=${sort}&dir=${dir}&name=${name!''}&category=${category!''}"
                            class="${(i == currentPage)?string('active-page', '')}">
                             ${i + 1}
                         </a>
@@ -116,7 +130,7 @@
                 </#list>
                 <#if currentPage lt totalPages - 1>
                     <li>
-                        <a href="?page=${currentPage + 1}&sort=${sort}&dir=${dir}&name=${name!''}"><@spring.message "common.next"/> &raquo;</a>
+                        <a href="?page=${currentPage + 1}&sort=${sort}&dir=${dir}&name=${name!''}&category=${category!''}"><@spring.message "common.next"/> &raquo;</a>
                     </li>
                 </#if>
             </ul>

@@ -109,14 +109,12 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public Page<ResumeDto> getAllActiveResumes(Pageable pageable, String name) {
-        if (name != null && !name.trim().isEmpty()) {
-            Page<Resume> resumePage = resumeRepository.findAllByIsActiveTrueAndNameContainingIgnoreCase(pageable, name);
-            return resumePage.map(this::convertIntoDto);
-        } else {
-            Page<Resume> resumePage = resumeRepository.findAllByIsActiveTrue(pageable);
-            return resumePage.map(this::convertIntoDto);
-        }
+    public Page<ResumeDto> getAllActiveResumes(Pageable pageable, String name, String category) {
+        String searchName = (name != null && !name.isBlank()) ? name : null;
+        String searchCat = (category != null && !category.isBlank()) ? category : null;
+
+        return resumeRepository.searchResumes(searchName, searchCat, pageable)
+                .map(this::convertIntoDto);
     }
 
     @Override
