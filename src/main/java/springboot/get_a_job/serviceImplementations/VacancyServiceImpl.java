@@ -111,6 +111,13 @@ public class VacancyServiceImpl implements VacancyService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void refreshVacancy(Integer vacancyId){
+        if (vacancyRepository.findById(vacancyId).isPresent()) {
+            vacancyRepository.refreshVacancy(vacancyId, LocalDateTime.now());
+        }
+    }
+
     private List<VacancyDto> convertList(List<Vacancy> vacancies) {
         return vacancies.stream()
                 .map(this::convertToDto)

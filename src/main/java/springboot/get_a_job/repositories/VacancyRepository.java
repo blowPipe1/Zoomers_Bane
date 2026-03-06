@@ -3,11 +3,14 @@ package springboot.get_a_job.repositories;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import springboot.get_a_job.models.Vacancy;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -42,4 +45,9 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Integer> {
             @Param("category") String category,
             Pageable pageable
     );
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Vacancy r SET r.updateTime = :now WHERE r.id = :id")
+    void refreshVacancy(@Param("id") Integer id, @Param("now") LocalDateTime now);
 }

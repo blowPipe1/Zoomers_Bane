@@ -17,4 +17,5 @@ public interface VacancyService {
     Page<VacancyDto> findActiveVacanciesByCreator(Integer authorId, Pageable pageable);
     List<VacancyDto> findAllByAuthorId(Integer authorId);
     Vacancy convertIntoModel(VacancyDto dto);
+    void refreshVacancy(Integer vacancyId);
 }

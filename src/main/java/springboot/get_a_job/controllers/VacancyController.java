@@ -6,12 +6,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import springboot.get_a_job.dto.*;
 import springboot.get_a_job.dto.validation.OnUpdate;
 import springboot.get_a_job.models.Category;
@@ -113,7 +115,7 @@ public class VacancyController {
     public String getAllActiveVacancies(
             Model model,
             @PageableDefault(size = 9) Pageable pageable,
-            @RequestParam(defaultValue = "createdDate") String sort,
+            @RequestParam(defaultValue = "updateTime") String sort,
             @RequestParam(defaultValue = "desc") String dir,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String category) {
@@ -138,6 +140,21 @@ public class VacancyController {
         model.addAttribute("category", category);
 
         return "vacancy-list";
+    }
+
+    @GetMapping("/refresh/{vacancyId}")
+    public String refreshVacancy(
+            @PathVariable Integer vacancyId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        VacancyDto original = vacancyService.findVacancyById(vacancyId).orElseThrow();
+        if (!original.getAuthor().equals(userDetails.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        vacancyService.refreshVacancy(vacancyId);
+
+        return "redirect:/api/users/dashboard";
     }
 
     private Map<String, String> getCategoriesMap() {

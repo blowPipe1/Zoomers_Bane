@@ -54,6 +54,7 @@
                 <option value="salary" ${(RequestParameters.sort?? && RequestParameters.sort == 'salary')?string('selected', '')}><@spring.message "item-list.sort.by-salary"/></option>
                 <option value="name" ${(RequestParameters.sort?? && RequestParameters.sort == 'name')?string('selected', '')}><@spring.message "item-list.sort.by-title"/></option>
                 <option value="createdDate" ${(RequestParameters.sort?? && RequestParameters.sort == 'createdDate')?string('selected', '')}><@spring.message "item-list.sort.by-date"/></option>
+                <option value="updateTime" ${(RequestParameters.sort?? && RequestParameters.sort == 'updateTime')?string('selected', '')}><@spring.message "item-list.sort.by-update-time"/></option>
             </select>
             <select name="dir" onchange="this.form.submit()">
                 <option value="asc" ${(RequestParameters.dir?? && RequestParameters.dir == 'asc')?string('selected', '')}><@spring.message "item-list.sort.asc"/></option>

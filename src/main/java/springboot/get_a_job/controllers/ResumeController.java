@@ -120,7 +120,7 @@ public class ResumeController {
     public String getAllActiveResumes(
             Model model,
             @PageableDefault(size = 9) Pageable pageable,
-            @RequestParam(defaultValue = "createdDate") String sort,
+            @RequestParam(defaultValue = "updateTime") String sort,
             @RequestParam(defaultValue = "desc") String dir,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String category) {
