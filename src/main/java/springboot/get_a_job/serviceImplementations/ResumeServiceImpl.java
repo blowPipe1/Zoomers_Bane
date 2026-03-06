@@ -109,14 +109,12 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
-    public Page<ResumeDto> getAllActiveResumes(Pageable pageable, String name) {
-        if (name != null && !name.trim().isEmpty()) {
-            Page<Resume> resumePage = resumeRepository.findAllByIsActiveTrueAndNameContainingIgnoreCase(pageable, name);
-            return resumePage.map(this::convertIntoDto);
-        } else {
-            Page<Resume> resumePage = resumeRepository.findAllByIsActiveTrue(pageable);
-            return resumePage.map(this::convertIntoDto);
-        }
+    public Page<ResumeDto> getAllActiveResumes(Pageable pageable, String name, String category) {
+        String searchName = (name != null && !name.isBlank()) ? name : null;
+        String searchCat = (category != null && !category.isBlank()) ? category : null;
+
+        return resumeRepository.searchResumes(searchName, searchCat, pageable)
+                .map(this::convertIntoDto);
     }
 
     @Override
@@ -131,6 +129,12 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    public Page<ResumeDto> findActiveResumesByCreator(Integer applicantId, Pageable pageable) {
+        Page<Resume> resumes = resumeRepository.findAllByApplicantIdAndIsActiveTrue(applicantId, pageable);
+        return resumes.map(this::convertIntoDto) ;
+    }
+
+    @Override
     public Optional<Resume>findById(Integer id){
         return resumeRepository.findById(id);
     }
@@ -140,6 +144,13 @@ public class ResumeServiceImpl implements ResumeService {
         return resumeRepository.findAllByApplicantId(applicantId)
                 .stream()
                 .map(this::convertIntoDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public void refreshResume(Integer resumeId){
+        if (resumeRepository.findById(resumeId).isPresent()) {
+            resumeRepository.refreshResume(resumeId, LocalDateTime.now());
+        }
     }
 
     private List<ResumeDto> convertList(List<Resume> resumes) {

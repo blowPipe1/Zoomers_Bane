@@ -20,6 +20,7 @@ import springboot.get_a_job.dto.*;
 import springboot.get_a_job.dto.validation.OnUpdate;
 import springboot.get_a_job.models.Category;
 import springboot.get_a_job.models.CustomUserDetails;
+import springboot.get_a_job.models.User;
 import springboot.get_a_job.services.*;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class ResumeController {
     private final CategoryService categoryService;
     private final ResumeService resumeService;
     private final ContactInfoService contactInfoService;
+    private final UserAccountService userAccountService;
 
     @GetMapping("/form")
     public String showCreateForm(Model model) {
@@ -118,9 +120,10 @@ public class ResumeController {
     public String getAllActiveResumes(
             Model model,
             @PageableDefault(size = 9) Pageable pageable,
-            @RequestParam(defaultValue = "createdDate") String sort,
+            @RequestParam(defaultValue = "updateTime") String sort,
             @RequestParam(defaultValue = "desc") String dir,
-            @RequestParam(required = false) String name) {
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String category) {
 
         Sort sortOrder = dir.equalsIgnoreCase("desc")
                 ? Sort.by(sort).descending()
@@ -128,7 +131,7 @@ public class ResumeController {
 
         Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortOrder);
 
-        Page<ResumeDto> resumePage = resumeService.getAllActiveResumes(pageRequest, name);
+        Page<ResumeDto> resumePage = resumeService.getAllActiveResumes(pageRequest, name, category);
 
         model.addAttribute("resumes", resumePage.getContent());
         model.addAttribute("currentPage", resumePage.getNumber());
@@ -138,15 +141,35 @@ public class ResumeController {
         model.addAttribute("sort", sort);
         model.addAttribute("dir", dir);
         model.addAttribute("name", name);
+        model.addAttribute("categories", getCategoriesMap());
+        model.addAttribute("category", category);
 
         return "resume-list";
     }
 
     @GetMapping("/{resumeId}")
-    public String getRusumeById(@PathVariable Integer resumeId, Model model) {
+    public String getResumeById(@PathVariable Integer resumeId, Model model) {
         ResumeDto resume = resumeService.findResumeById(resumeId).orElseGet(null);
+        Integer creatorId = userAccountService.findByEmail(resume.getApplicantEmail()).orElse(new User()).getId();
         model.addAttribute("resume", resume);
+        model.addAttribute("creatorId", creatorId);
         return "resume";
+    }
+
+
+    @GetMapping("/refresh/{resumeId}")
+    public String refreshResume(
+            @PathVariable Integer resumeId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        ResumeDto original = resumeService.findResumeById(resumeId).orElseThrow();
+        if (!original.getApplicantEmail().equals(userDetails.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        resumeService.refreshResume(resumeId);
+
+        return "redirect:/api/users/dashboard";
     }
 
     private Map<String, String> getContactTypesMap() {

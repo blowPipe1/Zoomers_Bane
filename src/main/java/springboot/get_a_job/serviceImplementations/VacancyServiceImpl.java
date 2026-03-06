@@ -78,16 +78,12 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public Page<VacancyDto> getAllActiveVacancies(Pageable pageable, String name) {
-        Page<Vacancy> vacancyPage;
+    public Page<VacancyDto> getAllActiveVacancies(Pageable pageable, String name, String category) {
+        String searchName = (name != null && !name.isBlank()) ? name : null;
+        String searchCat = (category != null && !category.isBlank()) ? category : null;
 
-        if (name != null && !name.trim().isEmpty()) {
-            vacancyPage = vacancyRepository.findAllByIsActiveTrueAndNameContainingIgnoreCase(name, pageable);
-        } else {
-            vacancyPage = vacancyRepository.findAllByIsActiveTrue(pageable);
-        }
-
-        return vacancyPage.map(this::convertToDto);
+        return vacancyRepository.searchVacancies(searchName, searchCat, pageable)
+                .map(this::convertToDto);
     }
 
     @Override
@@ -102,11 +98,24 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
+    public Page<VacancyDto> findActiveVacanciesByCreator(Integer authorId, Pageable pageable) {
+        Page<Vacancy> vacancies = vacancyRepository.findAllByAuthorIdAndIsActiveTrue(authorId, pageable);
+        return vacancies.map(this::convertToDto);
+    }
+
+    @Override
     public List<VacancyDto> findAllByAuthorId(Integer authorId){
         return vacancyRepository.findAllByAuthorId(authorId)
                 .stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void refreshVacancy(Integer vacancyId){
+        if (vacancyRepository.findById(vacancyId).isPresent()) {
+            vacancyRepository.refreshVacancy(vacancyId, LocalDateTime.now());
+        }
     }
 
     private List<VacancyDto> convertList(List<Vacancy> vacancies) {

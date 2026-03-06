@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springboot.get_a_job.dto.ApplicantResponseDto;
 import springboot.get_a_job.dto.ResumeDto;
+import springboot.get_a_job.dto.UserDto;
 import springboot.get_a_job.dto.VacancyDto;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
+import springboot.get_a_job.exceptions.UserNotFoundException;
 import springboot.get_a_job.exceptions.VacancyNotFoundException;
 import springboot.get_a_job.models.Message;
 import springboot.get_a_job.models.RespondedApplicant;
@@ -14,6 +16,7 @@ import springboot.get_a_job.repositories.MessageRepository;
 import springboot.get_a_job.repositories.RespondedApplicantRepository;
 import springboot.get_a_job.services.RespondedApplicantService;
 import springboot.get_a_job.services.ResumeService;
+import springboot.get_a_job.services.UserAccountService;
 import springboot.get_a_job.services.VacancyService;
 
 import java.time.LocalDateTime;
@@ -26,6 +29,7 @@ public class RespondedApplicantServiceImpl implements RespondedApplicantService 
     private final MessageRepository messageRepository;
     private final VacancyService vacancyService;
     private final ResumeService resumeService;
+    private final UserAccountService userAccountService;
 
     @Override
     @Transactional
@@ -64,7 +68,12 @@ public class RespondedApplicantServiceImpl implements RespondedApplicantService 
 
     @Override
     public List<RespondedApplicant> getApplicationsForUser(Integer userId){
-        return respondedApplicantRepository.findByResume_Applicant_Id(userId);
+        UserDto user = userAccountService.findUserById(userId).orElseThrow();
+        if (user.getAccountType().equalsIgnoreCase("applicant")) {
+            return respondedApplicantRepository.findByResume_Applicant_Id(userId);
+        } else {
+            return respondedApplicantRepository.findByVacancy_Author_Id(userId);
+        }
     }
 
     @Override

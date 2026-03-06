@@ -36,12 +36,25 @@
                    value="${RequestParameters.name!''}"
                    class="search-input">
 
+            <div class="search-group">
+                <label for="category"><@spring.message "item-list.search.by-category"/></label>
+                <select name="category" id="category" class="form-control search-input" onchange="this.form.submit()">
+                    <option value=""><@spring.message "item-list.sort.default"/></option>
+                    <#list categories?keys as key>
+                        <option value="${key}" ${(category?? && category == key)?string('selected', '')}>
+                            ${categories[key]}
+                        </option>
+                    </#list>
+                </select>
+            </div>
+
             <label><@spring.message "item-list.sort"/></label>
             <select name="sort" onchange="this.form.submit()">
                 <option value="id" ${(RequestParameters.sort?? && RequestParameters.sort == 'id')?string('selected', '')}><@spring.message "item-list.sort.default"/></option>
                 <option value="salary" ${(RequestParameters.sort?? && RequestParameters.sort == 'salary')?string('selected', '')}><@spring.message "item-list.sort.by-salary"/></option>
                 <option value="name" ${(RequestParameters.sort?? && RequestParameters.sort == 'name')?string('selected', '')}><@spring.message "item-list.sort.by-title"/></option>
                 <option value="createdDate" ${(RequestParameters.sort?? && RequestParameters.sort == 'createdDate')?string('selected', '')}><@spring.message "item-list.sort.by-date"/></option>
+                <option value="updateTime" ${(RequestParameters.sort?? && RequestParameters.sort == 'updateTime')?string('selected', '')}><@spring.message "item-list.sort.by-update-time"/></option>
                 <option value="applications" ${(RequestParameters.sort?? && RequestParameters.sort == 'applications')?string('selected', '')}><@spring.message "item-list.sort.by-applications"/></option>
             </select>
             <select name="dir" onchange="this.form.submit()">
@@ -70,6 +83,8 @@
                     </div>
                 </div>
             </a>
+            <#else>
+                <p style="text-align: center"><@spring.message "vacancy-list.content.notfound"/></p>
         </#list>
     </div>
     <div class="pagination">
@@ -77,12 +92,12 @@
             <ul class="pagination-list" style="display: flex; justify-content: center; list-style: none; gap: 10px; margin-top: 20px;">
                 <#if currentPage gt 0>
                     <li>
-                        <a href="?page=${currentPage - 1}&sort=${sort}&dir=${dir}&name=${name!''}">&laquo; <@spring.message "common.previous"/></a>
+                        <a href="?page=${currentPage - 1}&sort=${sort}&dir=${dir}&name=${name!''}&category=${category!''}">&laquo; <@spring.message "common.previous"/></a>
                     </li>
                 </#if>
                 <#list 0..totalPages-1 as i>
                     <li>
-                        <a href="?page=${i}&sort=${sort}&dir=${dir}"
+                        <a href="?page=${i}&sort=${sort}&dir=${dir}&name=${name!''}&category=${category!''}"
                            style="${(i == currentPage)?string('font-weight: bold; text-decoration: underline;', '')}">
                             ${i + 1}
                         </a>
@@ -90,7 +105,7 @@
                 </#list>
                 <#if currentPage lt totalPages - 1>
                     <li>
-                        <a href="?page=${currentPage + 1}&sort=${sort}&dir=${dir}&name=${name!''}"><@spring.message "common.next"/> &raquo;</a>
+                        <a href="?page=${currentPage + 1}&sort=${sort}&dir=${dir}&name=${name!''}&category=${category!''}"><@spring.message "common.next"/> &raquo;</a>
                     </li>
                 </#if>
             </ul>

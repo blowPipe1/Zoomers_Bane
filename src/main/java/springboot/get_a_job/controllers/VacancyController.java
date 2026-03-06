@@ -6,18 +6,22 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import springboot.get_a_job.dto.*;
 import springboot.get_a_job.dto.validation.OnUpdate;
 import springboot.get_a_job.models.Category;
 import springboot.get_a_job.models.CustomUserDetails;
+import springboot.get_a_job.models.User;
 import springboot.get_a_job.services.CategoryService;
 import springboot.get_a_job.services.ResumeService;
+import springboot.get_a_job.services.UserAccountService;
 import springboot.get_a_job.services.VacancyService;
 
 import java.util.List;
@@ -31,6 +35,7 @@ public class VacancyController {
     private final VacancyService vacancyService;
     private final CategoryService categoryService;
     private final ResumeService resumeService;
+    private final UserAccountService userAccountService;
 
     @PostMapping("/create")
     public String createVacancy(
@@ -97,7 +102,9 @@ public class VacancyController {
                           Model model,
                           @AuthenticationPrincipal CustomUserDetails currentUser){
         VacancyDto vacancy = vacancyService.findVacancyById(vacancyId).orElseGet(null);
+        Integer creatorId = userAccountService.findByEmail(vacancy.getAuthor()).orElse(new User()).getId();
         model.addAttribute("vacancy", vacancy);
+        model.addAttribute("creatorId", creatorId);
 
         List<ResumeDto> userResumes = resumeService.findAllByApplicantId(currentUser.getId());
         model.addAttribute("userResumes", userResumes);
@@ -108,9 +115,10 @@ public class VacancyController {
     public String getAllActiveVacancies(
             Model model,
             @PageableDefault(size = 9) Pageable pageable,
-            @RequestParam(defaultValue = "createdDate") String sort,
+            @RequestParam(defaultValue = "updateTime") String sort,
             @RequestParam(defaultValue = "desc") String dir,
-            @RequestParam(required = false) String name) {
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String category) {
 
         Sort sortOrder = dir.equalsIgnoreCase("desc")
                 ? Sort.by(sort).descending()
@@ -118,7 +126,7 @@ public class VacancyController {
 
         Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortOrder);
 
-        Page<VacancyDto> vacancyPage = vacancyService.getAllActiveVacancies(pageRequest, name);
+        Page<VacancyDto> vacancyPage = vacancyService.getAllActiveVacancies(pageRequest, name, category);
 
         model.addAttribute("vacancies", vacancyPage.getContent());
         model.addAttribute("currentPage", vacancyPage.getNumber());
@@ -128,8 +136,25 @@ public class VacancyController {
         model.addAttribute("sort", sort);
         model.addAttribute("dir", dir);
         model.addAttribute("name", name);
+        model.addAttribute("categories", getCategoriesMap());
+        model.addAttribute("category", category);
 
         return "vacancy-list";
+    }
+
+    @GetMapping("/refresh/{vacancyId}")
+    public String refreshVacancy(
+            @PathVariable Integer vacancyId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        VacancyDto original = vacancyService.findVacancyById(vacancyId).orElseThrow();
+        if (!original.getAuthor().equals(userDetails.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        vacancyService.refreshVacancy(vacancyId);
+
+        return "redirect:/api/users/dashboard";
     }
 
     private Map<String, String> getCategoriesMap() {

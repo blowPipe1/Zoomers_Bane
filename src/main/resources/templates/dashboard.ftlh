@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><@spring.message "common.profile"/></title>
+    <title><@spring.message "common.profile.your"/></title>
     <link rel="stylesheet" href="<@spring.url '/css/dashboard.css'/>">
 </head>
 <body>
@@ -15,7 +15,7 @@
             <a href="?lang=en" style="margin-left: 10px;">EN</a>
         </div>
 
-        <h2><@spring.message "common.profile"/></h2>
+        <h2><@spring.message "common.profile.your"/></h2>
         <div class="profile-header">
             <div class="user-avatar-container">
                 <form id="avatarForm" action="/api/users/avatar" method="post" enctype="multipart/form-data" class="avatar-form">
@@ -78,7 +78,7 @@
                         <p><@spring.message "item-list.updated"/>: ${items.formattedUpdateTime}</p>
                         <div style="display: flex; flex-direction: row; gap: 10px; width: 100%; box-sizing: border-box;" >
                             <a href="/api/resumes/edit/${items.id}" style="flex: 1;"><div class="card-action" style="text-align: center;"> <@spring.message "common.edit-btn"/> </div></a>
-                            <a href="javascript:location.reload();" style="flex: 1;"><div class="card-action" style="text-align: center;"> <@spring.message "common.update-btn"/> </div></a>
+                            <a href="/api/resumes/refresh/${items.id}" style="flex: 1;"><div class="card-action" style="text-align: center;"> <@spring.message "common.update-btn"/> </div></a>
                         </div>
 
                     </div>
@@ -97,7 +97,7 @@
                         <p><@spring.message "item-list.updated"/>: ${items.formattedUpdateTime}</p>
                         <div style="display: flex; flex-direction: row; gap: 10px; width: 100%; box-sizing: border-box;" >
                             <a href="/api/vacancies/edit/${items.id}" style="flex: 1;"><div class="card-action" style="text-align: center;"> <@spring.message "common.edit-btn"/> </div></a>
-                            <a href="javascript:location.reload();" style="flex: 1;"><div class="card-action" style="text-align: center;"> <@spring.message "common.update-btn"/> </div></a>
+                            <a href="/api/vacancies/refresh/${items.id}" style="flex: 1;"><div class="card-action" style="text-align: center;"> <@spring.message "common.update-btn"/> </div></a>
                         </div>
                     </div>
                 <#else>

@@ -3,12 +3,15 @@ package springboot.get_a_job.repositories;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.transaction.annotation.Transactional;
 import springboot.get_a_job.models.Resume;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +26,8 @@ public interface ResumeRepository extends JpaRepository<Resume, Integer> {
 
     Page<Resume> findAllByApplicantId(Integer applicantId, Pageable pageable);
 
+    Page<Resume> findAllByApplicantIdAndIsActiveTrue(Integer applicantId, Pageable pageable);
+
     List<Resume> findAllByApplicantId(Integer applicantId);
 
     List<Resume> findAllByApplicantNameContainingIgnoreCase(String name);
@@ -33,5 +38,17 @@ public interface ResumeRepository extends JpaRepository<Resume, Integer> {
     @Query("SELECT r.id FROM Resume r WHERE r.name ILIKE :name")
     Optional<Integer> findIdByName(@Param("name") String name);
 
-    Page<Resume> findAllByIsActiveTrueAndNameContainingIgnoreCase(Pageable pageable, String name);
+
+    @Query("SELECT r FROM Resume r JOIN r.category c " +
+            "WHERE r.isActive = true " +
+            "AND (:name IS NULL OR LOWER(r.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
+            "AND (:category IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :category, '%')))")
+    Page<Resume> searchResumes(@Param("name") String name,
+                               @Param("category") String category,
+                               Pageable pageable);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Resume r SET r.updateTime = :now WHERE r.id = :id")
+    void refreshResume(@Param("id") Integer id, @Param("now") LocalDateTime now);
 }

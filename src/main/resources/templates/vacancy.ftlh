@@ -12,7 +12,9 @@
     <div class="profile-header">
         <div class="user-info">
             <h1>${vacancy.name}</h1>
-            <p><strong><@spring.message "vacancy.owner"/>: </strong> ${vacancy.author}</p>
+            <span><@spring.message "vacancy.owner"/>:
+                <a href="/api/users/${creatorId}" style="color: blue; text-decoration: none;">${vacancy.author}</a>
+            </span>
             <p><@spring.message "common.status"/>:
                 <@spring.message vacancy.isActive?string('common.status-value.active', 'common.status-value.inactive')/> </p>
         </div>
@@ -61,39 +63,32 @@
             <div class="section-title"><@spring.message "vacancy.apply"/></div>
 
             <#if userResumes?? && (userResumes?size > 0)>
-                <div class="respond-form">
-                    <form action="/api/responses/apply" method="post">
-                        <input type="hidden" name="vacancyId" value="${vacancy.id}">
+                <div id="applySection"
+                     data-vacancy-id="${vacancy.id}"
+                     data-resumes='[<#list userResumes as r>{"id":${r.id}, "name":"${r.name}"}<#if r_has_next>,</#if></#list>]'
+                     data-csrf-name="${_csrf.parameterName}"
+                     data-csrf-token="${_csrf.token}"
+                     data-msg-select="<@spring.message 'vacancy.apply.select-resume'/>"
+                     data-msg-message="<@spring.message 'vacancy.apply.message'/>"
+                     data-msg-placeholder="<@spring.message 'vacancy.apply.message.placeholder'/>"
+                     data-msg-send="<@spring.message 'common.send-btn'/>">
 
-                        <div class="form-group">
-                            <label for="resumeId"><@spring.message "vacancy.apply.select-resume"/>:</label>
-                            <select name="resumeId" id="resumeId" class="form-control" required>
-                                <#list userResumes as resume>
-                                    <option value="${resume.id}">${resume.name}</option>
-                                </#list>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="message"><@spring.message "vacancy.apply.message"/>:</label>
-                            <textarea name="message" id="message" class="form-control"
-                                      placeholder="<@spring.message "vacancy.apply.message.placeholder"/>"></textarea>
-                        </div>
-
-                        <button type="submit" class="btn-submit"><@spring.message "common.send-btn"/></button>
-                    </form>
+                    <button id="initApplyBtn" class="btn-submit">
+                        <@spring.message "vacancy.apply"/>
+                    </button>
                 </div>
             <#else>
-            <a href="api/resumes/form">
-                <div class="description-box" style="background: #fff3cd; border-color: #ffeeba;">
-                    <@spring.message "vacancy.apply.no-resumes"/>
-                </div>
-            </a>
-
+                <a href="/api/resumes/form">
+                    <div class="description-box" style="background: #fff3cd; border-color: #ffeeba;">
+                        <@spring.message "vacancy.apply.no-resumes"/>
+                    </div>
+                </a>
             </#if>
         </div>
     </#if>
 </div>
+
+<script src="<@spring.url '/js/vacancy-apply.js'/>"></script>
 
 </body>
 </html>

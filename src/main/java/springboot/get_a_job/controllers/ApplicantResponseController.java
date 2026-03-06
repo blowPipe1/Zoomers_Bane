@@ -26,7 +26,7 @@ public class ApplicantResponseController {
     @PostMapping("/apply")
     public String submitApplication(@ModelAttribute ApplicantResponseDto applyRequestDTO) {
         applicantService.applyToVacancy(applyRequestDTO);
-        return "redirect:/api/vacancies/" + applyRequestDTO.getVacancyId() + "?success=true";
+        return "redirect:/api/responses/";
     }
 
     @GetMapping("/")
