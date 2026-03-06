@@ -37,9 +37,9 @@
                    class="search-input">
 
             <div class="search-group">
-                <label for="category"><@spring.message "item-list.search.by-title"/></label>
+                <label for="category"><@spring.message "item-list.search.by-category"/></label>
                 <select name="category" id="category" class="form-control search-input" onchange="this.form.submit()">
-                    <option value="">None</option>
+                    <option value=""><@spring.message "item-list.sort.default"/></option>
                     <#list categories?keys as key>
                         <option value="${key}" ${(category?? && category == key)?string('selected', '')}>
                             ${categories[key]}

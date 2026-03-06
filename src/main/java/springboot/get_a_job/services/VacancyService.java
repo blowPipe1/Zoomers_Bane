@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface VacancyService {
     void createVacancy(VacancyDto vacancy);
     void updateVacancy(Integer id, VacancyDto vacancy);
-    Page<VacancyDto> getAllActiveVacancies(Pageable pageable, String name);
+    Page<VacancyDto> getAllActiveVacancies(Pageable pageable, String name, String category);
     Optional<VacancyDto>findVacancyById(Integer id);
     Page<VacancyDto> findVacancyByCreator(Integer applicant_id, Pageable pageable);
     Page<VacancyDto> findActiveVacanciesByCreator(Integer authorId, Pageable pageable);

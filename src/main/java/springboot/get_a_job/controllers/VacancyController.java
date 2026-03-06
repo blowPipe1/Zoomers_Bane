@@ -115,7 +115,8 @@ public class VacancyController {
             @PageableDefault(size = 9) Pageable pageable,
             @RequestParam(defaultValue = "createdDate") String sort,
             @RequestParam(defaultValue = "desc") String dir,
-            @RequestParam(required = false) String name) {
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String category) {
 
         Sort sortOrder = dir.equalsIgnoreCase("desc")
                 ? Sort.by(sort).descending()
@@ -123,7 +124,7 @@ public class VacancyController {
 
         Pageable pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sortOrder);
 
-        Page<VacancyDto> vacancyPage = vacancyService.getAllActiveVacancies(pageRequest, name);
+        Page<VacancyDto> vacancyPage = vacancyService.getAllActiveVacancies(pageRequest, name, category);
 
         model.addAttribute("vacancies", vacancyPage.getContent());
         model.addAttribute("currentPage", vacancyPage.getNumber());
@@ -133,6 +134,8 @@ public class VacancyController {
         model.addAttribute("sort", sort);
         model.addAttribute("dir", dir);
         model.addAttribute("name", name);
+        model.addAttribute("categories", getCategoriesMap());
+        model.addAttribute("category", category);
 
         return "vacancy-list";
     }

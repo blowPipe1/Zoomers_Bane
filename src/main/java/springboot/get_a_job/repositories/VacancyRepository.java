@@ -31,4 +31,15 @@ public interface VacancyRepository extends JpaRepository<Vacancy, Integer> {
     List<Vacancy> findAllByAuthorNameContainingIgnoreCase(String name);
 
     Page<Vacancy> findAllByIsActiveTrueAndNameContainingIgnoreCase(String name, Pageable pageable);
+
+    @Query("SELECT v FROM Vacancy v " +
+            "LEFT JOIN v.category c " +
+            "WHERE v.isActive = true " +
+            "AND (:name IS NULL OR LOWER(v.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
+            "AND (:category IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :category, '%')))")
+    Page<Vacancy> searchVacancies(
+            @Param("name") String name,
+            @Param("category") String category,
+            Pageable pageable
+    );
 }

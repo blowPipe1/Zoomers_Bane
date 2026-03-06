@@ -78,16 +78,12 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public Page<VacancyDto> getAllActiveVacancies(Pageable pageable, String name) {
-        Page<Vacancy> vacancyPage;
+    public Page<VacancyDto> getAllActiveVacancies(Pageable pageable, String name, String category) {
+        String searchName = (name != null && !name.isBlank()) ? name : null;
+        String searchCat = (category != null && !category.isBlank()) ? category : null;
 
-        if (name != null && !name.trim().isEmpty()) {
-            vacancyPage = vacancyRepository.findAllByIsActiveTrueAndNameContainingIgnoreCase(name, pageable);
-        } else {
-            vacancyPage = vacancyRepository.findAllByIsActiveTrue(pageable);
-        }
-
-        return vacancyPage.map(this::convertToDto);
+        return vacancyRepository.searchVacancies(searchName, searchCat, pageable)
+                .map(this::convertToDto);
     }
 
     @Override
