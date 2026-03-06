@@ -31,38 +31,48 @@
         <form action="/api/vacancies/all" method="get" class="sort-form">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
-            <input type="text" name="name"
-                   placeholder="<@spring.message "item-list.search.by-title"/>"
-                   value="${RequestParameters.name!''}"
-                   class="search-input">
+            <div class="form-row main-search">
+                <input type="text" name="name"
+                       placeholder="<@spring.message 'item-list.search.by-title'/>"
+                       value="${RequestParameters.name!''}"
+                       class="search-input">
 
-            <div class="search-group">
-                <label for="category"><@spring.message "item-list.search.by-category"/></label>
-                <select name="category" id="category" class="form-control search-input" onchange="this.form.submit()">
-                    <option value=""><@spring.message "item-list.sort.default"/></option>
-                    <#list categories?keys as key>
-                        <option value="${key}" ${(category?? && category == key)?string('selected', '')}>
-                            ${categories[key]}
-                        </option>
-                    </#list>
-                </select>
+                <div class="input-group">
+                    <label for="category"><@spring.message "item-list.search.by-category"/></label>
+                    <select name="category" id="category" onchange="this.form.submit()">
+                        <option value=""><@spring.message "item-list.sort.default"/></option>
+                        <#list categories?keys as key>
+                            <option value="${key}" ${(category?? && category == key)?string('selected', '')}>
+                                ${categories[key]}
+                            </option>
+                        </#list>
+                    </select>
+                </div>
             </div>
 
-            <label><@spring.message "item-list.sort"/></label>
-            <select name="sort" onchange="this.form.submit()">
-                <option value="id" ${(RequestParameters.sort?? && RequestParameters.sort == 'id')?string('selected', '')}><@spring.message "item-list.sort.default"/></option>
-                <option value="salary" ${(RequestParameters.sort?? && RequestParameters.sort == 'salary')?string('selected', '')}><@spring.message "item-list.sort.by-salary"/></option>
-                <option value="name" ${(RequestParameters.sort?? && RequestParameters.sort == 'name')?string('selected', '')}><@spring.message "item-list.sort.by-title"/></option>
-                <option value="createdDate" ${(RequestParameters.sort?? && RequestParameters.sort == 'createdDate')?string('selected', '')}><@spring.message "item-list.sort.by-date"/></option>
-                <option value="updateTime" ${(RequestParameters.sort?? && RequestParameters.sort == 'updateTime')?string('selected', '')}><@spring.message "item-list.sort.by-update-time"/></option>
-                <option value="applications" ${(RequestParameters.sort?? && RequestParameters.sort == 'applications')?string('selected', '')}><@spring.message "item-list.sort.by-applications"/></option>
-            </select>
-            <select name="dir" onchange="this.form.submit()">
-                <option value="asc" ${(RequestParameters.dir?? && RequestParameters.dir == 'asc')?string('selected', '')}><@spring.message "item-list.sort.asc"/></option>
-                <option value="desc" ${(RequestParameters.dir?? && RequestParameters.dir == 'desc')?string('selected', '')}><@spring.message "item-list.sort.des"/></option>
-            </select>
+            <div class="form-row secondary-controls">
+                <div class="input-group">
+                    <label><@spring.message "item-list.sort"/></label>
+                    <select name="sort" onchange="this.form.submit()">
+                        <option value="id" ${(RequestParameters.sort?? && RequestParameters.sort == 'id')?string('selected', '')}><@spring.message "item-list.sort.default"/></option>
+                        <option value="salary" ${(RequestParameters.sort?? && RequestParameters.sort == 'salary')?string('selected', '')}><@spring.message "item-list.sort.by-salary"/></option>
+                        <option value="name" ${(RequestParameters.sort?? && RequestParameters.sort == 'name')?string('selected', '')}><@spring.message "item-list.sort.by-title"/></option>
+                        <option value="createdDate" ${(RequestParameters.sort?? && RequestParameters.sort == 'createdDate')?string('selected', '')}><@spring.message "item-list.sort.by-date"/></option>
+                        <option value="updateTime" ${(RequestParameters.sort?? && RequestParameters.sort == 'updateTime')?string('selected', '')}><@spring.message "item-list.sort.by-update-time"/></option>
+                        <option value="applications" ${(RequestParameters.sort?? && RequestParameters.sort == 'applications')?string('selected', '')}><@spring.message "item-list.sort.by-applications"/></option>
+                    </select>
+                    <select name="dir" onchange="this.form.submit()">
+                        <option value="asc" ${(RequestParameters.dir?? && RequestParameters.dir == 'asc')?string('selected', '')}><@spring.message "item-list.sort.asc"/></option>
+                        <option value="desc" ${(RequestParameters.dir?? && RequestParameters.dir == 'desc')?string('selected', '')}><@spring.message "item-list.sort.des"/></option>
+                    </select>
+                </div>
+                <button type="button" onclick="resetVacancyFilters()" class="btn-reset">
+                    <@spring.message "email-reset.btn"/>
+                </button>
+            </div>
         </form>
     </div>
+
     <div class="vacancy-list">
         <#list vacancies as vacancy>
             <a href="/api/vacancies/${vacancy.id}" class="vacancy-card-wrapper">
