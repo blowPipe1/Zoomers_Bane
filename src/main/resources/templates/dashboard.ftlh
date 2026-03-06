@@ -78,7 +78,7 @@
                         <p><@spring.message "item-list.updated"/>: ${items.formattedUpdateTime}</p>
                         <div style="display: flex; flex-direction: row; gap: 10px; width: 100%; box-sizing: border-box;" >
                             <a href="/api/resumes/edit/${items.id}" style="flex: 1;"><div class="card-action" style="text-align: center;"> <@spring.message "common.edit-btn"/> </div></a>
-                            <a href="javascript:location.reload();" style="flex: 1;"><div class="card-action" style="text-align: center;"> <@spring.message "common.update-btn"/> </div></a>
+                            <a href="/api/resumes/refresh/${items.id}" style="flex: 1;"><div class="card-action" style="text-align: center;"> <@spring.message "common.update-btn"/> </div></a>
                         </div>
 
                     </div>

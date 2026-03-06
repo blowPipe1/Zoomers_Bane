@@ -3,12 +3,15 @@ package springboot.get_a_job.repositories;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.transaction.annotation.Transactional;
 import springboot.get_a_job.models.Resume;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,4 +46,9 @@ public interface ResumeRepository extends JpaRepository<Resume, Integer> {
     Page<Resume> searchResumes(@Param("name") String name,
                                @Param("category") String category,
                                Pageable pageable);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Resume r SET r.updateTime = :now WHERE r.id = :id")
+    void refreshResume(@Param("id") Integer id, @Param("now") LocalDateTime now);
 }

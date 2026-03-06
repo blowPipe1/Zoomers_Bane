@@ -156,6 +156,22 @@ public class ResumeController {
         return "resume";
     }
 
+
+    @GetMapping("/refresh/{resumeId}")
+    public String refreshResume(
+            @PathVariable Integer resumeId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        ResumeDto original = resumeService.findResumeById(resumeId).orElseThrow();
+        if (!original.getApplicantEmail().equals(userDetails.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        resumeService.refreshResume(resumeId);
+
+        return "redirect:/api/users/dashboard";
+    }
+
     private Map<String, String> getContactTypesMap() {
         return  contactInfoService.findAll().stream()
                 .collect(Collectors.toMap(type -> type, type -> type, (existing, replacement) -> existing));

@@ -146,6 +146,13 @@ public class ResumeServiceImpl implements ResumeService {
                 .map(this::convertIntoDto).collect(Collectors.toList());
     }
 
+    @Override
+    public void refreshResume(Integer resumeId){
+        if (resumeRepository.findById(resumeId).isPresent()) {
+            resumeRepository.refreshResume(resumeId, LocalDateTime.now());
+        }
+    }
+
     private List<ResumeDto> convertList(List<Resume> resumes) {
         return resumes.stream().map(this::convertIntoDto).collect(Collectors.toList());
     }
