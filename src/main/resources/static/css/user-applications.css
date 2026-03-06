@@ -55,9 +55,18 @@ h1 {
     margin-bottom: 4px;
 }
 
+.vacancy-name-link{
+    font-size: 18px;
+    font-weight: 600;
+    color: #007bff;
+    text-decoration: none;
+    margin-bottom: 4px;
+}
+
 .resume-name {
     font-size: 14px;
     color: #6c757d;
+    margin-top: 4px;
 }
 
 .status-badge {

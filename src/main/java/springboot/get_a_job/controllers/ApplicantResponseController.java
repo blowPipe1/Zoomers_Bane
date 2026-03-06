@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import springboot.get_a_job.dto.ApplicantResponseDto;
+import springboot.get_a_job.dto.UserDto;
 import springboot.get_a_job.models.CustomUserDetails;
 import springboot.get_a_job.models.RespondedApplicant;
+import springboot.get_a_job.models.User;
 import springboot.get_a_job.services.RespondedApplicantService;
+import springboot.get_a_job.services.UserAccountService;
 
 import java.util.List;
 
@@ -22,6 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ApplicantResponseController {
     private final RespondedApplicantService applicantService;
+    private final UserAccountService userAccountService;
 
     @PostMapping("/apply")
     public String submitApplication(@ModelAttribute ApplicantResponseDto applyRequestDTO) {
@@ -34,7 +38,9 @@ public class ApplicantResponseController {
                                        @AuthenticationPrincipal CustomUserDetails currentUser) {
 
         List<RespondedApplicant> apps = applicantService.getApplicationsForUser(currentUser.getId());
+        UserDto currentUserModel = userAccountService.findUserById(currentUser.getId()).orElse(new UserDto());
         model.addAttribute("applications", apps);
+        model.addAttribute("currentUser", currentUserModel);
         return "user_applications";
     }
 }
