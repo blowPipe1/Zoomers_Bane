@@ -13,8 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RespondedApplicantDto {
     private Integer id;
-    private String vacancyTitle;
-    private String resumeTitle;
+    private Integer vacancyId;
+    private Integer resumeId;
     private Boolean confirmation;
-    private LocalDateTime lastMessageAt;
 }

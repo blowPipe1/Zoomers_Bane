@@ -48,7 +48,7 @@
                     <@spring.message app.confirmation?string('user-applications.status.confirmed', 'user-applications.status.pending')/> </p>
             </div>
 
-            <a href="#" class="btn-chat"><@spring.message "user-applications.chat"/></a>
+            <a href="/chat/${app.id}" class="btn-chat"><@spring.message "user-applications.chat"/></a>
         </div>
     <#else>
         <div class="empty-state">

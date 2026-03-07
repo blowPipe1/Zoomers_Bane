@@ -23,8 +23,17 @@ public class Message {
     @JoinColumn(name = "responded_applicants_id")
     private RespondedApplicant application;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
+    private User author;
+
     @Column(columnDefinition = "TEXT")
     private String content;
 
     private LocalDateTime timestamp;
+
+    public String getFormattedTimestamp() {
+        if (timestamp == null) return "N/A";
+        return timestamp.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+    }
 }

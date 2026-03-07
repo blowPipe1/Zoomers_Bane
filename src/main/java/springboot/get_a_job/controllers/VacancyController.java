@@ -46,7 +46,6 @@ public class VacancyController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", getCategoriesMap());
-
             return "vacancy-create";
         }
         vacancyDto.setAuthor(currentUserA.getUsername());

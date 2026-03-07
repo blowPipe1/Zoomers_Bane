@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import springboot.get_a_job.models.RespondedApplicant;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RespondedApplicantRepository extends JpaRepository<RespondedApplicant, Integer> {
@@ -12,4 +13,5 @@ public interface RespondedApplicantRepository extends JpaRepository<RespondedApp
     List<RespondedApplicant> findByVacancy_Id(Integer id);
     List<RespondedApplicant> findByResume_Applicant_Id(Integer userId);
     List<RespondedApplicant> findByVacancy_Author_Id(Integer userId);
+    Optional<RespondedApplicant> findById(Integer id);
 }

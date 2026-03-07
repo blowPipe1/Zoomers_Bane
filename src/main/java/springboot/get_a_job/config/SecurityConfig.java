@@ -28,7 +28,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register-form/**", "/register/**", "/api/vacancies/all", "/passwords/**").permitAll()
-                        .requestMatchers("/images/**", "/css/**", "/js/**", "/static/**").permitAll()
+                        .requestMatchers("/images/**", "/css/**", "/js/**", "/static/**", "/ws-chat/**").permitAll()
+
 
                         .requestMatchers("/api/vacancies/create").hasRole("EMPLOYER")
                         .requestMatchers("/api/vacancies/update/*").hasRole("EMPLOYER")

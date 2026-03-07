@@ -37,9 +37,17 @@ INSERT INTO responded_applicants (resume_id, vacancy_id, confirmation) VALUES
     ( ((select id from RESUMES where APPLICANT_ID = (select id from USERS where EMAIL = 'gachi@muchi.com') and name = 'Kotlin the Right Version ♂')), ((select id from VACANCIES where AUTHOR_ID = (select id from USERS where EMAIL = 'boss@ofgym.com') and name = 'Kotlin Developer')), TRUE),
     ( ((select id from RESUMES where APPLICANT_ID = (select id from USERS where EMAIL = 'deagle@miss.com') and name = 'Couch')), ((select id from VACANCIES where AUTHOR_ID = (select id from USERS where EMAIL = 'boss@ofgym.com') and name = 'Banking Expert')), TRUE);
 
-INSERT INTO messages (responded_applicants_id, content, timestamp) VALUES
-    ( select id from responded_applicants where RESUME_ID = ((select id from RESUMES where APPLICANT_ID = (select id from USERS where EMAIL = 'gachi@muchi.com') and name = 'Java the Right Version ♂')) and VACANCY_ID = ((select id from VACANCIES where AUTHOR_ID = (select id from USERS where EMAIL = 'boss@ofgym.com') and name = 'Java Developer')), 'Im interested in vacancy you have posted', CURRENT_TIMESTAMP());
+INSERT INTO messages (responded_applicants_id, author_id, content, timestamp)
+VALUES (
+           (SELECT id FROM responded_applicants
+            WHERE resume_id = (SELECT id FROM resumes WHERE applicant_id = (SELECT id FROM users WHERE email = 'gachi@muchi.com') AND name = 'Java the Right Version ♂')
+              AND vacancy_id = (SELECT id FROM vacancies WHERE author_id = (SELECT id FROM users WHERE email = 'boss@ofgym.com') AND name = 'Java Developer')),
 
+           (SELECT id FROM users WHERE email = 'gachi@muchi.com'), -- Указываем автора сообщения
+
+           'Im interested in vacancy you have posted',
+           CURRENT_TIMESTAMP()
+       );
 
 
 INSERT INTO users (name, surname, age, email, password, phone_number, avatar, account_type ) VALUES

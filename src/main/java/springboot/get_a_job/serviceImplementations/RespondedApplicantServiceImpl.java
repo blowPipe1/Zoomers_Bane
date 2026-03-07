@@ -3,15 +3,13 @@ package springboot.get_a_job.serviceImplementations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import springboot.get_a_job.dto.ApplicantResponseDto;
-import springboot.get_a_job.dto.ResumeDto;
-import springboot.get_a_job.dto.UserDto;
-import springboot.get_a_job.dto.VacancyDto;
+import springboot.get_a_job.dto.*;
 import springboot.get_a_job.exceptions.ResumeNotFoundException;
 import springboot.get_a_job.exceptions.UserNotFoundException;
 import springboot.get_a_job.exceptions.VacancyNotFoundException;
 import springboot.get_a_job.models.Message;
 import springboot.get_a_job.models.RespondedApplicant;
+import springboot.get_a_job.models.Vacancy;
 import springboot.get_a_job.repositories.MessageRepository;
 import springboot.get_a_job.repositories.RespondedApplicantRepository;
 import springboot.get_a_job.services.RespondedApplicantService;
@@ -81,4 +79,22 @@ public class RespondedApplicantServiceImpl implements RespondedApplicantService 
         return respondedApplicantRepository.findByVacancy_Author_Id(employerId);
     }
 
+    @Override
+    public RespondedApplicant getById(Integer applicantId){
+        return respondedApplicantRepository.findById(applicantId).orElseThrow();
+    }
+
+    @Override
+    public RespondedApplicantDto getDtoById(Integer applicantId){
+        return convertToDto(respondedApplicantRepository.findById(applicantId).orElseThrow());
+    }
+
+    private RespondedApplicantDto convertToDto(RespondedApplicant application) {
+        return new RespondedApplicantDto(
+                application.getId(),
+                application.getVacancy().getId(),
+                application.getResume().getId(),
+                application.getConfirmation()
+        );
+    }
 }

@@ -1,6 +1,7 @@
 package springboot.get_a_job.services;
 
 import springboot.get_a_job.dto.ApplicantResponseDto;
+import springboot.get_a_job.dto.RespondedApplicantDto;
 import springboot.get_a_job.models.RespondedApplicant;
 
 import java.util.List;
@@ -11,4 +12,6 @@ public interface RespondedApplicantService {
     void applyToVacancy(ApplicantResponseDto dto);
     List<RespondedApplicant> getApplicationsForUser(Integer userId);
     List<RespondedApplicant> getApplicationsForEmployer(Integer userId);
+    RespondedApplicant getById(Integer Id);
+    RespondedApplicantDto getDtoById(Integer applicantId);
 }
